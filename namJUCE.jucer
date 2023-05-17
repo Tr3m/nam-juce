@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="njospK" name="namJUCE" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              cppLanguageStandard="17">
+  <MAINGROUP id="fLUIGm" name="namJUCE">
+    <GROUP id="{374B1152-41A2-5B5A-A64F-8F1AF7840A23}" name="Source">
+      <FILE id="D1SwcU" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="WXmi05" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="Wphfv0" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="f5ihH7" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+    <GROUP id="{57DEC536-9D56-7AEE-380B-EC532FF9E2D9}" name="NeuralAmpModelerCore">
+      <GROUP id="{AA22893B-AF58-CC45-7066-C76557F882A3}" name="dsp">
+        <FILE id="tNgWjh" name="dsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/dsp.cpp"/>
+        <FILE id="UOL8SC" name="dsp.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/dsp.h"/>
+        <FILE id="op6Xl1" name="ImpulseResponse.cpp" compile="1" resource="0"
+              file="Source/NeuralAmpModelerCore/dsp/ImpulseResponse.cpp"/>
+        <FILE id="yWPfmf" name="ImpulseResponse.h" compile="0" resource="0"
+              file="Source/NeuralAmpModelerCore/dsp/ImpulseResponse.h"/>
+        <FILE id="KVU87I" name="NoiseGate.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/NoiseGate.cpp"/>
+        <FILE id="IX06A0" name="NoiseGate.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/NoiseGate.h"/>
+        <FILE id="R6xdOG" name="RecursiveLinearFilter.cpp" compile="1" resource="0"
+              file="Source/NeuralAmpModelerCore/dsp/RecursiveLinearFilter.cpp"/>
+        <FILE id="jWJoYN" name="RecursiveLinearFilter.h" compile="0" resource="0"
+              file="Source/NeuralAmpModelerCore/dsp/RecursiveLinearFilter.h"/>
+        <FILE id="l49dnd" name="Resample.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/Resample.h"/>
+        <FILE id="yV7D3A" name="wav.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/wav.cpp"/>
+        <FILE id="pbVa3A" name="wav.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/wav.h"/>
+      </GROUP>
+      <GROUP id="{964E87CA-5ED7-5CED-2D79-38DF2B938C42}" name="NAM">
+        <FILE id="x7Hxnq" name="activations.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/activations.cpp"/>
+        <FILE id="XyaWx6" name="activations.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/activations.h"/>
+        <FILE id="OCqgVk" name="convnet.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/convnet.cpp"/>
+        <FILE id="yquMjf" name="convnet.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/convnet.h"/>
+        <FILE id="ty6LLS" name="dsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/dsp.cpp"/>
+        <FILE id="nmwSLZ" name="dsp.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/dsp.h"/>
+        <FILE id="s0qLOb" name="get_dsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/get_dsp.cpp"/>
+        <FILE id="JNKKhj" name="lstm.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/lstm.cpp"/>
+        <FILE id="R4BHGU" name="lstm.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/lstm.h"/>
+        <FILE id="CG0pBi" name="util.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/util.cpp"/>
+        <FILE id="ly4PIt" name="util.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/util.h"/>
+        <FILE id="EflZXn" name="version.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/version.h"/>
+        <FILE id="Ve1xEb" name="wavenet.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/wavenet.cpp"/>
+        <FILE id="sVAPzL" name="wavenet.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/wavenet.h"/>
+      </GROUP>
+      <FILE id="uB1o4Y" name="format.sh" compile="0" resource="1" file="Source/NeuralAmpModelerCore/format.sh"/>
+      <FILE id="ZdY4Xz" name="LICENSE" compile="0" resource="1" file="Source/NeuralAmpModelerCore/LICENSE"/>
+      <FILE id="eE7qb3" name="README.md" compile="0" resource="1" file="Source/NeuralAmpModelerCore/README.md"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="namJUCE" headerPath="/home/manos/Repositories/namJUCE/Modules/eigen&#10;"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="namJUCE" headerPath="/home/manos/Repositories/namJUCE/Modules/eigen&#10;"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+</JUCERPROJECT>
