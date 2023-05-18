@@ -29,7 +29,7 @@ NeuralAmpModeler::~NeuralAmpModeler()
 void NeuralAmpModeler::prepare()
 {
 	//Test Load
-    auto dspPath = std::filesystem::u8path("C:\\Users\\tr3m\\Desktop\\nam\\block_letter.nam");
+    auto dspPath = std::filesystem::u8path("/home/manos/Desktop/nam/block_letter.nam");
 	mNAM = get_dsp(dspPath);
 }
 
