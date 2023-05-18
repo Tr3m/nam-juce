@@ -1,6 +1,3 @@
-[submodule "Source/NeuralAmpModelerCore"]
-	path = Source/NeuralAmpModelerCore
-	url = https://github.com/sdatkinson/NeuralAmpModelerCore
 [submodule "Modules/eigen"]
 	path = Modules/eigen
 	url = https://gitlab.com/libeigen/eigen.git
