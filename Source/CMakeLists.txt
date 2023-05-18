@@ -1,0 +1,36 @@
+target_sources(namJUCE
+PRIVATE
+    NeuralAmpModeler.cpp
+    NeuralAmpModeler.h
+    PluginEditor.cpp
+    PluginEditor.h
+    PluginProcessor.cpp
+    PluginProcessor.h
+    architecture.hpp
+    NeuralAmpModelerCore/NAM/activations.cpp
+    NeuralAmpModelerCore/NAM/activations.h
+    NeuralAmpModelerCore/NAM/convnet.cpp
+    NeuralAmpModelerCore/NAM/convnet.h
+    NeuralAmpModelerCore/NAM/dsp.cpp
+    NeuralAmpModelerCore/NAM/dsp.h
+    NeuralAmpModelerCore/NAM/get_dsp.cpp
+    NeuralAmpModelerCore/NAM/lstm.cpp
+    NeuralAmpModelerCore/NAM/lstm.h
+    NeuralAmpModelerCore/NAM/util.cpp
+    NeuralAmpModelerCore/NAM/util.h
+    NeuralAmpModelerCore/NAM/version.h
+    NeuralAmpModelerCore/NAM/wavenet.cpp
+    NeuralAmpModelerCore/NAM/wavenet.h
+    NeuralAmpModelerCore/dsp/ImpulseResponse.cpp
+    NeuralAmpModelerCore/dsp/ImpulseResponse.h
+    NeuralAmpModelerCore/dsp/NoiseGate.cpp
+    NeuralAmpModelerCore/dsp/NoiseGate.h
+    NeuralAmpModelerCore/dsp/RecursiveLinearFilter.cpp
+    NeuralAmpModelerCore/dsp/RecursiveLinearFilter.h
+    NeuralAmpModelerCore/dsp/Resample.h
+    NeuralAmpModelerCore/dsp/dsp.cpp
+    NeuralAmpModelerCore/dsp/dsp.h
+    NeuralAmpModelerCore/dsp/wav.cpp
+    NeuralAmpModelerCore/dsp/wav.h
+)
+
