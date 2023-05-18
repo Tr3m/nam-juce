@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(namJUCE VERSION 1.0.0)
+project(NAM VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(JUCE CONFIG REQUIRED)
 
-juce_add_plugin(namJUCE
+juce_add_plugin(NAM
     VERSION 1.0.0
     # ICON_BIG ...                            
     # ICON_SMALL ...
@@ -25,7 +25,7 @@ juce_add_plugin(namJUCE
     )        
     
 
-    juce_generate_juce_header(namJUCE)
+    juce_generate_juce_header(NAM)
     
     #add_subdirectory(Assets)
 
@@ -37,7 +37,7 @@ juce_add_plugin(namJUCE
     add_subdirectory(Modules/eigen)
 
 
-target_compile_definitions(namJUCE
+target_compile_definitions(NAM
     PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
@@ -45,7 +45,7 @@ target_compile_definitions(namJUCE
         JUCE_VST3_CAN_REPLACE_VST2=0
         JUCE_DISPLAY_SPLASH_SCREEN=0)     
 
-target_link_libraries(namJUCE
+target_link_libraries(NAM
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
         #BinaryData
@@ -58,7 +58,7 @@ target_link_libraries(namJUCE
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
 
-target_include_directories(namJUCE
+target_include_directories(NAM
     PUBLIC
         Modules/eigen
         Modules/json/include
