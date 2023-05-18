@@ -93,7 +93,7 @@ void NamJUCEAudioProcessor::changeProgramName (int index, const juce::String& ne
 //==============================================================================
 void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    
+    myNAM.prepare();
 }
 
 void NamJUCEAudioProcessor::releaseResources()
@@ -138,9 +138,34 @@ void NamJUCEAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         buffer.clear (i, 0, buffer.getNumSamples());
 
     
+   
+
+    
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
+
+        // ..do something to the data...
+    }
+}
+
+void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
+{
+    juce::ScopedNoDenormals noDenormals;
+    auto totalNumInputChannels = getTotalNumInputChannels();
+    auto totalNumOutputChannels = getTotalNumOutputChannels();
+
+
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+        buffer.clear(i, 0, buffer.getNumSamples());
+
+
+    myNAM.processBlock(buffer, totalNumInputChannels, totalNumOutputChannels);
+
+
+    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    {
+        auto* channelData = buffer.getWritePointer(channel);
 
         // ..do something to the data...
     }
@@ -166,6 +191,11 @@ void NamJUCEAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
    
+}
+
+bool NamJUCEAudioProcessor::supportsDoublePrecisionProcessing() const
+{
+    return supportsDouble;
 }
 
 //==============================================================================

@@ -6,6 +6,7 @@
 #include "NeuralAmpModelerCore/dsp/RecursiveLinearFilter.h"
 #include "NeuralAmpModelerCore/dsp/dsp.h"
 #include "NeuralAmpModelerCore/dsp/wav.h"
+#include <JuceHeader.h>
 
 const int kNumPresets = 1;
 
@@ -47,6 +48,13 @@ public:
 	NeuralAmpModeler();
 	~NeuralAmpModeler();
 
+	void processBlock(juce::AudioBuffer<double>& buffer, int inputChannels, int outputChannels);
+
+	void prepare();
+
 private:
 
+	std::unique_ptr<DSP> mNAM;
+
+	std::unordered_map<std::string, double> mNAMParams = { {"Input", 0.0}, {"Output", 0.0} };
 };

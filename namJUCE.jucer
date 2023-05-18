@@ -2,7 +2,8 @@
 
 <JUCERPROJECT id="njospK" name="namJUCE" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              cppLanguageStandard="17">
+              cppLanguageStandard="17" pluginManufacturer="Manos Labrakis"
+              pluginName="Neural Amp Modeler" version="1.0.0">
   <MAINGROUP id="fLUIGm" name="namJUCE">
     <GROUP id="{374B1152-41A2-5B5A-A64F-8F1AF7840A23}" name="Source">
       <FILE id="D1SwcU" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -82,9 +83,10 @@
     </LINUX_MAKE>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="C:\Users\tr3m\Repositories\namJUCE\Modules\eigen&#10;C:\Users\tr3m\Repositories\namJUCE\Modules\json\include\&#10;C:\Users\tr3m\Repositories\namJUCE\Modules\json\include\nlohmann"
-                       useRuntimeLibDLL="0"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="C:\Users\tr3m\Repositories\namJUCE\Modules\eigen&#10;C:\Users\tr3m\Repositories\namJUCE\Modules\json\include\&#10;C:\Users\tr3m\Repositories\namJUCE\Modules\json\include\nlohmann"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\Modules\eigen&#10;..\..\Modules\json\include\&#10;..\..\Modules\json\include\nlohmann"
+                       useRuntimeLibDLL="0" targetName="Neural Amp Modeler"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="..\..\Modules\eigen&#10;..\..\Modules\json\include\&#10;..\..\Modules\json\include\nlohmann"
+                       targetName="Neural Amp Modeler"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../juce"/>
