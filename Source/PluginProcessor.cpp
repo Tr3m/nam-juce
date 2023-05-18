@@ -19,7 +19,7 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), apvts(*this, nullptr, "Params", createParameters())
 #endif
 {
 }
@@ -185,12 +185,32 @@ juce::AudioProcessorEditor* NamJUCEAudioProcessor::createEditor()
 //==============================================================================
 void NamJUCEAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    
+    auto state = apvts.copyState();
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    copyXmlToBinary(*xml, destData);
 }
 
 void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-   
+    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+    if (xmlState.get() != nullptr)
+        if (xmlState->hasTagName(apvts.state.getType()))
+            apvts.replaceState(juce::ValueTree::fromXml(*xmlState));   
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::createParameters()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("INPUT_ID", "INPUT", -20.0f, 20.0f, 0.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("NGATE_ID", "NGATE", -100.0f, 0.0f, -80.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("BASS_ID", "BASS", 0.0f, 10.0f, 5.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIDDLE_ID", "MIDDLE", 0.0f, 10.0f, 5.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("TREBLE_ID", "TREBLE", 0.0f, 10.0f, 5.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_ID", "OUTPUT", -40.0f, 40.0f, 0.0f));
+
+    return { parameters.begin(), parameters.end() };
 }
 
 bool NamJUCEAudioProcessor::supportsDoublePrecisionProcessing() const

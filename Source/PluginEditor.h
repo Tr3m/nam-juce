@@ -16,7 +16,20 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
+    enum PluginKnobs
+    {
+        Input = 0,
+        NoiseGate,
+        Bass,
+        Middle,
+        Treble,
+        Output
+    };
+
 private:
+
+    std::unique_ptr<juce::Slider> sliders[6];
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[6];
 
     NamJUCEAudioProcessor& audioProcessor;
 
