@@ -1,18 +1,11 @@
-#include <algorithm> // std::clamp
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
 #include <iostream>
 #include <utility>
 
-///#include "Colors.h"
-///#include "IControls.h"
 #include "NeuralAmpModelerCore/NAM/activations.h"
-// clang-format off
-// These includes need to happen in this order or else the latter won't know
-// a bunch of stuff.
 #include "NeuralAmpModeler.h"
-///#include "IPlug_include_in_plug_src.h"
-// clang-format on
 #include "architecture.hpp"
 
 NeuralAmpModeler::NeuralAmpModeler()
@@ -22,7 +15,7 @@ NeuralAmpModeler::NeuralAmpModeler()
     mToneMid(),
     mToneTreble()
 {
-
+    this->mNoiseGateTrigger.AddListener(&this->mNoiseGateGain);
 }
 
 NeuralAmpModeler::~NeuralAmpModeler()
@@ -70,40 +63,36 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
     auto* channelDataRight = buffer.getWritePointer(1);
     auto* outputData = outputBuffer.getWritePointer(0);
     
-    double** samplePointer = &channelDataLeft;
+    double** inputPointer = &channelDataLeft;
     double** outputPointer = &outputData;
 
-    /*
+    
     //Noise Gate Trigger
-    double** triggerOutput = samplePointer;
+    double** triggerOutput = inputPointer;
     if (noiseGateActive)
     {
         const namdsp::noise_gate::TriggerParams triggerParams(time, params[EParams::kNoiseGateThreshold]->load(), ratio, openTime, holdTime, closeTime);
         this->mNoiseGateTrigger.SetParams(triggerParams);
         this->mNoiseGateTrigger.SetSampleRate(sampleRate);
-        triggerOutput = this->mNoiseGateTrigger.Process(samplePointer, 1, buffer.getNumSamples());
-    }
-   
-    */    
+        triggerOutput = this->mNoiseGateTrigger.Process(inputPointer, 1, buffer.getNumSamples());
+    } 
     
     if (mNAM != nullptr)
     {
-        mNAM->process(samplePointer, outputPointer, 1, buffer.getNumSamples(), dB_to_linear(params[EParams::kInputLevel]->load()), 
+        mNAM->process(triggerOutput, outputPointer, 1, buffer.getNumSamples(), dB_to_linear(params[EParams::kInputLevel]->load()), 
             dB_to_linear(params[EParams::kOutputLevel]->load()), mNAMParams);
         mNAM->finalize_(buffer.getNumSamples());
-    }  
+    }
 
     // Apply the noise gate    
-    //double** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(output, 1, buffer.getNumSamples()) : output;
+    double** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(outputPointer, 1, buffer.getNumSamples()) : outputPointer;
 
     //Check if TONESTACK is active here...
 
     //Apply the tone stack
-    double** bassPointers = this->mToneBass.Process(outputPointer, 1, buffer.getNumSamples());
+    double** bassPointers = this->mToneBass.Process(gateGainOutput, 1, buffer.getNumSamples());
     double** midPointers = this->mToneMid.Process(bassPointers, 1, buffer.getNumSamples());
-    double** treblePointers = this->mToneTreble.Process(midPointers, 1, buffer.getNumSamples());
-
-    
+    double** treblePointers = this->mToneTreble.Process(midPointers, 1, buffer.getNumSamples());    
 
     //DO DUAL MONO
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
