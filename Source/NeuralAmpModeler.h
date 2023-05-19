@@ -63,10 +63,18 @@ private:
 
 	std::unique_ptr<DSP> mNAM;
 
-	// Tone stack modules
+	// Tone Stack modules
 	recursive_linear_filter::LowShelf mToneBass;
 	recursive_linear_filter::Peaking mToneMid;
 	recursive_linear_filter::HighShelf mToneTreble;
+
+	//Tone Stack Parameters
+	const double bassFrequency = 150.0;
+	const double midFrequency = 425.0;
+	const double trebleFrequency = 1800.0;
+	const double bassQuality = 0.707;
+	double midQuality = 0.7;
+	const double trebleQuality = 0.707;
 
 	std::unordered_map<std::string, double> mNAMParams = { {"Input", 0.0}, {"Output", 0.0} };
 };

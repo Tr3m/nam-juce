@@ -91,41 +91,14 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
         mNAM->process(samplePointer, outputPointer, 1, buffer.getNumSamples(), dB_to_linear(params[EParams::kInputLevel]->load()), 
             dB_to_linear(params[EParams::kOutputLevel]->load()), mNAMParams);
         mNAM->finalize_(buffer.getNumSamples());
-    }
-    
-    
+    }  
 
     // Apply the noise gate    
     //double** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(output, 1, buffer.getNumSamples()) : output;
 
     //Check if TONESTACK is active here...
 
-    // Translate params from knob 0-10 to dB.
-    // Tuned ranges based on my ear. E.g. seems treble doesn't need nearly as
-    // much swing as bass can use.
-    const double bassGainDB = 4.0 * (params[EParams::kToneBass]->load() - 5.0); // +/- 20
-    const double midGainDB = 3.0 * (params[EParams::kToneMid]->load() - 5.0); // +/- 15
-    const double trebleGainDB = 2.0 * (params[EParams::kToneTreble]->load() - 5.0); // +/- 10
-
-    const double bassFrequency = 150.0;
-    const double midFrequency = 425.0;
-    const double trebleFrequency = 1800.0;
-    const double bassQuality = 0.707;
-    // Wider EQ on mid bump up to sound less honky.
-    const double midQuality = midGainDB < 0.0 ? 1.5 : 0.7;
-    const double trebleQuality = 0.707;
-
-    // Define filter parameters
-    recursive_linear_filter::BiquadParams bassParams(sampleRate, bassFrequency, bassQuality, bassGainDB);
-    recursive_linear_filter::BiquadParams midParams(sampleRate, midFrequency, midQuality, midGainDB);
-    recursive_linear_filter::BiquadParams trebleParams(sampleRate, trebleFrequency, trebleQuality, trebleGainDB);
-
-    // Apply tone stack
-    // Set parameters
-    this->mToneBass.SetParams(bassParams);
-    this->mToneMid.SetParams(midParams);
-    this->mToneTreble.SetParams(trebleParams);
-
+    //Apply the tone stack
     double** bassPointers = this->mToneBass.Process(outputPointer, 1, buffer.getNumSamples());
     double** midPointers = this->mToneMid.Process(bassPointers, 1, buffer.getNumSamples());
     double** treblePointers = this->mToneTreble.Process(midPointers, 1, buffer.getNumSamples());
@@ -141,13 +114,31 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
 }
 
 void NeuralAmpModeler::updateParameters()
-{
-    /*if(int(params[EParams::kNoiseGateThreshold]->load() == -101))
-        noiseGateActive = false;
-    else
-        noiseGateActive = true;*/
-
+{   
+    //Noise Gate
     noiseGateActive = int(params[EParams::kNoiseGateThreshold]->load()) < -100 ? false : true;
+
+    //Tone Stack
+
+    // Translate params from knob 0-10 to dB.
+    // Tuned ranges based on my ear. E.g. seems treble doesn't need nearly as
+    // much swing as bass can use.
+    const double bassGainDB = 4.0 * (params[EParams::kToneBass]->load() - 5.0); // +/- 20
+    const double midGainDB = 3.0 * (params[EParams::kToneMid]->load() - 5.0); // +/- 15
+    const double trebleGainDB = 2.0 * (params[EParams::kToneTreble]->load() - 5.0); // +/- 10
+    
+    // Wider EQ on mid bump up to sound less honky.
+    midQuality = midGainDB < 0.0 ? 1.5 : 0.7;    
+
+    // Define filter parameters
+    recursive_linear_filter::BiquadParams bassParams(sampleRate, bassFrequency, bassQuality, bassGainDB);
+    recursive_linear_filter::BiquadParams midParams(sampleRate, midFrequency, midQuality, midGainDB);
+    recursive_linear_filter::BiquadParams trebleParams(sampleRate, trebleFrequency, trebleQuality, trebleGainDB);
+
+    // Set tone stack parameters
+    this->mToneBass.SetParams(bassParams);
+    this->mToneMid.SetParams(midParams);
+    this->mToneTreble.SetParams(trebleParams);
 }
 
 double NeuralAmpModeler::dB_to_linear(double db_value)
