@@ -93,7 +93,13 @@ void NamJUCEAudioProcessor::changeProgramName (int index, const juce::String& ne
 //==============================================================================
 void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    myNAM.prepare(sampleRate);
+    juce::dsp::ProcessSpec spec;
+
+    spec.sampleRate = sampleRate;
+    spec.numChannels = getNumOutputChannels();
+    spec.maximumBlockSize = samplesPerBlock;
+
+    myNAM.prepare(spec);
     myNAM.hookParameters(apvts);
 }
 
@@ -171,6 +177,7 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce
         // ..do something to the data...
     }
 }
+
 
 //==============================================================================
 bool NamJUCEAudioProcessor::hasEditor() const

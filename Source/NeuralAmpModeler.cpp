@@ -30,12 +30,15 @@ NeuralAmpModeler::~NeuralAmpModeler()
 
 }
 
-void NeuralAmpModeler::prepare(double _sampleRate)
+void NeuralAmpModeler::prepare(juce::dsp::ProcessSpec& spec)
 {
-    this->sampleRate = _sampleRate;
+    this->sampleRate = spec.sampleRate;
+
+    outputBuffer.setSize(1, spec.maximumBlockSize, false, false, false);
+    outputBuffer.clear();
 
 	//Test Load
-    auto dspPath = std::filesystem::u8path("/home/manos/Desktop/nam/block_letter.nam");
+    auto dspPath = std::filesystem::u8path("C:\\Users\\Manos\\Desktop\\nam\\block_letter.nam");
 	mNAM = get_dsp(dspPath);
 }
 
@@ -65,9 +68,12 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
 
     auto* channelDataLeft = buffer.getWritePointer(0);
     auto* channelDataRight = buffer.getWritePointer(1);
+    auto* outputData = outputBuffer.getWritePointer(0);
     
     double** samplePointer = &channelDataLeft;
+    double** outputPointer = &outputData;
 
+    /*
     //Noise Gate Trigger
     double** triggerOutput = samplePointer;
     if (noiseGateActive)
@@ -77,22 +83,61 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
         this->mNoiseGateTrigger.SetSampleRate(sampleRate);
         triggerOutput = this->mNoiseGateTrigger.Process(samplePointer, 1, buffer.getNumSamples());
     }
+   
+    */    
     
     if (mNAM != nullptr)
     {
-        mNAM->process(samplePointer, samplePointer, 1, buffer.getNumSamples(), params[EParams::kInputLevel]->load(), params[EParams::kOutputLevel]->load(), mNAMParams);
+        mNAM->process(samplePointer, outputPointer, 1, buffer.getNumSamples(), dB_to_linear(params[EParams::kInputLevel]->load()), 
+            dB_to_linear(params[EParams::kOutputLevel]->load()), mNAMParams);
         mNAM->finalize_(buffer.getNumSamples());
     }
+    
+    
 
-    // Apply the noise gate
-    //double** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(samplePointer, 1, buffer.getNumSamples()) : samplePointer;
+    // Apply the noise gate    
+    //double** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(output, 1, buffer.getNumSamples()) : output;
 
-    if(noiseGateActive)
-        mNoiseGateGain.Process(samplePointer, 1, buffer.getNumSamples());
+    //Check if TONESTACK is active here...
+
+    // Translate params from knob 0-10 to dB.
+    // Tuned ranges based on my ear. E.g. seems treble doesn't need nearly as
+    // much swing as bass can use.
+    const double bassGainDB = 4.0 * (params[EParams::kToneBass]->load() - 5.0); // +/- 20
+    const double midGainDB = 3.0 * (params[EParams::kToneMid]->load() - 5.0); // +/- 15
+    const double trebleGainDB = 2.0 * (params[EParams::kToneTreble]->load() - 5.0); // +/- 10
+
+    const double bassFrequency = 150.0;
+    const double midFrequency = 425.0;
+    const double trebleFrequency = 1800.0;
+    const double bassQuality = 0.707;
+    // Wider EQ on mid bump up to sound less honky.
+    const double midQuality = midGainDB < 0.0 ? 1.5 : 0.7;
+    const double trebleQuality = 0.707;
+
+    // Define filter parameters
+    recursive_linear_filter::BiquadParams bassParams(sampleRate, bassFrequency, bassQuality, bassGainDB);
+    recursive_linear_filter::BiquadParams midParams(sampleRate, midFrequency, midQuality, midGainDB);
+    recursive_linear_filter::BiquadParams trebleParams(sampleRate, trebleFrequency, trebleQuality, trebleGainDB);
+
+    // Apply tone stack
+    // Set parameters
+    this->mToneBass.SetParams(bassParams);
+    this->mToneMid.SetParams(midParams);
+    this->mToneTreble.SetParams(trebleParams);
+
+    double** bassPointers = this->mToneBass.Process(outputPointer, 1, buffer.getNumSamples());
+    double** midPointers = this->mToneMid.Process(bassPointers, 1, buffer.getNumSamples());
+    double** treblePointers = this->mToneTreble.Process(midPointers, 1, buffer.getNumSamples());
+
+    
 
     //DO DUAL MONO
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
-        channelDataRight[sample] = channelDataLeft[sample];
+    {
+        channelDataRight[sample] = treblePointers[0][sample];
+        channelDataLeft[sample] = treblePointers[0][sample];
+    }
 }
 
 void NeuralAmpModeler::updateParameters()
@@ -102,5 +147,10 @@ void NeuralAmpModeler::updateParameters()
     else
         noiseGateActive = true;*/
 
-    noiseGateActive = int(params[EParams::kNoiseGateThreshold]->load() == -101) ? false : true;
+    noiseGateActive = int(params[EParams::kNoiseGateThreshold]->load()) < -100 ? false : true;
+}
+
+double NeuralAmpModeler::dB_to_linear(double db_value)
+{
+    return std::pow(10.0, db_value / 20.0);
 }

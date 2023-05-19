@@ -15,12 +15,14 @@ public:
 	NeuralAmpModeler();
 	~NeuralAmpModeler();
 
-	void prepare(double _sampleRate);
+	void prepare(juce::dsp::ProcessSpec& spec);
 	
 	void processBlock(juce::AudioBuffer<double>& buffer, int inputChannels, int outputChannels);
 
 	void hookParameters(juce::AudioProcessorValueTreeState&);
 	void updateParameters();
+
+	double dB_to_linear(double db_value);
 
 	enum EParams
 	{
@@ -38,16 +40,19 @@ public:
 		kNumParams
 	};
 
+	
+
 private:
 	double sampleRate;
+	juce::AudioBuffer<double> outputBuffer; 
 
 	//Parameter Pointers
-	std::atomic<float>* params[6];
-	bool noiseGateActive {false};
+	std::atomic<float>* params[6];	
 
 	// Noise gates
 	namdsp::noise_gate::Trigger mNoiseGateTrigger;
 	namdsp::noise_gate::Gain mNoiseGateGain;
+	bool noiseGateActive {false};
 
 	//Noise Gate Parameters
 	const double time = 0.01;
