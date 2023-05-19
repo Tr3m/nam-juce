@@ -6,7 +6,7 @@
 //==============================================================================
 /**
 */
-class NamJUCEAudioProcessorEditor  : public juce::AudioProcessorEditor
+class NamJUCEAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Timer
 {
 public:
     NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&);
@@ -15,6 +15,7 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    void timerCallback();
 
     enum PluginKnobs
     {

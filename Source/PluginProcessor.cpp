@@ -93,7 +93,8 @@ void NamJUCEAudioProcessor::changeProgramName (int index, const juce::String& ne
 //==============================================================================
 void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    myNAM.prepare();
+    myNAM.prepare(sampleRate);
+    myNAM.hookParameters(apvts);
 }
 
 void NamJUCEAudioProcessor::releaseResources()
@@ -204,7 +205,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("INPUT_ID", "INPUT", -20.0f, 20.0f, 0.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("NGATE_ID", "NGATE", -100.0f, 0.0f, -80.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("NGATE_ID", "NGATE", -101.0f, 0.0f, -80.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("BASS_ID", "BASS", 0.0f, 10.0f, 5.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIDDLE_ID", "MIDDLE", 0.0f, 10.0f, 5.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("TREBLE_ID", "TREBLE", 0.0f, 10.0f, 5.0f));

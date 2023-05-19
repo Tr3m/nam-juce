@@ -61,3 +61,8 @@ void NamJUCEAudioProcessorEditor::resized()
 {
     
 }
+
+void NamJUCEAudioProcessorEditor::timerCallback()
+{
+    
+}
