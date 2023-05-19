@@ -16,7 +16,9 @@ public:
 	~NeuralAmpModeler();
 
 	void prepare(juce::dsp::ProcessSpec& spec);
-	
+	void loadModel(const std::string modelPath);
+	void clear();
+
 	void processBlock(juce::AudioBuffer<double>& buffer, int inputChannels, int outputChannels);
 
 	void hookParameters(juce::AudioProcessorValueTreeState&);
@@ -36,7 +38,6 @@ public:
 		kNumParams
 	};
 
-	
 
 private:
 	double sampleRate;

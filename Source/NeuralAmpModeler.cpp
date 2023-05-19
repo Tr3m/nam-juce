@@ -29,10 +29,17 @@ void NeuralAmpModeler::prepare(juce::dsp::ProcessSpec& spec)
 
     outputBuffer.setSize(1, spec.maximumBlockSize, false, false, false);
     outputBuffer.clear();
+}
 
-	//Test Load
-    auto dspPath = std::filesystem::u8path("C:\\Users\\Manos\\Desktop\\nam\\block_letter.nam");
-	mNAM = get_dsp(dspPath);
+void NeuralAmpModeler::loadModel(const std::string modelPath)
+{
+    auto dspPath = std::filesystem::u8path(modelPath);
+    mNAM = get_dsp(dspPath);
+}
+
+void NeuralAmpModeler::clear()
+{
+    mNAM = nullptr;
 }
 
 void NeuralAmpModeler::hookParameters(juce::AudioProcessorValueTreeState& apvts)
@@ -87,6 +94,8 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
             dB_to_linear(params[EParams::kOutputLevel]->load()), mNAMParams);
         mNAM->finalize_(buffer.getNumSamples());
     }
+    else
+        outputPointer = triggerOutput;
 
     // Apply the noise gate    
     double** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(outputPointer, 1, buffer.getNumSamples()) : outputPointer;

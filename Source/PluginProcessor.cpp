@@ -22,6 +22,7 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                        ), apvts(*this, nullptr, "Params", createParameters())
 #endif
 {
+    
 }
 
 NamJUCEAudioProcessor::~NamJUCEAudioProcessor()
@@ -101,6 +102,29 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 
     myNAM.prepare(spec);
     myNAM.hookParameters(apvts);
+
+    try
+    {
+        if(lastModelPath != "null")
+            myNAM.loadModel(lastModelPath);
+        else
+            myNAM.clear();
+    }
+    catch(const std::exception& e)
+    {
+        myNAM.clear();
+    }
+}
+
+void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
+{
+    std::string model_path = modelToLoad.getFullPathName().toStdString();
+    this->suspendProcessing(true);
+    myNAM.loadModel(model_path);
+    this->suspendProcessing(false);
+
+    lastModelPath = model_path;
+    lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
 }
 
 void NamJUCEAudioProcessor::releaseResources()
@@ -195,6 +219,10 @@ void NamJUCEAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     auto state = apvts.copyState();
     std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    xml->addTextElement("ModelPath");
+    xml->addTextElement("ModelName");
+    xml->setAttribute("ModelPath", lastModelPath);
+    xml->setAttribute("ModelName", lastModelName);
     copyXmlToBinary(*xml, destData);
 }
 
@@ -204,7 +232,26 @@ void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInByt
 
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(apvts.state.getType()))
-            apvts.replaceState(juce::ValueTree::fromXml(*xmlState));   
+        {
+            apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
+            try
+            {
+                lastModelPath = xmlState->getStringAttribute("ModelPath").toStdString();
+                lastModelName = xmlState->getStringAttribute("ModelName").toStdString();
+
+                if(lastModelName != "null")
+                {
+                    juce::File fileCheck{lastModelPath};
+                    if(!fileCheck.exists())
+                        lastModelName = "Model File Missing!";                    
+                }
+            }
+            catch(const std::exception& e)
+            {
+                lastModelPath = "null";
+                lastModelName = "";
+            }
+        }
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::createParameters()
@@ -227,6 +274,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
 bool NamJUCEAudioProcessor::supportsDoublePrecisionProcessing() const
 {
     return supportsDouble;
+}
+
+const std::string NamJUCEAudioProcessor::getLastModelPath()
+{
+    return lastModelPath;
+}
+
+const std::string NamJUCEAudioProcessor::getLastModelName()
+{
+    return lastModelName;
 }
 
 //==============================================================================

@@ -32,10 +32,7 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     toneStackToggle->setBounds(sliders[PluginKnobs::Bass]->getX() + 45, sliders[PluginKnobs::Bass]->getY() + knobSize - 9, 100, 40);
     toneStackToggle->setButtonText("Tone Stack");
 
-    toneStackToggle->onClick = [this]
-    {
-        setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
-    };
+    toneStackToggle->onClick = [this]{setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));};
 
     //Rerunning this for GUI Recustrunction upon reopning the plugin
     setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
@@ -45,6 +42,26 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     normalizeToggle->setBounds(toneStackToggle->getX() + 120, toneStackToggle->getY(), 100, 40);
     normalizeToggle->setButtonText("Normalize");
 
+    modelNameBox.reset(new juce::TextEditor("ModelNameBox"));
+    addAndMakeVisible(modelNameBox.get());
+    modelNameBox->setMultiLine(false);
+    modelNameBox->setReturnKeyStartsNewLine(false);
+    modelNameBox->setReadOnly(true);
+    modelNameBox->setScrollbarsShown(true);
+    modelNameBox->setCaretVisible(true);
+    modelNameBox->setPopupMenuEnabled(true);
+    modelNameBox->setAlpha(0.9f);
+    modelNameBox->setColour(TextEditor::backgroundColourId, Colours::transparentBlack);
+    modelNameBox->setBounds(15, sliders[PluginKnobs::Input]->getY() + 160, 160, 24);
+
+    loadModelButton.reset(new juce::TextButton("LoadModelButton"));
+    addAndMakeVisible(loadModelButton.get());
+    loadModelButton->setButtonText("Load");
+    loadModelButton->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentBlack);
+    loadModelButton->setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::snow);
+    loadModelButton->setBounds(modelNameBox->getX() + modelNameBox->getWidth() + 5, modelNameBox->getY(), 40, modelNameBox->getHeight());
+    loadModelButton->onClick = [this]{loadModelButtonClicked();};
+
     sliderAttachments[PluginKnobs::Input] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "INPUT_ID", *sliders[PluginKnobs::Input]);
     sliderAttachments[PluginKnobs::NoiseGate] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "NGATE_ID", *sliders[PluginKnobs::NoiseGate]);
     sliderAttachments[PluginKnobs::Bass] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "BASS_ID", *sliders[PluginKnobs::Bass]);
@@ -53,9 +70,13 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     sliderAttachments[PluginKnobs::Output] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "OUTPUT_ID", *sliders[PluginKnobs::Output]);
 
     toneStackToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "TONE_STACK_ON_ID", *toneStackToggle));
-    normalizeToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "NORMALIZE_ID", *normalizeToggle));
+    normalizeToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "NORMALIZE_ID", *normalizeToggle));    
 
-    
+    if(audioProcessor.getLastModelPath() != "null")
+    {        
+        audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
+        modelNameBox->setText(audioProcessor.getLastModelName());
+    }
     
 }
 
@@ -85,7 +106,7 @@ void NamJUCEAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText("Treble", sliders[PluginKnobs::Treble]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
     g.drawFittedText("Output", sliders[PluginKnobs::Output]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
 
-    //g.drawFittedText("ToneStack", toneStackToggle->getBounds().withHeight(24).translated(40, 0), juce::Justification::centred, 1);
+    g.drawFittedText("Model", modelNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
 }
 
 void NamJUCEAudioProcessorEditor::resized()
@@ -115,5 +136,19 @@ void NamJUCEAudioProcessorEditor::setToneStackEnabled(bool toneStackEnabled)
     {
         sliders[slider] -> setEnabled(toneStackEnabled);
         toneStackEnabled ? sliders[slider]->setAlpha(1.0f) : sliders[slider] -> setAlpha(0.3f);
+    }
+}
+
+void NamJUCEAudioProcessorEditor::loadModelButtonClicked()
+{
+    juce::FileChooser chooser("Choose an model to load", File::getSpecialLocation(File::userDesktopDirectory), "*.nam", true, false);
+
+    if (chooser.browseForFileToOpen())
+    {		
+        File model;
+        model = chooser.getResult();
+        audioProcessor.loadNamModel(model);
+        modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+        modelNameBox->setText(model.getFileNameWithoutExtension());        
     }
 }

@@ -18,7 +18,10 @@ public:
     void resized() override;
     void timerCallback();
     void sliderValueChanged(juce::Slider* slider);
+    
     void setToneStackEnabled(bool toneStackEnabled);
+
+    void loadModelButtonClicked();
 
     enum PluginKnobs
     {
@@ -41,6 +44,9 @@ private:
 
     std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment;
+
+    std::unique_ptr<juce::TextEditor> modelNameBox;
+    std::unique_ptr<juce::TextButton> loadModelButton;
 
     NamJUCEAudioProcessor& audioProcessor;
 

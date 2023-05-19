@@ -50,7 +50,11 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    void loadNamModel(juce::File modelToLoad);
+
     bool supportsDoublePrecisionProcessing() const override;
+    const std::string getLastModelPath();
+    const std::string getLastModelName();
 
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
@@ -60,6 +64,9 @@ private:
     //==============================================================================
 
     NeuralAmpModeler myNAM;
+
+    std::string lastModelPath = "null";
+    std::string lastModelName = "null";
 
     bool supportsDouble{ true };
 
