@@ -29,6 +29,7 @@ juce_add_plugin(NAM
     
     #add_subdirectory(Assets)
 
+    add_subdirectory(Assets)
     add_subdirectory(Source)
     include_directories(Source)
 
@@ -48,7 +49,7 @@ target_compile_definitions(NAM
 target_link_libraries(NAM
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
-        #BinaryData
+        BinaryData
         juce::juce_audio_utils
         juce::juce_dsp
         nlohmann_json::nlohmann_json

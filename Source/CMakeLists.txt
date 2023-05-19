@@ -6,6 +6,7 @@ PRIVATE
     PluginEditor.h
     PluginProcessor.cpp
     PluginProcessor.h
+    MyLookAndFeel.h
     architecture.hpp
 )
 

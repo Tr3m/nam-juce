@@ -2,11 +2,12 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "MyLookAndFeel.h"
 
 //==============================================================================
 /**
 */
-class NamJUCEAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Timer
+class NamJUCEAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener
 {
 public:
     NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&);
@@ -16,6 +17,8 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
     void timerCallback();
+    void sliderValueChanged(juce::Slider* slider);
+    void setToneStackEnabled(bool toneStackEnabled);
 
     enum PluginKnobs
     {
@@ -31,6 +34,13 @@ private:
 
     std::unique_ptr<juce::Slider> sliders[6];
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[6];
+
+    knobLookAndFeel lnf;
+
+    juce::String ngThreshold {"Null"};
+
+    std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment;
 
     NamJUCEAudioProcessor& audioProcessor;
 

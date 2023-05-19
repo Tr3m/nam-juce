@@ -20,9 +20,6 @@ public:
 	void processBlock(juce::AudioBuffer<double>& buffer, int inputChannels, int outputChannels);
 
 	void hookParameters(juce::AudioProcessorValueTreeState&);
-	void updateParameters();
-
-	double dB_to_linear(double db_value);
 
 	enum EParams
 	{
@@ -33,7 +30,6 @@ public:
 		kToneTreble,
 		kOutputLevel,
 		
-		kNoiseGateActive,
 		kEQActive,
 		kOutNorm,
 		kIRToggle,
@@ -47,7 +43,7 @@ private:
 	juce::AudioBuffer<double> outputBuffer; 
 
 	//Parameter Pointers
-	std::atomic<float>* params[6];	
+	std::atomic<float>* params[8];	
 
 	// Noise gates
 	namdsp::noise_gate::Trigger mNoiseGateTrigger;
@@ -62,11 +58,14 @@ private:
     const double closeTime = 0.05;
 
 	std::unique_ptr<DSP> mNAM;
+	bool outputNormalized {false};
 
 	// Tone Stack modules
 	recursive_linear_filter::LowShelf mToneBass;
 	recursive_linear_filter::Peaking mToneMid;
 	recursive_linear_filter::HighShelf mToneTreble;
+
+	bool toneStackActive {true};
 
 	//Tone Stack Parameters
 	const double bassFrequency = 150.0;
@@ -77,4 +76,10 @@ private:
 	const double trebleQuality = 0.707;
 
 	std::unordered_map<std::string, double> mNAMParams = { {"Input", 0.0}, {"Output", 0.0} };
+
+// Private Functions
+private:
+	void updateParameters();
+	double dB_to_linear(double db_value);
+	void doDualMono(juce::AudioBuffer<double>& mainBuffer, double** input);
 };

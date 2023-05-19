@@ -44,6 +44,9 @@ void NeuralAmpModeler::hookParameters(juce::AudioProcessorValueTreeState& apvts)
     params[EParams::kToneTreble] = apvts.getRawParameterValue("TREBLE_ID");
     params[EParams::kOutputLevel] = apvts.getRawParameterValue("OUTPUT_ID");
 
+    params[EParams::kEQActive] = apvts.getRawParameterValue("TONE_STACK_ON_ID");
+    params[EParams::kOutNorm] = apvts.getRawParameterValue("NORMALIZE_ID");
+
     DBG("Parameters Hooked!");
 }
 
@@ -79,6 +82,7 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
     
     if (mNAM != nullptr)
     {
+        mNAM->SetNormalize(outputNormalized);
         mNAM->process(triggerOutput, outputPointer, 1, buffer.getNumSamples(), dB_to_linear(params[EParams::kInputLevel]->load()), 
             dB_to_linear(params[EParams::kOutputLevel]->load()), mNAMParams);
         mNAM->finalize_(buffer.getNumSamples());
@@ -87,27 +91,30 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
     // Apply the noise gate    
     double** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(outputPointer, 1, buffer.getNumSamples()) : outputPointer;
 
-    //Check if TONESTACK is active here...
-
-    //Apply the tone stack
-    double** bassPointers = this->mToneBass.Process(gateGainOutput, 1, buffer.getNumSamples());
-    double** midPointers = this->mToneMid.Process(bassPointers, 1, buffer.getNumSamples());
-    double** treblePointers = this->mToneTreble.Process(midPointers, 1, buffer.getNumSamples());    
-
-    //DO DUAL MONO
-    for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+    if(toneStackActive)
     {
-        channelDataRight[sample] = treblePointers[0][sample];
-        channelDataLeft[sample] = treblePointers[0][sample];
-    }
+        //Apply the tone stack
+        double** bassPointers = this->mToneBass.Process(gateGainOutput, 1, buffer.getNumSamples());
+        double** midPointers = this->mToneMid.Process(bassPointers, 1, buffer.getNumSamples());
+        double** treblePointers = this->mToneTreble.Process(midPointers, 1, buffer.getNumSamples()); 
+
+        doDualMono(buffer, treblePointers);
+    } 
+    else
+        doDualMono(buffer, gateGainOutput);
+
+    
 }
 
 void NeuralAmpModeler::updateParameters()
-{   
+{
+    outputNormalized = bool(params[EParams::kOutNorm]->load());
+
     //Noise Gate
     noiseGateActive = int(params[EParams::kNoiseGateThreshold]->load()) < -100 ? false : true;
 
     //Tone Stack
+    toneStackActive = bool(params[EParams::kEQActive]->load());
 
     // Translate params from knob 0-10 to dB.
     // Tuned ranges based on my ear. E.g. seems treble doesn't need nearly as
@@ -133,4 +140,16 @@ void NeuralAmpModeler::updateParameters()
 double NeuralAmpModeler::dB_to_linear(double db_value)
 {
     return std::pow(10.0, db_value / 20.0);
+}
+
+void NeuralAmpModeler::doDualMono(juce::AudioBuffer<double>& mainBuffer, double** input)
+{
+    auto channelDataLeft = mainBuffer.getWritePointer(0);
+    auto channelDataRight = mainBuffer.getWritePointer(1);
+
+    for (int sample = 0; sample < mainBuffer.getNumSamples(); ++sample)
+    {
+        channelDataRight[sample] = input[0][sample];
+        channelDataLeft[sample] = input[0][sample];
+    }
 }
