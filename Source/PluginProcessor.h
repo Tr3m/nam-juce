@@ -73,6 +73,8 @@ private:
     juce::dsp::Convolution cab;
     bool irFound {false};
 
+    dsp::ProcessorDuplicator<dsp::IIR::Filter <double>, dsp::IIR::Coefficients <double>>highCut, lowCut;
+
     std::string lastModelPath = "null";
     std::string lastModelName = "null";
 

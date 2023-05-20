@@ -15,11 +15,13 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("Input",  juce::AudioChannelSet::mono(), true)
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), apvts(*this, nullptr, "Params", createParameters())
+                       ), apvts(*this, nullptr, "Params", createParameters()),
+                        lowCut(dsp::IIR::Coefficients<double>::makeHighPass(44100, 20.0f, 1.0f)),
+                        highCut(dsp::IIR::Coefficients<double>::makeLowPass(44100, 20000.0f, 1.0f))
 #endif
 {
     
@@ -105,6 +107,11 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 
     cab.reset();
     cab.prepare(spec);
+    
+    lowCut.reset();
+    lowCut.prepare(spec);
+    highCut.reset();
+    highCut.prepare(spec);
 
     fpBuffer.setSize(1, samplesPerBlock, false, false, false);
     fpBuffer.clear();
@@ -186,11 +193,8 @@ void NamJUCEAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    
    
 
-    
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
@@ -208,20 +212,22 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
+    juce::dsp::AudioBlock<double> block(buffer);
+
     auto* channelDataLeft = buffer.getWritePointer(0);
     auto* channelDataRight = buffer.getWritePointer(1);
 
     myNAM.processBlock(buffer, totalNumInputChannels, totalNumOutputChannels);
 
     //TODO: Change this ASAP! This is a HORRIBLE way of doing it.
-    juce::dsp::AudioBlock<float> block(fpBuffer);
+    juce::dsp::AudioBlock<float> fpBlock(fpBuffer);
     auto* fpData = fpBuffer.getWritePointer(0);
     for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
         fpData[sample] = channelDataLeft[sample];
 
     if(bool(*apvts.getRawParameterValue("CAB_ON_ID")))
     {
-        cab.process(juce::dsp::ProcessContextReplacing<float>(block));
+        cab.process(juce::dsp::ProcessContextReplacing<float>(fpBlock));
         if(irFound)
             fpBuffer.applyGain(juce::Decibels::decibelsToGain(9.0f));
     }
@@ -232,6 +238,12 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce
         channelDataLeft[sample] = fpData[sample];
         channelDataRight[sample] = fpData[sample];
     }
+
+    *lowCut.state = *dsp::IIR::Coefficients<double>::makeHighPass(getSampleRate(), *apvts.getRawParameterValue("LOWCUT_ID"), 1.0f);
+    *highCut.state = *dsp::IIR::Coefficients<double>::makeLowPass(getSampleRate(), *apvts.getRawParameterValue("HIGHCUT_ID"), 1.0f);
+
+    lowCut.process(juce::dsp::ProcessContextReplacing<double>(block));
+    highCut.process(juce::dsp::ProcessContextReplacing<double>(block));
 }
 
 
@@ -330,6 +342,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
     parameters.push_back(std::make_unique<juce::AudioParameterBool>("TONE_STACK_ON_ID", "TONE_STACK_ON", true, "TONE_STACK_ON"));
     parameters.push_back(std::make_unique<juce::AudioParameterBool>("NORMALIZE_ID", "NORMALIZE", false, "NORMALIZE"));
     parameters.push_back(std::make_unique<juce::AudioParameterBool>("CAB_ON_ID", "CAB_ON", true, "CAB_ON"));
+
+    parameters.push_back(std::make_unique<juce::AudioParameterInt>("LOWCUT_ID", "LOWCUT", 20, 2000, 20));
+    parameters.push_back(std::make_unique<juce::AudioParameterInt>("HIGHCUT_ID", "HIGHCUT", 200, 20000, 20000));
 
     return { parameters.begin(), parameters.end() };
 }

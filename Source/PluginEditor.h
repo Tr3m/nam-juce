@@ -32,13 +32,15 @@ public:
         Bass,
         Middle,
         Treble,
-        Output
+        Output,
+        LowCut,
+        HighCut
     };
 
 private:
 
-    std::unique_ptr<juce::Slider> sliders[6];
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[6];
+    std::unique_ptr<juce::Slider> sliders[8];
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[8];
 
     knobLookAndFeel lnf;
 
@@ -58,4 +60,5 @@ private:
 private:
     void initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height);
     void initializeButton(const juce::String label, std::unique_ptr<juce::TextButton>& button, int x, int y, int width, int height);
+    void initializeFilters();
 };

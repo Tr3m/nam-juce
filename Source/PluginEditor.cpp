@@ -25,6 +25,8 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
         sliders[slider]->setBounds(xStart + (slider * xOffsetMultiplier), 85, knobSize, knobSize);
     }
 
+    initializeFilters();
+
     sliders[PluginKnobs::NoiseGate]->addListener(this);
 
     //Tone Stack Toggle
@@ -67,6 +69,9 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     sliderAttachments[PluginKnobs::Treble] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "TREBLE_ID", *sliders[PluginKnobs::Treble]);
     sliderAttachments[PluginKnobs::Output] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "OUTPUT_ID", *sliders[PluginKnobs::Output]);
 
+    sliderAttachments[PluginKnobs::LowCut] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "LOWCUT_ID", *sliders[PluginKnobs::LowCut]);
+    sliderAttachments[PluginKnobs::HighCut] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "HIGHCUT_ID", *sliders[PluginKnobs::HighCut]);
+
     toneStackToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "TONE_STACK_ON_ID", *toneStackToggle));
     normalizeToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "NORMALIZE_ID", *normalizeToggle));    
     irToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "CAB_ON_ID", *irToggle));    
@@ -87,7 +92,7 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
 
 NamJUCEAudioProcessorEditor::~NamJUCEAudioProcessorEditor()
 {
-    for(int sliderAtt = 0; sliderAtt <= 5; ++sliderAtt)
+    for(int sliderAtt = 0; sliderAtt <= 7; ++sliderAtt)
         sliderAttachments[sliderAtt] = nullptr;
 
     toneStackToggleAttachment = nullptr;
@@ -111,6 +116,8 @@ void NamJUCEAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText("Middle", sliders[PluginKnobs::Middle]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
     g.drawFittedText("Treble", sliders[PluginKnobs::Treble]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
     g.drawFittedText("Output", sliders[PluginKnobs::Output]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
+    g.drawFittedText("Low-Cut", sliders[PluginKnobs::LowCut]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
+    g.drawFittedText("High-Cut", sliders[PluginKnobs::HighCut]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
 
     g.drawFittedText("Model", modelNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
     g.drawFittedText("Impulse Response", irNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
@@ -197,4 +204,23 @@ void NamJUCEAudioProcessorEditor::initializeButton(const juce::String label, std
     button->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentBlack);
     button->setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::snow);
     button->setBounds(x, y, width, height);
+}
+
+void NamJUCEAudioProcessorEditor::initializeFilters()
+{
+    int knobSize = 76;
+    int xStart = sliders[PluginKnobs::Middle]->getX();
+    int xOffsetMultiplier = 90;
+    
+    for(int slider = PluginKnobs::LowCut; slider <= PluginKnobs::HighCut; ++slider)
+    {
+        sliders[slider].reset(new juce::Slider("slider" + std::to_string(slider)));
+        addAndMakeVisible(sliders[slider].get());
+        sliders[slider]->setLookAndFeel(&lnf);
+        sliders[slider]->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+        sliders[slider]->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+        sliders[slider]->setPopupDisplayEnabled(true, true, getTopLevelComponent());
+
+        sliders[slider]->setBounds(xStart + ((slider - 6) * xOffsetMultiplier), 265, knobSize, knobSize);
+    }
 }
