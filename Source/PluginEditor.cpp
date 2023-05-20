@@ -27,40 +27,38 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
 
     sliders[PluginKnobs::NoiseGate]->addListener(this);
 
+    //Tone Stack Toggle
     toneStackToggle.reset(new juce::ToggleButton("ToneStackToggleButton"));
     addAndMakeVisible(toneStackToggle.get());
-    toneStackToggle->setBounds(sliders[PluginKnobs::Bass]->getX() + 45, sliders[PluginKnobs::Bass]->getY() + knobSize - 9, 100, 40);
+    toneStackToggle->setBounds(sliders[PluginKnobs::Bass]->getX() + 30, sliders[PluginKnobs::Bass]->getY() + knobSize - 9, 100, 40);
     toneStackToggle->setButtonText("Tone Stack");
-
     toneStackToggle->onClick = [this]{setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));};
 
     //Rerunning this for GUI Recustrunction upon reopning the plugin
     setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
 
+    //Normalize Toggle
     normalizeToggle.reset(new juce::ToggleButton("NormalizeToggleButton"));
     addAndMakeVisible(normalizeToggle.get());
     normalizeToggle->setBounds(toneStackToggle->getX() + 120, toneStackToggle->getY(), 100, 40);
     normalizeToggle->setButtonText("Normalize");
 
-    modelNameBox.reset(new juce::TextEditor("ModelNameBox"));
-    addAndMakeVisible(modelNameBox.get());
-    modelNameBox->setMultiLine(false);
-    modelNameBox->setReturnKeyStartsNewLine(false);
-    modelNameBox->setReadOnly(true);
-    modelNameBox->setScrollbarsShown(true);
-    modelNameBox->setCaretVisible(true);
-    modelNameBox->setPopupMenuEnabled(true);
-    modelNameBox->setAlpha(0.9f);
-    modelNameBox->setColour(TextEditor::backgroundColourId, Colours::transparentBlack);
-    modelNameBox->setBounds(15, sliders[PluginKnobs::Input]->getY() + 160, 160, 24);
+    //IR Toggle
+    irToggle.reset(new juce::ToggleButton("IRToggleButton"));
+    addAndMakeVisible(irToggle.get());
+    irToggle->setBounds(normalizeToggle->getX() + 120, normalizeToggle->getY(), 100, 40);
+    irToggle->setButtonText("IR");
 
-    loadModelButton.reset(new juce::TextButton("LoadModelButton"));
-    addAndMakeVisible(loadModelButton.get());
-    loadModelButton->setButtonText("Load");
-    loadModelButton->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentBlack);
-    loadModelButton->setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::snow);
-    loadModelButton->setBounds(modelNameBox->getX() + modelNameBox->getWidth() + 5, modelNameBox->getY(), 40, modelNameBox->getHeight());
+    //Model Name Box and Button
+    initializeTextBox("ModelNameBox", modelNameBox, 15, sliders[PluginKnobs::Input]->getY() + 160, 160, 24);
+    
+    initializeButton("LoadModelButton", loadModelButton, modelNameBox->getX() + modelNameBox->getWidth() + 5, modelNameBox->getY(), 40, modelNameBox->getHeight());
     loadModelButton->onClick = [this]{loadModelButtonClicked();};
+
+    //IR Name Box and Button
+    initializeTextBox("IRNameBox", irNameBox, 15, modelNameBox->getY() + 80, 160, 24);
+    initializeButton("LoadIRButton", loadIRButton, irNameBox->getX() + irNameBox->getWidth() + 5, irNameBox->getY(), 40, irNameBox->getHeight());
+    loadIRButton->onClick = [this]{loadIrButtonClicked();};
 
     sliderAttachments[PluginKnobs::Input] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "INPUT_ID", *sliders[PluginKnobs::Input]);
     sliderAttachments[PluginKnobs::NoiseGate] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "NGATE_ID", *sliders[PluginKnobs::NoiseGate]);
@@ -71,11 +69,18 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
 
     toneStackToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "TONE_STACK_ON_ID", *toneStackToggle));
     normalizeToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "NORMALIZE_ID", *normalizeToggle));    
+    irToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "CAB_ON_ID", *irToggle));    
 
     if(audioProcessor.getLastModelPath() != "null")
     {        
         audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
         modelNameBox->setText(audioProcessor.getLastModelName());
+    }
+
+    if(audioProcessor.getLastIrPath() != "null")
+    {        
+        audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
+        irNameBox->setText(audioProcessor.getLastIrName());
     }
     
 }
@@ -87,6 +92,7 @@ NamJUCEAudioProcessorEditor::~NamJUCEAudioProcessorEditor()
 
     toneStackToggleAttachment = nullptr;
     normalizeToggleAttachment = nullptr;
+    irToggleAttachment = nullptr;
 }
 
 //==============================================================================
@@ -107,6 +113,7 @@ void NamJUCEAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText("Output", sliders[PluginKnobs::Output]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
 
     g.drawFittedText("Model", modelNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
+    g.drawFittedText("Impulse Response", irNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
 }
 
 void NamJUCEAudioProcessorEditor::resized()
@@ -151,4 +158,43 @@ void NamJUCEAudioProcessorEditor::loadModelButtonClicked()
         modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
         modelNameBox->setText(model.getFileNameWithoutExtension());        
     }
+}
+
+void NamJUCEAudioProcessorEditor::loadIrButtonClicked()
+{
+    juce::FileChooser chooser("Choose an IR to load", File::getSpecialLocation(File::userDesktopDirectory), "*.wav", true, false);
+
+    if (chooser.browseForFileToOpen())
+    {		
+        File impulseResponse;
+        impulseResponse = chooser.getResult();
+        audioProcessor.loadImpulseResponse(impulseResponse);
+        irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+        irNameBox->setText(impulseResponse.getFileNameWithoutExtension());        
+    }
+}
+
+void NamJUCEAudioProcessorEditor::initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height)
+{
+    textBox.reset(new juce::TextEditor(label));
+    addAndMakeVisible(textBox.get());
+    textBox->setMultiLine(false);
+    textBox->setReturnKeyStartsNewLine(false);
+    textBox->setReadOnly(true);
+    textBox->setScrollbarsShown(true);
+    textBox->setCaretVisible(true);
+    textBox->setPopupMenuEnabled(true);
+    textBox->setAlpha(0.9f);
+    textBox->setColour(TextEditor::backgroundColourId, Colours::transparentBlack);
+    textBox->setBounds(x, y, width, height);
+}
+
+void NamJUCEAudioProcessorEditor::initializeButton(const juce::String label, std::unique_ptr<juce::TextButton>& button, int x, int y, int width, int height)
+{
+    button.reset(new juce::TextButton("LoadModelButton"));
+    addAndMakeVisible(button.get());
+    button->setButtonText("Load");
+    button->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentBlack);
+    button->setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::snow);
+    button->setBounds(x, y, width, height);
 }

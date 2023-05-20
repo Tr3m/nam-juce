@@ -20,8 +20,10 @@ public:
     void sliderValueChanged(juce::Slider* slider);
     
     void setToneStackEnabled(bool toneStackEnabled);
+    
 
     void loadModelButtonClicked();
+    void loadIrButtonClicked();
 
     enum PluginKnobs
     {
@@ -42,13 +44,18 @@ private:
 
     juce::String ngThreshold {"Null"};
 
-    std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment;
+    std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment;
 
-    std::unique_ptr<juce::TextEditor> modelNameBox;
-    std::unique_ptr<juce::TextButton> loadModelButton;
+    std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
+    std::unique_ptr<juce::TextButton> loadModelButton, loadIRButton;
 
     NamJUCEAudioProcessor& audioProcessor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamJUCEAudioProcessorEditor)
+
+// Private Functions
+private:
+    void initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height);
+    void initializeButton(const juce::String label, std::unique_ptr<juce::TextButton>& button, int x, int y, int width, int height);
 };

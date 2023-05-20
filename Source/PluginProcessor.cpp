@@ -103,6 +103,13 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     myNAM.prepare(spec);
     myNAM.hookParameters(apvts);
 
+    cab.reset();
+    cab.prepare(spec);
+
+    fpBuffer.setSize(1, samplesPerBlock, false, false, false);
+    fpBuffer.clear();
+
+    //Load last NAM Model
     try
     {
         if(lastModelPath != "null")
@@ -114,6 +121,10 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     {
         myNAM.clear();
     }
+
+    //Load last IR
+    if(lastIrPath != "null")
+        cab.loadImpulseResponse(juce::File(lastIrPath), dsp::Convolution::Stereo::no, dsp::Convolution::Trim::no, 0, dsp::Convolution::Normalise::yes);
 }
 
 void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
@@ -125,6 +136,14 @@ void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
 
     lastModelPath = model_path;
     lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
+}
+
+void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
+{
+    std::string ir_path = irToLoad.getFullPathName().toStdString();
+    cab.loadImpulseResponse(irToLoad, dsp::Convolution::Stereo::no, dsp::Convolution::Trim::no, 0, dsp::Convolution::Normalise::yes);
+    lastIrPath = ir_path;
+    lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
 }
 
 void NamJUCEAudioProcessor::releaseResources()
@@ -186,19 +205,32 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
+    auto* channelDataLeft = buffer.getWritePointer(0);
+    auto* channelDataRight = buffer.getWritePointer(1);
 
     myNAM.processBlock(buffer, totalNumInputChannels, totalNumOutputChannels);
 
+    //TODO: Change this ASAP! This is a HORRIBLE way of doing it.
+    juce::dsp::AudioBlock<float> block(fpBuffer);
+    auto* fpData = fpBuffer.getWritePointer(0);
+    for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
+        fpData[sample] = channelDataLeft[sample];
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    if(bool(*apvts.getRawParameterValue("CAB_ON_ID")))
     {
-        auto* channelData = buffer.getWritePointer(channel);
+        cab.process(juce::dsp::ProcessContextReplacing<float>(block));
+        if(irFound)
+            fpBuffer.applyGain(juce::Decibels::decibelsToGain(9.0f));
+    }
 
-        // ..do something to the data...
+    //Do Dual Mono
+    for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
+    {
+        channelDataLeft[sample] = fpData[sample];
+        channelDataRight[sample] = fpData[sample];
     }
 }
 
@@ -221,8 +253,12 @@ void NamJUCEAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     std::unique_ptr<juce::XmlElement> xml(state.createXml());
     xml->addTextElement("ModelPath");
     xml->addTextElement("ModelName");
+    xml->addTextElement("IRPath");
+    xml->addTextElement("IRName");
     xml->setAttribute("ModelPath", lastModelPath);
     xml->setAttribute("ModelName", lastModelName);
+    xml->setAttribute("IRPath", lastIrPath);
+    xml->setAttribute("IRName", lastIrName);
     copyXmlToBinary(*xml, destData);
 }
 
@@ -234,6 +270,7 @@ void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInByt
         if (xmlState->hasTagName(apvts.state.getType()))
         {
             apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
+            //Try to load last NAM Model
             try
             {
                 lastModelPath = xmlState->getStringAttribute("ModelPath").toStdString();
@@ -251,6 +288,31 @@ void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInByt
                 lastModelPath = "null";
                 lastModelName = "";
             }
+
+            //Try to load last IR
+            try
+            {
+                lastIrPath = xmlState->getStringAttribute("IRPath").toStdString();
+                lastIrName = xmlState->getStringAttribute("IRName").toStdString();
+
+                if(lastIrName != "null")
+                {
+                    juce::File fileCheck{lastIrPath};
+                    if(!fileCheck.exists())
+                    {
+                        lastIrName = "IR File Missing!";   
+                        irFound = false;                 
+                    }
+                    else
+                        irFound = true;
+                }
+            }
+            catch(const std::exception& e)
+            {
+                lastIrPath = "null";
+                lastIrName = "";
+                irFound = false;
+            }
         }
 }
 
@@ -267,6 +329,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
 
     parameters.push_back(std::make_unique<juce::AudioParameterBool>("TONE_STACK_ON_ID", "TONE_STACK_ON", true, "TONE_STACK_ON"));
     parameters.push_back(std::make_unique<juce::AudioParameterBool>("NORMALIZE_ID", "NORMALIZE", false, "NORMALIZE"));
+    parameters.push_back(std::make_unique<juce::AudioParameterBool>("CAB_ON_ID", "CAB_ON", true, "CAB_ON"));
 
     return { parameters.begin(), parameters.end() };
 }
@@ -284,6 +347,16 @@ const std::string NamJUCEAudioProcessor::getLastModelPath()
 const std::string NamJUCEAudioProcessor::getLastModelName()
 {
     return lastModelName;
+}
+
+const std::string NamJUCEAudioProcessor::getLastIrPath()
+{
+    return lastIrPath;
+}
+
+const std::string NamJUCEAudioProcessor::getLastIrName()
+{
+    return lastIrName;
 }
 
 //==============================================================================
