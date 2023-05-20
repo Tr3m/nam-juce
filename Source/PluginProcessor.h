@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include "NeuralAmpModeler.h"
+#include "ff_meters.h"
 
 //==============================================================================
 /**
@@ -60,6 +61,16 @@ public:
     const std::string getLastIrPath();
     const std::string getLastIrName();
 
+    foleys::LevelMeterSource& getMeterInSource()
+    {
+        return meterInSource;
+    }
+
+    foleys::LevelMeterSource& getMeterOutSource()
+    {
+        return meterOutSource;
+    }
+
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 
@@ -82,6 +93,9 @@ private:
     std::string lastIrName = "null";
 
     bool supportsDouble{ true };
+
+    foleys::LevelMeterSource meterInSource;
+    foleys::LevelMeterSource meterOutSource;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamJUCEAudioProcessor)
 };

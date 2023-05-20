@@ -52,6 +52,9 @@ private:
     std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
     std::unique_ptr<juce::TextButton> loadModelButton, loadIRButton;
 
+    foleys::LevelMeter meterIn{ foleys::LevelMeter::SingleChannel }, meterOut{ foleys::LevelMeter::SingleChannel };
+    MeterLookAndFeel meterlnf;
+
     NamJUCEAudioProcessor& audioProcessor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamJUCEAudioProcessorEditor)

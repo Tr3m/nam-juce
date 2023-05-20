@@ -7,3 +7,6 @@
 [submodule "Source/NeuralAmpModelerCore"]
 	path = Source/NeuralAmpModelerCore
 	url = https://github.com/Tr3m/NeuralAmpModelerCore
+[submodule "Modules/ff_meters"]
+	path = Modules/ff_meters
+	url = https://github.com/ffAudio/ff_meters

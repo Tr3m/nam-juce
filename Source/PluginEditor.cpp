@@ -8,6 +8,23 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
 
     setSize (560, 400);
 
+    //Meters
+    meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
+    meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentBlack);
+    meterIn.setLookAndFeel(&meterlnf);
+    meterIn.setMeterSource(&audioProcessor.getMeterInSource());
+    addAndMakeVisible(meterIn);
+
+    meterOut.setLookAndFeel(&meterlnf);
+    meterOut.setMeterSource(&audioProcessor.getMeterOutSource());
+    addAndMakeVisible(meterOut);
+
+    meterIn.setAlpha(0.8);
+    meterOut.setAlpha(0.8);
+
+    meterIn.setSelectedChannel(0);
+    meterOut.setSelectedChannel(0);  
+	
     int knobSize = 76;
     int xStart = 15;
     int xOffsetMultiplier = 90;
@@ -87,6 +104,14 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
         audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
         irNameBox->setText(audioProcessor.getLastIrName());
     }
+
+    int meterHeight = 135;
+    int meterWidth = 18;
+    meterIn.setBounds(Rectangle<int>(sliders[PluginKnobs::LowCut]->getX() - 25 - (meterWidth / 2), 
+        sliders[PluginKnobs::LowCut]->getY() - (meterHeight / 6), meterWidth, meterHeight));
+
+    meterOut.setBounds(Rectangle<int>(sliders[PluginKnobs::HighCut]->getX() + sliders[PluginKnobs::HighCut]->getWidth() 
+        + 25, sliders[PluginKnobs::LowCut]->getY() - (meterHeight / 6), meterWidth, meterHeight));
     
 }
 
@@ -121,6 +146,9 @@ void NamJUCEAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.drawFittedText("Model", modelNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
     g.drawFittedText("Impulse Response", irNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
+
+    g.drawFittedText("In", meterIn.getBounds().withHeight(24).withWidth(24).translated(-7, -30), juce::Justification::centred, 1);
+    g.drawFittedText("Out", meterOut.getBounds().withHeight(24).withWidth(24).translated(-7, -30), juce::Justification::centred, 1);
 }
 
 void NamJUCEAudioProcessorEditor::resized()
@@ -209,7 +237,7 @@ void NamJUCEAudioProcessorEditor::initializeButton(const juce::String label, std
 void NamJUCEAudioProcessorEditor::initializeFilters()
 {
     int knobSize = 76;
-    int xStart = sliders[PluginKnobs::Middle]->getX();
+    int xStart = sliders[PluginKnobs::Middle]->getX() + 20;
     int xOffsetMultiplier = 90;
     
     for(int slider = PluginKnobs::LowCut; slider <= PluginKnobs::HighCut; ++slider)

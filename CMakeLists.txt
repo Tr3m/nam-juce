@@ -25,17 +25,23 @@ juce_add_plugin(NAM
     )        
     
 
-    juce_generate_juce_header(NAM)
-    
-    #add_subdirectory(Assets)
+juce_generate_juce_header(NAM)
 
-    add_subdirectory(Assets)
-    add_subdirectory(Source)
-    include_directories(Source)
+#add_subdirectory(Assets)
 
-    add_subdirectory(Modules/json)
+add_subdirectory(Assets)
+add_subdirectory(Source)
+include_directories(Source)
 
-    add_subdirectory(Modules/eigen)
+add_subdirectory(Modules/json)
+
+add_subdirectory(Modules/eigen)
+
+target_sources(NAM
+    PRIVATE
+        Modules/ff_meters/ff_meters.h
+        Modules/ff_meters/ff_meters.cpp)
+
 
 
 target_compile_definitions(NAM
@@ -65,6 +71,7 @@ target_include_directories(NAM
         Modules/eigen
         Modules/json/include
         Modules/json/include/nlohmann
+        Modules/ff_meters
     #INTERFACE
         #$<TARGET_PROPERTY:juce_plugin_modules,INCLUDE_DIRECTORIES>
     )

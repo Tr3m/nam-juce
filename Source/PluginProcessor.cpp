@@ -116,6 +116,9 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     fpBuffer.setSize(1, samplesPerBlock, false, false, false);
     fpBuffer.clear();
 
+    meterInSource.resize(getTotalNumOutputChannels(), sampleRate * 0.1 / samplesPerBlock);
+    meterOutSource.resize(getTotalNumOutputChannels(), sampleRate * 0.1 / samplesPerBlock);
+
     //Load last NAM Model
     try
     {
@@ -190,7 +193,7 @@ void NamJUCEAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    
+
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
    
@@ -205,6 +208,7 @@ void NamJUCEAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
 void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
+    meterInSource.measureBlock(buffer);
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -244,6 +248,8 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce
 
     lowCut.process(juce::dsp::ProcessContextReplacing<double>(block));
     highCut.process(juce::dsp::ProcessContextReplacing<double>(block));
+
+    meterOutSource.measureBlock(buffer);
 }
 
 
