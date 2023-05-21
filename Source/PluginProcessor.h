@@ -1,8 +1,9 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_dsp/juce_dsp.h>
 #include "NeuralAmpModeler.h"
-#include "ff_meters.h"
+#include <ff_meters/ff_meters.h>
 
 //==============================================================================
 /**
@@ -90,7 +91,7 @@ private:
     bool irFound {false};
     bool irLoaded {false};
 
-    dsp::ProcessorDuplicator<dsp::IIR::Filter <double>, dsp::IIR::Coefficients <double>>highCut, lowCut;
+    juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter <double>, juce::dsp::IIR::Coefficients <double>>highCut, lowCut;
 
     std::string lastModelPath = "null";
     std::string lastModelName = "null";

@@ -71,7 +71,7 @@ target_include_directories(NAM
         Modules/eigen
         Modules/json/include
         Modules/json/include/nlohmann
-        Modules/ff_meters
+        Modules/
     #INTERFACE
         #$<TARGET_PROPERTY:juce_plugin_modules,INCLUDE_DIRECTORIES>
     )

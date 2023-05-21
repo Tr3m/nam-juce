@@ -90,7 +90,7 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
     double** triggerOutput = inputPointer;
     if (noiseGateActive)
     {
-        const namdsp::noise_gate::TriggerParams triggerParams(time, params[EParams::kNoiseGateThreshold]->load(), ratio, openTime, holdTime, closeTime);
+        const dsp::noise_gate::TriggerParams triggerParams(time, params[EParams::kNoiseGateThreshold]->load(), ratio, openTime, holdTime, closeTime);
         this->mNoiseGateTrigger.SetParams(triggerParams);
         this->mNoiseGateTrigger.SetSampleRate(sampleRate);
         triggerOutput = this->mNoiseGateTrigger.Process(inputPointer, 1, buffer.getNumSamples());

@@ -124,10 +124,10 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
 
     int meterHeight = 135;
     int meterWidth = 18;
-    meterIn.setBounds(Rectangle<int>(sliders[PluginKnobs::LowCut]->getX() - 25 - (meterWidth / 2), 
+    meterIn.setBounds(juce::Rectangle<int>(sliders[PluginKnobs::LowCut]->getX() - 25 - (meterWidth / 2), 
         sliders[PluginKnobs::LowCut]->getY() - (meterHeight / 6), meterWidth, meterHeight));
 
-    meterOut.setBounds(Rectangle<int>(sliders[PluginKnobs::HighCut]->getX() + sliders[PluginKnobs::HighCut]->getWidth() 
+    meterOut.setBounds(juce::Rectangle<int>(sliders[PluginKnobs::HighCut]->getX() + sliders[PluginKnobs::HighCut]->getWidth() 
         + 25, sliders[PluginKnobs::LowCut]->getY() - (meterHeight / 6), meterWidth, meterHeight));
     
 }
@@ -200,11 +200,11 @@ void NamJUCEAudioProcessorEditor::setToneStackEnabled(bool toneStackEnabled)
 
 void NamJUCEAudioProcessorEditor::loadModelButtonClicked()
 {
-    juce::FileChooser chooser("Choose an model to load", File::getSpecialLocation(File::userDesktopDirectory), "*.nam", true, false);
+    juce::FileChooser chooser("Choose an model to load", juce::File::getSpecialLocation(juce::File::userDesktopDirectory), "*.nam", true, false);
 
     if (chooser.browseForFileToOpen())
     {		
-        File model;
+        juce::File model;
         model = chooser.getResult();
         audioProcessor.loadNamModel(model);
         modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
@@ -216,11 +216,11 @@ void NamJUCEAudioProcessorEditor::loadModelButtonClicked()
 
 void NamJUCEAudioProcessorEditor::loadIrButtonClicked()
 {
-    juce::FileChooser chooser("Choose an IR to load", File::getSpecialLocation(File::userDesktopDirectory), "*.wav", true, false);
+    juce::FileChooser chooser("Choose an IR to load", juce::File::getSpecialLocation(juce::File::userDesktopDirectory), "*.wav", true, false);
 
     if (chooser.browseForFileToOpen())
     {		
-        File impulseResponse;
+        juce::File impulseResponse;
         impulseResponse = chooser.getResult();
         audioProcessor.loadImpulseResponse(impulseResponse);
         irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
@@ -241,7 +241,7 @@ void NamJUCEAudioProcessorEditor::initializeTextBox(const juce::String label, st
     textBox->setCaretVisible(true);
     textBox->setPopupMenuEnabled(true);
     textBox->setAlpha(0.9f);
-    textBox->setColour(TextEditor::backgroundColourId, Colours::transparentBlack);
+    textBox->setColour(juce::TextEditor::backgroundColourId, juce::Colours::transparentBlack);
     textBox->setBounds(x, y, width, height);
 }
 

@@ -8,7 +8,6 @@ A JUCE implementation of Steven Atkinson's [NeuralAmpModelerPlugin](https://gith
   <img src="https://cdn.discordapp.com/attachments/580466872169005066/1109348678021414963/namjuce.png" />
 </p>
 
-</br>
 
 ## Building with CMake
 
@@ -38,4 +37,14 @@ cmake --build build --config Release
 git submodule update --init --recursive
 cmake -B build -DCMAKE_PREFIX_PATH=/path/to/JUCE/install -DCMAKE_BUILD_TYPE=Release
 cmake --build build
+```
+
+## Building with the Projucer
+
+The project can also be build with the Projucer instead of CMake. Exporters for all platforms are set within the .jucer file including relative paths for all libraries/dependencies so no additional configurtations are needed.
+
+The git submodules still need to be initialized before attempting to build. Initialize by running:
+
+```bash
+git submodule update --init --recursive
 ```

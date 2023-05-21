@@ -20,8 +20,8 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ), apvts(*this, nullptr, "Params", createParameters()),
-                        lowCut(dsp::IIR::Coefficients<double>::makeHighPass(44100, 20.0f, 1.0f)),
-                        highCut(dsp::IIR::Coefficients<double>::makeLowPass(44100, 20000.0f, 1.0f))
+                        lowCut(juce::dsp::IIR::Coefficients<double>::makeHighPass(44100, 20.0f, 1.0f)),
+                        highCut(juce::dsp::IIR::Coefficients<double>::makeLowPass(44100, 20000.0f, 1.0f))
 #endif
 {
     
@@ -135,7 +135,7 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     //Load last IR
     if(lastIrPath != "null")
     {
-        cab.loadImpulseResponse(juce::File(lastIrPath), dsp::Convolution::Stereo::no, dsp::Convolution::Trim::no, 0, dsp::Convolution::Normalise::yes);
+        cab.loadImpulseResponse(juce::File(lastIrPath), juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
         irLoaded = true;
     }
 }
@@ -159,7 +159,7 @@ bool NamJUCEAudioProcessor::getIrStatus()
 void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
 {
     std::string ir_path = irToLoad.getFullPathName().toStdString();
-    cab.loadImpulseResponse(irToLoad, dsp::Convolution::Stereo::no, dsp::Convolution::Trim::no, 0, dsp::Convolution::Normalise::yes);
+    cab.loadImpulseResponse(irToLoad, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
     irLoaded = true;
     lastIrPath = ir_path;
     lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
@@ -260,8 +260,8 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce
         channelDataRight[sample] = fpData[sample];
     }
 
-    *lowCut.state = *dsp::IIR::Coefficients<double>::makeHighPass(getSampleRate(), *apvts.getRawParameterValue("LOWCUT_ID"), 1.0f);
-    *highCut.state = *dsp::IIR::Coefficients<double>::makeLowPass(getSampleRate(), *apvts.getRawParameterValue("HIGHCUT_ID"), 1.0f);
+    *lowCut.state = *juce::dsp::IIR::Coefficients<double>::makeHighPass(getSampleRate(), *apvts.getRawParameterValue("LOWCUT_ID"), 1.0f);
+    *highCut.state = *juce::dsp::IIR::Coefficients<double>::makeLowPass(getSampleRate(), *apvts.getRawParameterValue("HIGHCUT_ID"), 1.0f);
 
     lowCut.process(juce::dsp::ProcessContextReplacing<double>(block));
     highCut.process(juce::dsp::ProcessContextReplacing<double>(block));

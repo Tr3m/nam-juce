@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-#include "ff_meters.h"
+#include <ff_meters/ff_meters.h>
 
 class knobLookAndFeel : public juce::LookAndFeel_V4
 {

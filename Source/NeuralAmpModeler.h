@@ -1,12 +1,13 @@
 #pragma once
 
-#include "NeuralAmpModelerCore/NAM/dsp.h"
+#include "NeuralAmpModelerCore/NAM/namdsp.h"
 #include "NeuralAmpModelerCore/dsp/ImpulseResponse.h"
 #include "NeuralAmpModelerCore/dsp/NoiseGate.h"
 #include "NeuralAmpModelerCore/dsp/RecursiveLinearFilter.h"
-#include "NeuralAmpModelerCore/dsp/dsp.h"
+#include "NeuralAmpModelerCore/dsp/coredsp.h"
 #include "NeuralAmpModelerCore/dsp/wav.h"
-#include <JuceHeader.h>
+#include <juce_dsp/juce_dsp.h>
+#include <juce_audio_processors/juce_audio_processors.h>
 
 class NeuralAmpModeler
 {
@@ -49,8 +50,8 @@ private:
 	std::atomic<float>* params[8];	
 
 	// Noise gates
-	namdsp::noise_gate::Trigger mNoiseGateTrigger;
-	namdsp::noise_gate::Gain mNoiseGateGain;
+	dsp::noise_gate::Trigger mNoiseGateTrigger;
+	dsp::noise_gate::Gain mNoiseGateGain;
 	bool noiseGateActive {false};
 
 	//Noise Gate Parameters
