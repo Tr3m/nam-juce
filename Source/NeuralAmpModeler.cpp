@@ -35,11 +35,20 @@ void NeuralAmpModeler::loadModel(const std::string modelPath)
 {
     auto dspPath = std::filesystem::u8path(modelPath);
     mNAM = get_dsp(dspPath);
+
+    if(mNAM != nullptr)
+        modelLoaded = true;
 }
 
 void NeuralAmpModeler::clear()
 {
     mNAM = nullptr;
+    modelLoaded = false;
+}
+
+bool NeuralAmpModeler::isModelLoaded()
+{
+    return modelLoaded;
 }
 
 void NeuralAmpModeler::hookParameters(juce::AudioProcessorValueTreeState& apvts)

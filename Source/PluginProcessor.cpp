@@ -134,7 +134,10 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 
     //Load last IR
     if(lastIrPath != "null")
+    {
         cab.loadImpulseResponse(juce::File(lastIrPath), dsp::Convolution::Stereo::no, dsp::Convolution::Trim::no, 0, dsp::Convolution::Normalise::yes);
+        irLoaded = true;
+    }
 }
 
 void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
@@ -148,12 +151,26 @@ void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
     lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
 }
 
+bool NamJUCEAudioProcessor::getIrStatus()
+{
+    return irLoaded;
+}
+
 void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
 {
     std::string ir_path = irToLoad.getFullPathName().toStdString();
     cab.loadImpulseResponse(irToLoad, dsp::Convolution::Stereo::no, dsp::Convolution::Trim::no, 0, dsp::Convolution::Normalise::yes);
+    irLoaded = true;
     lastIrPath = ir_path;
     lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
+}
+
+void NamJUCEAudioProcessor::clearIR()
+{
+    cab.reset();
+    irLoaded = false;
+    lastIrPath = "null";
+    lastIrName = "null";
 }
 
 void NamJUCEAudioProcessor::releaseResources()
@@ -229,7 +246,7 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce
     for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
         fpData[sample] = channelDataLeft[sample];
 
-    if(bool(*apvts.getRawParameterValue("CAB_ON_ID")))
+    if(bool(*apvts.getRawParameterValue("CAB_ON_ID")) && irLoaded)
     {
         cab.process(juce::dsp::ProcessContextReplacing<float>(fpBlock));
         if(irFound)
@@ -332,6 +349,18 @@ void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInByt
                 irFound = false;
             }
         }
+}
+
+bool NamJUCEAudioProcessor::getNamModelStatus()
+{
+    return myNAM.isModelLoaded();
+}
+
+void NamJUCEAudioProcessor::clearNAM()
+{
+    myNAM.clear();
+    lastModelPath = "null";
+    lastModelName = "null";
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::createParameters()

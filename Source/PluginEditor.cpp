@@ -69,22 +69,38 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     irToggle->setButtonText("IR");
 
     //Model Name Box and Button
-    initializeTextBox("ModelNameBox", modelNameBox, 15, sliders[PluginKnobs::Input]->getY() + 160, 160, 24);
-    
-    initializeButton("LoadModelButton", loadModelButton, modelNameBox->getX() + modelNameBox->getWidth() + 5, modelNameBox->getY(), 40, modelNameBox->getHeight());
+    initializeTextBox("ModelNameBox", modelNameBox, 15, sliders[PluginKnobs::Input]->getY() + 160, 160, 24);    
+    initializeButton("LoadModelButton", "Load", loadModelButton, modelNameBox->getX() + modelNameBox->getWidth() + 5, modelNameBox->getY(), 40, modelNameBox->getHeight());
     loadModelButton->onClick = [this]{loadModelButtonClicked();};
 
     //IR Name Box and Button
     initializeTextBox("IRNameBox", irNameBox, 15, modelNameBox->getY() + 80, 160, 24);
-    initializeButton("LoadIRButton", loadIRButton, irNameBox->getX() + irNameBox->getWidth() + 5, irNameBox->getY(), 40, irNameBox->getHeight());
+    initializeButton("LoadIRButton", "Load", loadIRButton, irNameBox->getX() + irNameBox->getWidth() + 5, irNameBox->getY(), 40, irNameBox->getHeight());
     loadIRButton->onClick = [this]{loadIrButtonClicked();};
 
-    sliderAttachments[PluginKnobs::Input] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "INPUT_ID", *sliders[PluginKnobs::Input]);
-    sliderAttachments[PluginKnobs::NoiseGate] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "NGATE_ID", *sliders[PluginKnobs::NoiseGate]);
-    sliderAttachments[PluginKnobs::Bass] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "BASS_ID", *sliders[PluginKnobs::Bass]);
-    sliderAttachments[PluginKnobs::Middle] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "MIDDLE_ID", *sliders[PluginKnobs::Middle]);
-    sliderAttachments[PluginKnobs::Treble] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "TREBLE_ID", *sliders[PluginKnobs::Treble]);
-    sliderAttachments[PluginKnobs::Output] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "OUTPUT_ID", *sliders[PluginKnobs::Output]);
+    initializeButton("ClearModelBtn", "X", clearModelButton, loadModelButton->getX() + loadModelButton->getWidth() + 5, loadModelButton->getY(), modelNameBox->getHeight(), modelNameBox->getHeight());
+    clearModelButton->setVisible(audioProcessor.getNamModelStatus());
+    clearModelButton->onClick = [this]
+    {
+        audioProcessor.clearNAM();
+        clearModelButton->setVisible(audioProcessor.getNamModelStatus());
+        modelNameBox->setText("");
+        modelNameBox->clear();
+    };
+
+    initializeButton("ClearIRbtn", "X", clearIrButton, loadIRButton->getX() + loadIRButton->getWidth() + 5, loadIRButton->getY(), irNameBox->getHeight(), irNameBox->getHeight());
+    clearIrButton->setVisible(audioProcessor.getIrStatus());
+    clearIrButton->onClick = [this]
+    {
+        audioProcessor.clearIR();
+        clearIrButton->setVisible(audioProcessor.getIrStatus());
+        irNameBox->setText("");
+        irNameBox->clear();
+    };
+
+    //Hook slider and button attacments
+    for(int slider = 0; slider < NUM_SLIDERS; ++slider)
+        sliderAttachments[slider] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, sliderIDs[slider], *sliders[slider]);
 
     sliderAttachments[PluginKnobs::LowCut] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "LOWCUT_ID", *sliders[PluginKnobs::LowCut]);
     sliderAttachments[PluginKnobs::HighCut] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "HIGHCUT_ID", *sliders[PluginKnobs::HighCut]);
@@ -93,6 +109,7 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     normalizeToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "NORMALIZE_ID", *normalizeToggle));    
     irToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "CAB_ON_ID", *irToggle));    
 
+    //Check the processor for Model and IR status upon reopening the UI
     if(audioProcessor.getLastModelPath() != "null")
     {        
         audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
@@ -117,7 +134,7 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
 
 NamJUCEAudioProcessorEditor::~NamJUCEAudioProcessorEditor()
 {
-    for(int sliderAtt = 0; sliderAtt <= 7; ++sliderAtt)
+    for(int sliderAtt = 0; sliderAtt < NUM_SLIDERS; ++sliderAtt)
         sliderAttachments[sliderAtt] = nullptr;
 
     toneStackToggleAttachment = nullptr;
@@ -191,8 +208,10 @@ void NamJUCEAudioProcessorEditor::loadModelButtonClicked()
         model = chooser.getResult();
         audioProcessor.loadNamModel(model);
         modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        modelNameBox->setText(model.getFileNameWithoutExtension());        
+        modelNameBox->setText(model.getFileNameWithoutExtension());
     }
+
+    clearModelButton->setVisible(audioProcessor.getNamModelStatus());
 }
 
 void NamJUCEAudioProcessorEditor::loadIrButtonClicked()
@@ -207,6 +226,8 @@ void NamJUCEAudioProcessorEditor::loadIrButtonClicked()
         irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
         irNameBox->setText(impulseResponse.getFileNameWithoutExtension());        
     }
+
+    clearIrButton->setVisible(audioProcessor.getIrStatus());
 }
 
 void NamJUCEAudioProcessorEditor::initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height)
@@ -224,11 +245,11 @@ void NamJUCEAudioProcessorEditor::initializeTextBox(const juce::String label, st
     textBox->setBounds(x, y, width, height);
 }
 
-void NamJUCEAudioProcessorEditor::initializeButton(const juce::String label, std::unique_ptr<juce::TextButton>& button, int x, int y, int width, int height)
+void NamJUCEAudioProcessorEditor::initializeButton(const juce::String label, const juce::String buttonText, std::unique_ptr<juce::TextButton>& button, int x, int y, int width, int height)
 {
-    button.reset(new juce::TextButton("LoadModelButton"));
+    button.reset(new juce::TextButton(label));
     addAndMakeVisible(button.get());
-    button->setButtonText("Load");
+    button->setButtonText(buttonText);
     button->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentBlack);
     button->setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::snow);
     button->setBounds(x, y, width, height);

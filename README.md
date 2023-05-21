@@ -1,4 +1,4 @@
-# NAM JUCE: Neural Amp Modeler Juce Implementation
+# NAM JUCE: Neural Amp Modeler JUCE Implementation
 
 A JUCE implementation of Steven Atkinson's [NeuralAmpModelerPlugin](https://github.com/sdatkinson/NeuralAmpModelerPlugin). This Repository is still a work-in-proress, but the basic functionality is there.
 

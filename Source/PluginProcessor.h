@@ -52,7 +52,12 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     void loadNamModel(juce::File modelToLoad);
-    void loadImpulseResponse(juce::File irToLoad);
+    bool getNamModelStatus();
+    void clearNAM();
+    
+    void loadImpulseResponse(juce::File irToLoad);  
+    bool getIrStatus();
+    void clearIR();  
 
     bool supportsDoublePrecisionProcessing() const override;
 
@@ -83,6 +88,7 @@ private:
     juce::AudioBuffer<float> fpBuffer; //Floating Point Buffer
     juce::dsp::Convolution cab;
     bool irFound {false};
+    bool irLoaded {false};
 
     dsp::ProcessorDuplicator<dsp::IIR::Filter <double>, dsp::IIR::Coefficients <double>>highCut, lowCut;
 

@@ -17,7 +17,9 @@ public:
 
 	void prepare(juce::dsp::ProcessSpec& spec);
 	void loadModel(const std::string modelPath);
+
 	void clear();
+	bool isModelLoaded();
 
 	void processBlock(juce::AudioBuffer<double>& buffer, int inputChannels, int outputChannels);
 
@@ -60,6 +62,7 @@ private:
 
 	std::unique_ptr<DSP> mNAM;
 	bool outputNormalized {false};
+	bool modelLoaded {false};
 
 	// Tone Stack modules
 	recursive_linear_filter::LowShelf mToneBass;
