@@ -6,11 +6,14 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
 
-    setSize (560, 400);
+    setSize (950, 650);
 
+    assetManager.reset(new AssetManager());
+    
     //Meters
     meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
-    meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentBlack);
+    meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
+    meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentWhite);
     meterIn.setLookAndFeel(&meterlnf);
     meterIn.setMeterSource(&audioProcessor.getMeterInSource());
     addAndMakeVisible(meterIn);
@@ -24,13 +27,18 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
 
     meterIn.setSelectedChannel(0);
     meterOut.setSelectedChannel(0);  
+
+    int meterHeight = 172;
+    int meterWidth = 18;
+    meterIn.setBounds(juce::Rectangle<int>(26, 174, meterWidth, meterHeight));
+    meterOut.setBounds(juce::Rectangle<int>(getWidth() - meterWidth - 22, 174, meterWidth, meterHeight));
 	
-    int knobSize = 76;
-    int xStart = 15;
-    int xOffsetMultiplier = 90;
+    int knobSize = 98;
+    int xStart = 75;
+    int xOffsetMultiplier = 140;
 
     //Setup sliders
-    for(int slider = 0; slider <= 5; ++slider)
+    for(int slider = 0; slider < NUM_SLIDERS; ++slider)
     {
         sliders[slider].reset(new juce::Slider("slider" + std::to_string(slider)));
         addAndMakeVisible(sliders[slider].get());
@@ -39,19 +47,24 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
         sliders[slider]->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
         sliders[slider]->setPopupDisplayEnabled(true, true, getTopLevelComponent());
 
-        sliders[slider]->setBounds(xStart + (slider * xOffsetMultiplier), 85, knobSize, knobSize);
+        if(slider >= PluginKnobs::LowCut)
+        {
+            xStart = sliders[PluginKnobs::Middle]->getX();
+            sliders[slider]->setBounds(xStart + ((slider - 6) * xOffsetMultiplier), 435, knobSize, knobSize);
+        }
+        else
+            sliders[slider]->setBounds(xStart + (slider * xOffsetMultiplier), 204, knobSize, knobSize);
     }
-
-    initializeFilters();
 
     sliders[PluginKnobs::NoiseGate]->addListener(this);
 
     //Tone Stack Toggle
     toneStackToggle.reset(new juce::ToggleButton("ToneStackToggleButton"));
     addAndMakeVisible(toneStackToggle.get());
-    toneStackToggle->setBounds(sliders[PluginKnobs::Bass]->getX() + 30, sliders[PluginKnobs::Bass]->getY() + knobSize - 9, 100, 40);
+    toneStackToggle->setBounds(sliders[PluginKnobs::Bass]->getX() + 30, sliders[PluginKnobs::Bass]->getY() + knobSize + 50, 100, 40);
     toneStackToggle->setButtonText("Tone Stack");
     toneStackToggle->onClick = [this]{setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));};
+    toneStackToggle->setVisible(false);
 
     //Rerunning this for GUI Recustrunction upon reopning the plugin
     setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
@@ -61,25 +74,30 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     addAndMakeVisible(normalizeToggle.get());
     normalizeToggle->setBounds(toneStackToggle->getX() + 120, toneStackToggle->getY(), 100, 40);
     normalizeToggle->setButtonText("Normalize");
+    normalizeToggle->setVisible(false);
 
     //IR Toggle
     irToggle.reset(new juce::ToggleButton("IRToggleButton"));
     addAndMakeVisible(irToggle.get());
     irToggle->setBounds(normalizeToggle->getX() + 120, normalizeToggle->getY(), 100, 40);
     irToggle->setButtonText("IR");
+    irToggle->setVisible(false);
 
     //Model Name Box and Button
-    initializeTextBox("ModelNameBox", modelNameBox, 15, sliders[PluginKnobs::Input]->getY() + 160, 160, 24);    
-    initializeButton("LoadModelButton", "Load", loadModelButton, modelNameBox->getX() + modelNameBox->getWidth() + 5, modelNameBox->getY(), 40, modelNameBox->getHeight());
+    initializeTextBox("ModelNameBox", modelNameBox, 90, sliders[PluginKnobs::Input]->getY() + 195  + screensOffset, 200, 28);    
+    initializeButton("LoadModelButton", "Load", loadModelButton, modelNameBox->getX() + modelNameBox->getWidth() + 15, modelNameBox->getY() - 3, 48, 39);
+    assetManager->setLoadButton(loadModelButton);
     loadModelButton->onClick = [this]{loadModelButtonClicked();};
 
     //IR Name Box and Button
-    initializeTextBox("IRNameBox", irNameBox, 15, modelNameBox->getY() + 80, 160, 24);
-    initializeButton("LoadIRButton", "Load", loadIRButton, irNameBox->getX() + irNameBox->getWidth() + 5, irNameBox->getY(), 40, irNameBox->getHeight());
+    initializeTextBox("IRNameBox", irNameBox, 90, modelNameBox->getY() + 80, 200, 28);
+    initializeButton("LoadIRButton", "Load", loadIRButton, irNameBox->getX() + irNameBox->getWidth() + 15, irNameBox->getY() - 3, 48, 39);
     loadIRButton->onClick = [this]{loadIrButtonClicked();};
+    assetManager->setLoadButton(loadIRButton);    
 
-    initializeButton("ClearModelBtn", "X", clearModelButton, loadModelButton->getX() + loadModelButton->getWidth() + 5, loadModelButton->getY(), modelNameBox->getHeight(), modelNameBox->getHeight());
+    initializeButton("ClearModelBtn", "X", clearModelButton, loadModelButton->getX() + loadModelButton->getWidth() + 10, loadModelButton->getY(), 48, 39);
     clearModelButton->setVisible(audioProcessor.getNamModelStatus());
+    assetManager->setClearButton(clearModelButton);
     clearModelButton->onClick = [this]
     {
         audioProcessor.clearNAM();
@@ -88,8 +106,9 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
         modelNameBox->clear();
     };
 
-    initializeButton("ClearIRbtn", "X", clearIrButton, loadIRButton->getX() + loadIRButton->getWidth() + 5, loadIRButton->getY(), irNameBox->getHeight(), irNameBox->getHeight());
+    initializeButton("ClearIRbtn", "X", clearIrButton, loadIRButton->getX() + loadIRButton->getWidth() + 10, loadIRButton->getY(), 48, 39);
     clearIrButton->setVisible(audioProcessor.getIrStatus());
+    assetManager->setClearButton(clearIrButton);
     clearIrButton->onClick = [this]
     {
         audioProcessor.clearIR();
@@ -120,15 +139,37 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     {        
         audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
         irNameBox->setText(audioProcessor.getLastIrName());
-    }
+    }    
+    
+    toneStackButton.reset(new juce::ImageButton("ToneStackButton"));
+    addAndMakeVisible(toneStackButton.get());
+    toneStackButton->setBounds(sliders[PluginKnobs::Middle]->getX() + (sliders[PluginKnobs::Middle]->getWidth() / 2) - 50, sliders[PluginKnobs::Middle]->getY() + sliders[PluginKnobs::Middle]->getHeight() + 15, 100, 40);
+    assetManager->setToggleButton(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"), AssetManager::Buttons::TONESTACK_BUTTON);
+    toneStackButton->onClick = [this]
+    {
+        toneStackToggle->setToggleState(!toneStackToggle->getToggleState(), true);
+        assetManager->setToggleButton(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"), AssetManager::Buttons::TONESTACK_BUTTON);
+    };
 
-    int meterHeight = 135;
-    int meterWidth = 18;
-    meterIn.setBounds(juce::Rectangle<int>(sliders[PluginKnobs::LowCut]->getX() - 25 - (meterWidth / 2), 
-        sliders[PluginKnobs::LowCut]->getY() - (meterHeight / 6), meterWidth, meterHeight));
+    normalizeButton.reset(new juce::ImageButton("NormalizeButton"));
+    addAndMakeVisible(normalizeButton.get());
+    normalizeButton->setBounds(sliders[PluginKnobs::Treble]->getX() + (sliders[PluginKnobs::Treble]->getWidth() / 2) - 50, sliders[PluginKnobs::Treble]->getY() + sliders[PluginKnobs::Treble]->getHeight() + 15, 100, 40);
+    assetManager->setToggleButton(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"), AssetManager::Buttons::NORMALIZE_BUTTON);
+    normalizeButton->onClick = [this]
+    {
+        normalizeToggle->setToggleState(!normalizeToggle->getToggleState(), true);
+        assetManager->setToggleButton(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"), AssetManager::Buttons::NORMALIZE_BUTTON);
+    };
 
-    meterOut.setBounds(juce::Rectangle<int>(sliders[PluginKnobs::HighCut]->getX() + sliders[PluginKnobs::HighCut]->getWidth() 
-        + 25, sliders[PluginKnobs::LowCut]->getY() - (meterHeight / 6), meterWidth, meterHeight));
+    irButton.reset(new juce::ImageButton("irButton"));
+    addAndMakeVisible(irButton.get());
+    irButton->setBounds(sliders[PluginKnobs::Output]->getX() + (sliders[PluginKnobs::Output]->getWidth() / 2) - 50, sliders[PluginKnobs::Output]->getY() + sliders[PluginKnobs::Output]->getHeight() + 15, 100, 40);
+    assetManager->setToggleButton(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"), AssetManager::Buttons::IR_BUTTON);
+    irButton->onClick = [this]
+    {
+        irToggle->setToggleState(!irToggle->getToggleState(), true);
+        assetManager->setToggleButton(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"), AssetManager::Buttons::IR_BUTTON);
+    };  
     
 }
 
@@ -150,22 +191,9 @@ void NamJUCEAudioProcessorEditor::paint (juce::Graphics& g)
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
 
-    //Temporary Labels
-    g.drawFittedText("Input", sliders[PluginKnobs::Input]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-    g.drawFittedText("Noise Gate", sliders[PluginKnobs::NoiseGate]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-    g.drawFittedText(ngThreshold, sliders[PluginKnobs::NoiseGate]->getBounds().withHeight(24).translated(0, 75), juce::Justification::centred, 1);
-    g.drawFittedText("Bass", sliders[PluginKnobs::Bass]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-    g.drawFittedText("Middle", sliders[PluginKnobs::Middle]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-    g.drawFittedText("Treble", sliders[PluginKnobs::Treble]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-    g.drawFittedText("Output", sliders[PluginKnobs::Output]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-    g.drawFittedText("Low-Cut", sliders[PluginKnobs::LowCut]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-    g.drawFittedText("High-Cut", sliders[PluginKnobs::HighCut]->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
+    g.drawImageAt(assetManager->getBackground(), 0, 0);
+    g.drawImageAt(assetManager->getScreens(), 0, 0);
 
-    g.drawFittedText("Model", modelNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-    g.drawFittedText("Impulse Response", irNameBox->getBounds().withHeight(24).translated(0, -30), juce::Justification::centred, 1);
-
-    g.drawFittedText("In", meterIn.getBounds().withHeight(24).withWidth(24).translated(-7, -30), juce::Justification::centred, 1);
-    g.drawFittedText("Out", meterOut.getBounds().withHeight(24).withWidth(24).translated(-7, -30), juce::Justification::centred, 1);
 }
 
 void NamJUCEAudioProcessorEditor::resized()
@@ -242,34 +270,13 @@ void NamJUCEAudioProcessorEditor::initializeTextBox(const juce::String label, st
     textBox->setPopupMenuEnabled(true);
     textBox->setAlpha(0.9f);
     textBox->setColour(juce::TextEditor::backgroundColourId, juce::Colours::transparentBlack);
+    textBox->setColour(juce::TextEditor::outlineColourId, juce::Colours::transparentBlack);
     textBox->setBounds(x, y, width, height);
 }
 
-void NamJUCEAudioProcessorEditor::initializeButton(const juce::String label, const juce::String buttonText, std::unique_ptr<juce::TextButton>& button, int x, int y, int width, int height)
+void NamJUCEAudioProcessorEditor::initializeButton(const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y, int width, int height)
 {
-    button.reset(new juce::TextButton(label));
+    button.reset(new juce::ImageButton(label));
     addAndMakeVisible(button.get());
-    button->setButtonText(buttonText);
-    button->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentBlack);
-    button->setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::snow);
     button->setBounds(x, y, width, height);
-}
-
-void NamJUCEAudioProcessorEditor::initializeFilters()
-{
-    int knobSize = 76;
-    int xStart = sliders[PluginKnobs::Middle]->getX() + 20;
-    int xOffsetMultiplier = 90;
-    
-    for(int slider = PluginKnobs::LowCut; slider <= PluginKnobs::HighCut; ++slider)
-    {
-        sliders[slider].reset(new juce::Slider("slider" + std::to_string(slider)));
-        addAndMakeVisible(sliders[slider].get());
-        sliders[slider]->setLookAndFeel(&lnf);
-        sliders[slider]->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-        sliders[slider]->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
-        sliders[slider]->setPopupDisplayEnabled(true, true, getTopLevelComponent());
-
-        sliders[slider]->setBounds(xStart + ((slider - 6) * xOffsetMultiplier), 265, knobSize, knobSize);
-    }
 }

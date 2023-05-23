@@ -5,13 +5,12 @@ A JUCE implementation of Steven Atkinson's [NeuralAmpModelerPlugin](https://gith
 </br>
 
 <p align="center">
-  <img src="https://cdn.discordapp.com/attachments/580466872169005066/1109348678021414963/namjuce.png" />
+  <img src="https://cdn.discordapp.com/attachments/580466872169005066/1110355539705217094/Screenshot_20230523_025538.png" />
 </p>
 
 
 ## Building with CMake
 
-</br>
 
 ### Prerequisites
 

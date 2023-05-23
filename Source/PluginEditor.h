@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "MyLookAndFeel.h"
+#include "AssetManager.h"
 
 #define NUM_SLIDERS 8
 
@@ -46,15 +47,23 @@ private:
 
     juce::String sliderIDs[NUM_SLIDERS] {"INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID"};
 
+    
+    std::unique_ptr<AssetManager> assetManager;   
+     
+
     knobLookAndFeel lnf;
 
     juce::String ngThreshold {"Null"};
 
+    int screensOffset = 27;
+
     std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment;
 
+    std::unique_ptr<juce::ImageButton> toneStackButton, normalizeButton, irButton, loadModelButton, loadIRButton, clearIrButton, clearModelButton;
+
     std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
-    std::unique_ptr<juce::TextButton> loadModelButton, loadIRButton, clearIrButton, clearModelButton;
+    
 
     foleys::LevelMeter meterIn{ foleys::LevelMeter::SingleChannel }, meterOut{ foleys::LevelMeter::SingleChannel };
     MeterLookAndFeel meterlnf;
@@ -66,6 +75,5 @@ private:
 // Private Functions
 private:
     void initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height);
-    void initializeButton(const juce::String label, const juce::String buttonText, std::unique_ptr<juce::TextButton>& button, int x, int y, int width, int height);
-    void initializeFilters();
+    void initializeButton(const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y, int width, int height);
 };

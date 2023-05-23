@@ -7,6 +7,7 @@ PRIVATE
     PluginProcessor.cpp
     PluginProcessor.h
     MyLookAndFeel.h
+    AssetManager.h
     architecture.hpp
 )
 

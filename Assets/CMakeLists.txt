@@ -1,5 +1,14 @@
+file(GLOB SRC_FILES    
+    "Buttons/*.png"
+)
+
 juce_add_binary_data(BinaryData SOURCES
     knob.png
+    background.png
+    buttonPressed.png
+    buttonUnpressed.png
+    screens.png
+    ${SRC_FILES}
 )
 
 # Need to build BinaryData with -fPIC flag on Linux

@@ -6,6 +6,7 @@
               pluginName="Neural Amp Modeler" version="1.0.0" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="fLUIGm" name="namJUCE">
     <GROUP id="{374B1152-41A2-5B5A-A64F-8F1AF7840A23}" name="Source">
+      <FILE id="Cs5Vi7" name="AssetManager.h" compile="0" resource="0" file="Source/AssetManager.h"/>
       <FILE id="D1SwcU" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="WXmi05" name="PluginProcessor.h" compile="0" resource="0"
@@ -63,8 +64,35 @@
       </GROUP>
     </GROUP>
     <GROUP id="{57A3CD4A-D5F9-0323-41BA-A03E0249546C}" name="Assets">
-      <FILE id="peR3Zz" name="CMakeLists.txt" compile="0" resource="1" file="Assets/CMakeLists.txt"/>
-      <FILE id="R1DwQz" name="knob.png" compile="0" resource="1" file="Assets/knob.png"/>
+      <GROUP id="{1F9680EB-D546-B35B-1ECC-5611DEEDDA9D}" name="Buttons">
+        <FILE id="Iq4r0g" name="00.png" compile="0" resource="1" file="Assets/Buttons/00.png"/>
+        <FILE id="UMEmla" name="01.png" compile="0" resource="1" file="Assets/Buttons/01.png"/>
+        <FILE id="m1b3B1" name="02.png" compile="0" resource="1" file="Assets/Buttons/02.png"/>
+        <FILE id="y2LZew" name="03.png" compile="0" resource="1" file="Assets/Buttons/03.png"/>
+        <FILE id="lFimfM" name="04.png" compile="0" resource="1" file="Assets/Buttons/04.png"/>
+        <FILE id="EY5LTh" name="05.png" compile="0" resource="1" file="Assets/Buttons/05.png"/>
+        <FILE id="fNEIVS" name="10.png" compile="0" resource="1" file="Assets/Buttons/10.png"/>
+        <FILE id="yydhmF" name="11.png" compile="0" resource="1" file="Assets/Buttons/11.png"/>
+        <FILE id="J0QxGw" name="12.png" compile="0" resource="1" file="Assets/Buttons/12.png"/>
+        <FILE id="jKcFj2" name="13.png" compile="0" resource="1" file="Assets/Buttons/13.png"/>
+        <FILE id="JHPbF3" name="14.png" compile="0" resource="1" file="Assets/Buttons/14.png"/>
+        <FILE id="az475f" name="15.png" compile="0" resource="1" file="Assets/Buttons/15.png"/>
+        <FILE id="VdfAvZ" name="clearButtonPressed.png" compile="0" resource="1"
+              file="Assets/Buttons/clearButtonPressed.png"/>
+        <FILE id="gVwILc" name="clearButtonUnpressed.png" compile="0" resource="1"
+              file="Assets/Buttons/clearButtonUnpressed.png"/>
+        <FILE id="KOpA08" name="loadButtonPushed.png" compile="0" resource="1"
+              file="Assets/Buttons/loadButtonPushed.png"/>
+        <FILE id="rDGCKu" name="loadButtonUnpushed.png" compile="0" resource="1"
+              file="Assets/Buttons/loadButtonUnpushed.png"/>
+      </GROUP>
+      <FILE id="cf6OAh" name="background.png" compile="0" resource="1" file="Assets/background.png"/>
+      <FILE id="LEcY2T" name="buttonPressed.png" compile="0" resource="1"
+            file="Assets/buttonPressed.png"/>
+      <FILE id="lbaPN0" name="buttonUnpressed.png" compile="0" resource="1"
+            file="Assets/buttonUnpressed.png"/>
+      <FILE id="UMrm6u" name="knob.png" compile="0" resource="1" file="Assets/knob.png"/>
+      <FILE id="rT0JMa" name="screens.png" compile="0" resource="1" file="Assets/screens.png"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
@@ -89,7 +117,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_dsp" path="../../../../../JUCE/modules"/>
-        <MODULEPATH id="ff_meters" path="../../../../../JUCE/modules_user"/>
+        <MODULEPATH id="ff_meters" path="Modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <VS2022 targetFolder="Builds/VisualStudio2022">
