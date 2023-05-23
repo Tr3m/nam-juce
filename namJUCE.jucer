@@ -14,6 +14,8 @@
       <FILE id="Wphfv0" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="f5ihH7" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="dS7OKv" name="NamEditor.cpp" compile="1" resource="0" file="Source/NamEditor.cpp"/>
+      <FILE id="vRRhwL" name="NamEditor.h" compile="0" resource="0" file="Source/NamEditor.h"/>
       <FILE id="TZr5zc" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
       <FILE id="rbqsy9" name="NeuralAmpModeler.cpp" compile="1" resource="0"
             file="Source/NeuralAmpModeler.cpp"/>
@@ -94,6 +96,9 @@
       <FILE id="UMrm6u" name="knob.png" compile="0" resource="1" file="Assets/knob.png"/>
       <FILE id="rT0JMa" name="screens.png" compile="0" resource="1" file="Assets/screens.png"/>
       <FILE id="xQMmKr" name="ICON.png" compile="0" resource="1" file="Assets/ICON.png"/>
+      <FILE id="sFbmsF" name="arrowcontract.png" compile="0" resource="1"
+            file="Assets/arrowcontract.png"/>
+      <FILE id="EWlXb3" name="arrowexpand.png" compile="0" resource="1" file="Assets/arrowexpand.png"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"

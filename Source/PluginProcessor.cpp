@@ -381,6 +381,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
     parameters.push_back(std::make_unique<juce::AudioParameterInt>("LOWCUT_ID", "LOWCUT", 20, 2000, 20));
     parameters.push_back(std::make_unique<juce::AudioParameterInt>("HIGHCUT_ID", "HIGHCUT", 200, 20000, 20000));
 
+    parameters.push_back(std::make_unique<juce::AudioParameterBool>("SMALL_WINDOW_ID", "SMALL_WINDOW", false, "SMALL_WINDOW"));
+
     return { parameters.begin(), parameters.end() };
 }
 

@@ -2,6 +2,8 @@ target_sources(NAM
 PRIVATE
     NeuralAmpModeler.cpp
     NeuralAmpModeler.h
+    NamEditor.h
+    NamEditor.cpp
     PluginEditor.cpp
     PluginEditor.h
     PluginProcessor.cpp

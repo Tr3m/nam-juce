@@ -8,6 +8,8 @@ juce_add_binary_data(BinaryData SOURCES
     buttonPressed.png
     buttonUnpressed.png
     screens.png
+    arrowexpand.png
+    arrowcontract.png
     ${SRC_FILES}
 )
 
