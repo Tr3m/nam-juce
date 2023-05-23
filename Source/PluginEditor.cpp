@@ -271,7 +271,13 @@ void NamJUCEAudioProcessorEditor::initializeTextBox(const juce::String label, st
     textBox->setAlpha(0.9f);
     textBox->setColour(juce::TextEditor::backgroundColourId, juce::Colours::transparentBlack);
     textBox->setColour(juce::TextEditor::outlineColourId, juce::Colours::transparentBlack);
+    juce::Font textBoxFont;
+    textBoxFont.setHeight(18.0f);
+    textBoxFont.setBold(true);
+    textBox->setFont(textBoxFont);
+    textBox->setAlpha(0.8f);
     textBox->setBounds(x, y, width, height);
+    
 }
 
 void NamJUCEAudioProcessorEditor::initializeButton(const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y, int width, int height)

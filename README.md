@@ -5,7 +5,7 @@ A JUCE implementation of Steven Atkinson's [NeuralAmpModelerPlugin](https://gith
 </br>
 
 <p align="center">
-  <img src="https://cdn.discordapp.com/attachments/580466872169005066/1110355539705217094/Screenshot_20230523_025538.png" />
+  <img src="https://cdn.discordapp.com/attachments/580466872169005066/1110514752842629130/Screenshot_20230523_132853.png" />
 </p>
 
 
@@ -47,3 +47,22 @@ The git submodules still need to be initialized before attempting to build. Init
 ```bash
 git submodule update --init --recursive
 ```
+
+## Supported Platforms
+
+- Windows
+- MacOS
+- Linux
+
+## Supported Formats
+
+- VST3
+- AU
+- Standalone Application
+
+Note: The Standalone application doesn't support ASIO by default. For ASIO support the `JUCE_ASIO` flag must be set in the `juce_audio_devices` module. 
+
+Additionally, a path to Steingberg's ASIO SDK needs to be provided to CMake/Projucer.
+
+More plugin formats like LV2 and VST(Legacy) can be built by providing the appropriate SDKs.
+
