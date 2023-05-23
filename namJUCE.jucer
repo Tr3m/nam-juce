@@ -93,6 +93,7 @@
             file="Assets/buttonUnpressed.png"/>
       <FILE id="UMrm6u" name="knob.png" compile="0" resource="1" file="Assets/knob.png"/>
       <FILE id="rT0JMa" name="screens.png" compile="0" resource="1" file="Assets/screens.png"/>
+      <FILE id="xQMmKr" name="ICON.png" compile="0" resource="1" file="Assets/ICON.png"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
@@ -120,7 +121,7 @@
         <MODULEPATH id="ff_meters" path="Modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2022 targetFolder="Builds/VisualStudio2022">
+    <VS2022 targetFolder="Builds/VisualStudio2022" smallIcon="xQMmKr" bigIcon="xQMmKr">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\Modules\eigen&#10;..\..\Modules\json\include\&#10;..\..\Modules\json\include\nlohmann&#10;"
                        useRuntimeLibDLL="0" targetName="Neural Amp Modeler"/>

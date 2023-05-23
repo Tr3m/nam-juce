@@ -8,8 +8,8 @@ find_package(JUCE CONFIG REQUIRED)
 
 juce_add_plugin(NAM
     VERSION 1.0.0
-    # ICON_BIG ...                            
-    # ICON_SMALL ...
+    ICON_BIG "Assets/ICON.png"
+    ICON_SMALL "Assets/ICON.png"
     COMPANY_NAME "Manos Labrakis"
     # IS_SYNTH TRUE/FALSE                 
     # NEEDS_MIDI_INPUT TRUE/FALSE           
