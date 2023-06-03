@@ -34,7 +34,7 @@ void NeuralAmpModeler::prepare(juce::dsp::ProcessSpec& spec)
 void NeuralAmpModeler::loadModel(const std::string modelPath)
 {
     auto dspPath = std::filesystem::u8path(modelPath);
-    mNAM = get_dsp(dspPath);
+    mNAM = get_dsp<float>(dspPath);
 
     if(mNAM != nullptr)
         modelLoaded = true;
@@ -66,7 +66,7 @@ void NeuralAmpModeler::hookParameters(juce::AudioProcessorValueTreeState& apvts)
     DBG("Parameters Hooked!");
 }
 
-void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int inputChannels, int outputChannels)
+void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer, int inputChannels, int outputChannels)
 {
     updateParameters();
 
@@ -82,15 +82,15 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
     auto* channelDataRight = buffer.getWritePointer(1);
     auto* outputData = outputBuffer.getWritePointer(0);
     
-    double** inputPointer = &channelDataLeft;
-    double** outputPointer = &outputData;
+    float** inputPointer = &channelDataLeft;
+    float** outputPointer = &outputData;
 
     
     //Noise Gate Trigger
-    double** triggerOutput = inputPointer;
+    float** triggerOutput = inputPointer;
     if (noiseGateActive)
     {
-        const dsp::noise_gate::TriggerParams triggerParams(time, params[EParams::kNoiseGateThreshold]->load(), ratio, openTime, holdTime, closeTime);
+        const dsp::noise_gate::TriggerParams<float> triggerParams(time, params[EParams::kNoiseGateThreshold]->load(), ratio, openTime, holdTime, closeTime);
         this->mNoiseGateTrigger.SetParams(triggerParams);
         this->mNoiseGateTrigger.SetSampleRate(sampleRate);
         triggerOutput = this->mNoiseGateTrigger.Process(inputPointer, 1, buffer.getNumSamples());
@@ -107,14 +107,14 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<double>& buffer, int input
         outputPointer = triggerOutput;
 
     // Apply the noise gate    
-    double** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(outputPointer, 1, buffer.getNumSamples()) : outputPointer;
+    float** gateGainOutput = noiseGateActive ? mNoiseGateGain.Process(outputPointer, 1, buffer.getNumSamples()) : outputPointer;
 
     if(toneStackActive)
     {
         //Apply the tone stack
-        double** bassPointers = this->mToneBass.Process(gateGainOutput, 1, buffer.getNumSamples());
-        double** midPointers = this->mToneMid.Process(bassPointers, 1, buffer.getNumSamples());
-        double** treblePointers = this->mToneTreble.Process(midPointers, 1, buffer.getNumSamples()); 
+        float** bassPointers = this->mToneBass.Process(gateGainOutput, 1, buffer.getNumSamples());
+        float** midPointers = this->mToneMid.Process(bassPointers, 1, buffer.getNumSamples());
+        float** treblePointers = this->mToneTreble.Process(midPointers, 1, buffer.getNumSamples()); 
 
         doDualMono(buffer, treblePointers);
     } 
@@ -145,9 +145,9 @@ void NeuralAmpModeler::updateParameters()
     midQuality = midGainDB < 0.0 ? 1.5 : 0.7;    
 
     // Define filter parameters
-    recursive_linear_filter::BiquadParams bassParams(sampleRate, bassFrequency, bassQuality, bassGainDB);
-    recursive_linear_filter::BiquadParams midParams(sampleRate, midFrequency, midQuality, midGainDB);
-    recursive_linear_filter::BiquadParams trebleParams(sampleRate, trebleFrequency, trebleQuality, trebleGainDB);
+    recursive_linear_filter::BiquadParams<float> bassParams(sampleRate, bassFrequency, bassQuality, bassGainDB);
+    recursive_linear_filter::BiquadParams<float> midParams(sampleRate, midFrequency, midQuality, midGainDB);
+    recursive_linear_filter::BiquadParams<float> trebleParams(sampleRate, trebleFrequency, trebleQuality, trebleGainDB);
 
     // Set tone stack parameters
     this->mToneBass.SetParams(bassParams);
@@ -160,7 +160,7 @@ double NeuralAmpModeler::dB_to_linear(double db_value)
     return std::pow(10.0, db_value / 20.0);
 }
 
-void NeuralAmpModeler::doDualMono(juce::AudioBuffer<double>& mainBuffer, double** input)
+void NeuralAmpModeler::doDualMono(juce::AudioBuffer<float>& mainBuffer, float** input)
 {
     auto channelDataLeft = mainBuffer.getWritePointer(0);
     auto channelDataRight = mainBuffer.getWritePointer(1);

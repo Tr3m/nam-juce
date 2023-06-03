@@ -27,7 +27,6 @@ public:
    #endif
 
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
-    void processBlock(juce::AudioBuffer<double>&, juce:: MidiBuffer&) override;
 
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
@@ -86,12 +85,11 @@ private:
 
     NeuralAmpModeler myNAM;
     
-    juce::AudioBuffer<float> fpBuffer; //Floating Point Buffer
     juce::dsp::Convolution cab;
     bool irFound {false};
     bool irLoaded {false};
 
-    juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter <double>, juce::dsp::IIR::Coefficients <double>>highCut, lowCut;
+    juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter <float>, juce::dsp::IIR::Coefficients <float>>highCut, lowCut;
 
     std::string lastModelPath = "null";
     std::string lastModelName = "null";
@@ -99,7 +97,7 @@ private:
     std::string lastIrPath = "null";
     std::string lastIrName = "null";
 
-    bool supportsDouble{ true };
+    bool supportsDouble{ false };
 
     foleys::LevelMeterSource meterInSource;
     foleys::LevelMeterSource meterOutSource;

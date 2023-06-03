@@ -40,7 +40,7 @@ cmake --build build
 
 ## Building with the Projucer
 
-The project can also be build with the Projucer instead of CMake. Exporters for all platforms are set within the .jucer file including relative paths for all libraries/dependencies so no additional configurtations are needed.
+The project can also be build with the Projucer instead of CMake. Exporters for all platforms are set within the .jucer file including relative paths for all libraries/dependencies so no additional configurations are needed.
 
 The git submodules still need to be initialized before attempting to build. Initialize by running:
 

@@ -22,7 +22,7 @@ public:
 	void clear();
 	bool isModelLoaded();
 
-	void processBlock(juce::AudioBuffer<double>& buffer, int inputChannels, int outputChannels);
+	void processBlock(juce::AudioBuffer<float>& buffer, int inputChannels, int outputChannels);
 
 	void hookParameters(juce::AudioProcessorValueTreeState&);
 
@@ -44,14 +44,14 @@ public:
 
 private:
 	double sampleRate;
-	juce::AudioBuffer<double> outputBuffer; 
+	juce::AudioBuffer<float> outputBuffer; 
 
 	//Parameter Pointers
 	std::atomic<float>* params[8];	
 
 	// Noise gates
-	dsp::noise_gate::Trigger mNoiseGateTrigger;
-	dsp::noise_gate::Gain mNoiseGateGain;
+	dsp::noise_gate::Trigger<float> mNoiseGateTrigger;
+	dsp::noise_gate::Gain<float> mNoiseGateGain;
 	bool noiseGateActive {false};
 
 	//Noise Gate Parameters
@@ -61,14 +61,14 @@ private:
     const double holdTime = 0.01;
     const double closeTime = 0.05;
 
-	std::unique_ptr<DSP> mNAM;
+	std::unique_ptr<DSP<float>> mNAM;
 	bool outputNormalized {false};
 	bool modelLoaded {false};
 
 	// Tone Stack modules
-	recursive_linear_filter::LowShelf mToneBass;
-	recursive_linear_filter::Peaking mToneMid;
-	recursive_linear_filter::HighShelf mToneTreble;
+	recursive_linear_filter::LowShelf<float> mToneBass;
+	recursive_linear_filter::Peaking<float> mToneMid;
+	recursive_linear_filter::HighShelf<float> mToneTreble;
 
 	bool toneStackActive {true};
 
@@ -80,11 +80,11 @@ private:
 	double midQuality = 0.7;
 	const double trebleQuality = 0.707;
 
-	std::unordered_map<std::string, double> mNAMParams = { {"Input", 0.0}, {"Output", 0.0} };
+	std::unordered_map<std::string, float> mNAMParams = { {"Input", 0.0}, {"Output", 0.0} };
 
 // Private Functions
 private:
 	void updateParameters();
 	double dB_to_linear(double db_value);
-	void doDualMono(juce::AudioBuffer<double>& mainBuffer, double** input);
+	void doDualMono(juce::AudioBuffer<float>& mainBuffer, float** input);
 };

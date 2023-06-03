@@ -20,8 +20,8 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ), apvts(*this, nullptr, "Params", createParameters()),
-                        lowCut(juce::dsp::IIR::Coefficients<double>::makeHighPass(44100, 20.0f, 1.0f)),
-                        highCut(juce::dsp::IIR::Coefficients<double>::makeLowPass(44100, 20000.0f, 1.0f))
+                        lowCut(juce::dsp::IIR::Coefficients<float>::makeHighPass(44100, 20.0f, 1.0f)),
+                        highCut(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f))
 #endif
 {
     
@@ -113,9 +113,6 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     highCut.reset();
     highCut.prepare(spec);
 
-    fpBuffer.setSize(1, samplesPerBlock, false, false, false);
-    fpBuffer.clear();
-
     meterInSource.resize(getTotalNumOutputChannels(), sampleRate * 0.1 / samplesPerBlock);
     meterOutSource.resize(getTotalNumOutputChannels(), sampleRate * 0.1 / samplesPerBlock);
 
@@ -204,26 +201,7 @@ bool NamJUCEAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
-void NamJUCEAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
-{
-    juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
-
-
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
-   
-
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
-    }
-}
-
-void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
+void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     meterInSource.measureBlock(buffer);
     juce::ScopedNoDenormals noDenormals;
@@ -233,38 +211,30 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    juce::dsp::AudioBlock<double> block(buffer);
+    juce::dsp::AudioBlock<float> block(buffer);
 
     auto* channelDataLeft = buffer.getWritePointer(0);
     auto* channelDataRight = buffer.getWritePointer(1);
 
     myNAM.processBlock(buffer, totalNumInputChannels, totalNumOutputChannels);
 
-    //TODO: Change this ASAP! This is a HORRIBLE way of doing it.
-    juce::dsp::AudioBlock<float> fpBlock(fpBuffer);
-    auto* fpData = fpBuffer.getWritePointer(0);
-    for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
-        fpData[sample] = channelDataLeft[sample];
-
     if(bool(*apvts.getRawParameterValue("CAB_ON_ID")) && irLoaded)
     {
-        cab.process(juce::dsp::ProcessContextReplacing<float>(fpBlock));
+        cab.process(juce::dsp::ProcessContextReplacing<float>(block));
         if(irFound)
-            fpBuffer.applyGain(juce::Decibels::decibelsToGain(9.0f));
+            buffer.applyGain(juce::Decibels::decibelsToGain(9.0f));
     }
 
     //Do Dual Mono
     for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
-    {
-        channelDataLeft[sample] = fpData[sample];
-        channelDataRight[sample] = fpData[sample];
-    }
+        channelDataRight[sample] = channelDataLeft[sample];
 
-    *lowCut.state = *juce::dsp::IIR::Coefficients<double>::makeHighPass(getSampleRate(), *apvts.getRawParameterValue("LOWCUT_ID"), 1.0f);
-    *highCut.state = *juce::dsp::IIR::Coefficients<double>::makeLowPass(getSampleRate(), *apvts.getRawParameterValue("HIGHCUT_ID"), 1.0f);
 
-    lowCut.process(juce::dsp::ProcessContextReplacing<double>(block));
-    highCut.process(juce::dsp::ProcessContextReplacing<double>(block));
+    *lowCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(getSampleRate(), *apvts.getRawParameterValue("LOWCUT_ID"), 1.0f);
+    *highCut.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(getSampleRate(), *apvts.getRawParameterValue("HIGHCUT_ID"), 1.0f);
+
+    lowCut.process(juce::dsp::ProcessContextReplacing<float>(block));
+    highCut.process(juce::dsp::ProcessContextReplacing<float>(block));
 
     meterOutSource.measureBlock(buffer);
 }
