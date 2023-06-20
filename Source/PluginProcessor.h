@@ -60,6 +60,8 @@ public:
     bool getIrStatus();
     void clearIR();  
 
+    bool getTriggerStatus();
+
     bool supportsDoublePrecisionProcessing() const override;
 
     const std::string getLastModelPath();

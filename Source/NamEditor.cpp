@@ -187,6 +187,8 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     eqButton->toFront(true);
     meterIn.toFront(true);
     meterOut.toFront(true);
+
+    startTimer(30);
     
 }
 
@@ -209,6 +211,9 @@ void NamEditor::paint(juce::Graphics& g)
 
     g.drawImageAt(assetManager->getBackground(), 0, 0);
     g.drawImageAt(assetManager->getScreens(), 0, 0);
+
+    //// TODO: Move this into a dedicated component with its own timer
+    g.drawImageAt(led_to_draw, 296, 168);
 }
 
 void NamEditor::resized()
@@ -220,7 +225,13 @@ void NamEditor::resized()
 
 void NamEditor::timerCallback()
 {
+    //// TODO: Move this into a dedicated component with its own timer
 
+    if(audioProcessor.getTriggerStatus() && static_cast<float>(*audioProcessor.apvts.getRawParameterValue("NGATE_ID")) > -101.0)
+        led_to_draw = led_on;
+    else
+        led_to_draw = led_off;
+    repaint();
 }
 
 void NamEditor::sliderValueChanged(juce::Slider* slider)

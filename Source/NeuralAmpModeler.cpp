@@ -124,6 +124,11 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer, int inputC
     
 }
 
+dsp::noise_gate::Trigger<float>* NeuralAmpModeler::getTrigger()
+{
+    return &mNoiseGateTrigger;
+}
+
 void NeuralAmpModeler::updateParameters()
 {
     outputNormalized = bool(params[EParams::kOutNorm]->load());

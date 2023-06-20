@@ -12,6 +12,8 @@ juce_add_binary_data(BinaryData SOURCES
     arrowexpand.png
     arrowcontract.png
     knob_minimal.png
+    led_off.png
+    led_on.png
     ${SRC_FILES}
 )
 

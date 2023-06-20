@@ -41,6 +41,7 @@ public:
 		kNumParams
 	};
 
+	dsp::noise_gate::Trigger<float>* getTrigger();
 
 private:
 	double sampleRate;

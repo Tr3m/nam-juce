@@ -156,6 +156,12 @@ bool NamJUCEAudioProcessor::getIrStatus()
     return irLoaded;
 }
 
+bool NamJUCEAudioProcessor::getTriggerStatus()
+{
+    auto t_state = myNAM.getTrigger();
+    return t_state->isGating();
+}
+
 void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
 {
     std::string ir_path = irToLoad.getFullPathName().toStdString();
