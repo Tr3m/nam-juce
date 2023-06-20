@@ -4,6 +4,7 @@
 #include <juce_dsp/juce_dsp.h>
 #include "NeuralAmpModeler.h"
 #include <ff_meters/ff_meters.h>
+#include "EqProcessor.h"
 
 //==============================================================================
 /**
@@ -79,6 +80,8 @@ public:
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 
+    bool eqModuleVisible {false};
+
 
 private:
     //==============================================================================
@@ -96,6 +99,8 @@ private:
 
     std::string lastIrPath = "null";
     std::string lastIrName = "null";
+
+    EqProcessor tenBandEq;
 
     bool supportsDouble{ false };
 

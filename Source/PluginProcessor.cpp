@@ -107,6 +107,9 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 
     cab.reset();
     cab.prepare(spec);
+
+    tenBandEq.prepare(spec);
+    tenBandEq.hookParameters(apvts);
     
     lowCut.reset();
     lowCut.prepare(spec);
@@ -216,7 +219,8 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
     auto* channelDataLeft = buffer.getWritePointer(0);
     auto* channelDataRight = buffer.getWritePointer(1);
 
-    myNAM.processBlock(buffer, totalNumInputChannels, totalNumOutputChannels);
+    if(myNAM.isModelLoaded())
+        myNAM.processBlock(buffer, totalNumInputChannels, totalNumOutputChannels);
 
     if(bool(*apvts.getRawParameterValue("CAB_ON_ID")) && irLoaded)
     {
@@ -224,6 +228,10 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
         if(irFound)
             buffer.applyGain(juce::Decibels::decibelsToGain(9.0f));
     }
+
+    //Ten-Band EQ Module
+    if(*apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))
+        tenBandEq.process(buffer);
 
     //Do Dual Mono
     for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
@@ -352,6 +360,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
     parameters.push_back(std::make_unique<juce::AudioParameterInt>("HIGHCUT_ID", "HIGHCUT", 200, 20000, 20000));
 
     parameters.push_back(std::make_unique<juce::AudioParameterBool>("SMALL_WINDOW_ID", "SMALL_WINDOW", false, "SMALL_WINDOW"));
+
+    tenBandEq.pushParametersToTree(parameters);
 
     return { parameters.begin(), parameters.end() };
 }

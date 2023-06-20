@@ -42,8 +42,8 @@ void NeuralAmpModeler::loadModel(const std::string modelPath)
 
 void NeuralAmpModeler::clear()
 {
-    mNAM = nullptr;
     modelLoaded = false;
+    mNAM = nullptr;    
 }
 
 bool NeuralAmpModeler::isModelLoaded()
@@ -63,7 +63,7 @@ void NeuralAmpModeler::hookParameters(juce::AudioProcessorValueTreeState& apvts)
     params[EParams::kEQActive] = apvts.getRawParameterValue("TONE_STACK_ON_ID");
     params[EParams::kOutNorm] = apvts.getRawParameterValue("NORMALIZE_ID");
 
-    DBG("Parameters Hooked!");
+    DBG("NAM Parameters Hooked!");
 }
 
 void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer, int inputChannels, int outputChannels)

@@ -2,12 +2,32 @@
 #include <JuceHeader.h>
 #include <ff_meters/ff_meters.h>
 
+using namespace juce;
+
 class knobLookAndFeel : public juce::LookAndFeel_V4
-{
+{  
 public:
-    knobLookAndFeel()
+
+    enum KnobTypes
     {
-        knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_png, BinaryData::knob_pngSize);
+        Main = 0,
+        Minimal
+    };
+
+    knobLookAndFeel(KnobTypes knobType)
+    {
+        switch(knobType)
+        {
+            case KnobTypes::Main:
+                knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_png, BinaryData::knob_pngSize);
+                break;
+            case KnobTypes::Minimal:
+                knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_minimal_png, BinaryData::knob_minimal_pngSize);
+                break;
+            default:
+                knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_png, BinaryData::knob_pngSize);
+                break;
+        }        
     }
 
     void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override
@@ -241,4 +261,218 @@ class MeterLookAndFeel : public foleys::LevelMeterLookAndFeel
         
     }
     
+};
+
+class SliderOnLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+
+	void drawLinearSlider(Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos, float maxSliderPos, const Slider::SliderStyle style, Slider& slider) {
+
+		if (slider.isBar())
+		{
+			g.setColour(juce::Colours::transparentBlack);
+			g.fillRect(slider.isHorizontal() ? Rectangle<float>(static_cast<float> (x), y + 0.5f, sliderPos - x, height - 1.0f)
+				: Rectangle<float>(x + 0.5f, sliderPos, width - 1.0f, y + (height - sliderPos)));
+		}
+		else
+		{
+			auto isTwoVal = (style == Slider::SliderStyle::TwoValueVertical || style == Slider::SliderStyle::TwoValueHorizontal);
+			auto isThreeVal = (style == Slider::SliderStyle::ThreeValueVertical || style == Slider::SliderStyle::ThreeValueHorizontal);
+
+			auto trackWidth = jmin(13.0f, slider.isHorizontal() ? height * 0.25f : width * 13.25f);
+
+
+			Point<float> startPoint(slider.isHorizontal() ? x : x + width * 0.5f,
+				slider.isHorizontal() ? y + height * 0.5f : height + y);
+
+			Point<float> endPoint(slider.isHorizontal() ? width + x : startPoint.x,
+				slider.isHorizontal() ? startPoint.y : y);
+
+			Path backgroundTrack;
+			backgroundTrack.startNewSubPath(startPoint);
+			backgroundTrack.lineTo(endPoint);
+			g.setColour(juce::Colours::transparentBlack);
+			g.strokePath(backgroundTrack, { trackWidth, PathStrokeType::beveled, PathStrokeType::rounded });
+
+			Path valueTrack;
+			Point<float> minPoint, maxPoint, thumbPoint;
+
+			if (isTwoVal || isThreeVal)
+			{
+				minPoint = { slider.isHorizontal() ? minSliderPos : width * 0.5f,
+							 slider.isHorizontal() ? height * 0.5f : minSliderPos };
+
+				if (isThreeVal)
+					thumbPoint = { slider.isHorizontal() ? sliderPos : width * 0.5f,
+								   slider.isHorizontal() ? height * 0.5f : sliderPos };
+
+				maxPoint = { slider.isHorizontal() ? maxSliderPos : width * 0.5f,
+							 slider.isHorizontal() ? height * 0.5f : maxSliderPos };
+			}
+			else
+			{
+				auto kx = slider.isHorizontal() ? sliderPos : (x + width * 0.5f);
+				auto ky = slider.isHorizontal() ? (y + height * 0.5f) : sliderPos;
+
+				minPoint = startPoint;
+				maxPoint = { kx, ky };
+			}
+
+			auto thumbWidth = getSliderThumbRadius(slider);
+
+			valueTrack.startNewSubPath(minPoint);
+			valueTrack.lineTo(isThreeVal ? thumbPoint : maxPoint);
+			g.setColour(juce::Colours::transparentBlack);
+			g.strokePath(valueTrack, { trackWidth, PathStrokeType::curved, PathStrokeType::rounded });
+			g.setColour(juce::Colours::black);
+
+			if (!isTwoVal)
+			{
+				//g.setColour(slider.findColour(Slider::thumbColourId));
+				//g.fillRect(Rectangle<float>(static_cast<float> (thumbWidth*3), static_cast<float> (thumbWidth)).withCentre(isThreeVal ? thumbPoint : maxPoint));
+				g.drawImage(thumbOn, Rectangle<float>(static_cast<float> (thumbWidth * 4), static_cast<float> (thumbWidth * 4)).withCentre(isThreeVal ? thumbPoint : maxPoint), false);
+			}
+
+			if (isTwoVal || isThreeVal)
+			{
+				auto sr = jmin(trackWidth, (slider.isHorizontal() ? height : width) * 0.4f);
+				auto pointerColour = slider.findColour(Slider::thumbColourId);
+
+				if (slider.isHorizontal())
+				{
+					drawPointer(g, minSliderPos - sr,
+						jmax(0.0f, y + height * 0.5f - trackWidth * 2.0f),
+						trackWidth * 2.0f, pointerColour, 2);
+
+					drawPointer(g, maxSliderPos - trackWidth,
+						jmin(y + height - trackWidth * 2.0f, y + height * 0.5f),
+						trackWidth * 2.0f, pointerColour, 4);
+				}
+				else
+				{
+					drawPointer(g, jmax(0.0f, x + width * 0.5f - trackWidth * 2.0f),
+						minSliderPos - trackWidth,
+						trackWidth * 2.0f, pointerColour, 1);
+
+					drawPointer(g, jmin(x + width - trackWidth * 2.0f, x + width * 0.5f), maxSliderPos - sr,
+						trackWidth * 2.0f, pointerColour, 3);
+				}
+			}
+		}
+
+	}
+
+	
+private:
+
+	Image thumbOn = ImageFileFormat::loadFrom(BinaryData::eq_thumb_on_png, BinaryData::eq_thumb_on_pngSize);
+	
+};
+
+class SliderOffLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+
+	void drawLinearSlider(Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos, float maxSliderPos, const Slider::SliderStyle style, Slider& slider) {
+
+		if (slider.isBar())
+		{
+			g.setColour(juce::Colours::transparentBlack);
+			g.fillRect(slider.isHorizontal() ? Rectangle<float>(static_cast<float> (x), y + 0.5f, sliderPos - x, height - 1.0f)
+				: Rectangle<float>(x + 0.5f, sliderPos, width - 1.0f, y + (height - sliderPos)));
+		}
+		else
+		{
+			auto isTwoVal = (style == Slider::SliderStyle::TwoValueVertical || style == Slider::SliderStyle::TwoValueHorizontal);
+			auto isThreeVal = (style == Slider::SliderStyle::ThreeValueVertical || style == Slider::SliderStyle::ThreeValueHorizontal);
+
+			auto trackWidth = jmin(13.0f, slider.isHorizontal() ? height * 0.25f : width * 13.25f);
+
+
+			Point<float> startPoint(slider.isHorizontal() ? x : x + width * 0.5f,
+				slider.isHorizontal() ? y + height * 0.5f : height + y);
+
+			Point<float> endPoint(slider.isHorizontal() ? width + x : startPoint.x,
+				slider.isHorizontal() ? startPoint.y : y);
+
+			Path backgroundTrack;
+			backgroundTrack.startNewSubPath(startPoint);
+			backgroundTrack.lineTo(endPoint);
+			g.setColour(juce::Colours::transparentBlack);
+			g.strokePath(backgroundTrack, { trackWidth, PathStrokeType::beveled, PathStrokeType::rounded });
+
+			Path valueTrack;
+			Point<float> minPoint, maxPoint, thumbPoint;
+
+			if (isTwoVal || isThreeVal)
+			{
+				minPoint = { slider.isHorizontal() ? minSliderPos : width * 0.5f,
+							 slider.isHorizontal() ? height * 0.5f : minSliderPos };
+
+				if (isThreeVal)
+					thumbPoint = { slider.isHorizontal() ? sliderPos : width * 0.5f,
+								   slider.isHorizontal() ? height * 0.5f : sliderPos };
+
+				maxPoint = { slider.isHorizontal() ? maxSliderPos : width * 0.5f,
+							 slider.isHorizontal() ? height * 0.5f : maxSliderPos };
+			}
+			else
+			{
+				auto kx = slider.isHorizontal() ? sliderPos : (x + width * 0.5f);
+				auto ky = slider.isHorizontal() ? (y + height * 0.5f) : sliderPos;
+
+				minPoint = startPoint;
+				maxPoint = { kx, ky };
+			}
+
+			auto thumbWidth = getSliderThumbRadius(slider);
+
+			valueTrack.startNewSubPath(minPoint);
+			valueTrack.lineTo(isThreeVal ? thumbPoint : maxPoint);
+			g.setColour(juce::Colours::transparentBlack);
+			g.strokePath(valueTrack, { trackWidth, PathStrokeType::curved, PathStrokeType::rounded });
+			g.setColour(juce::Colours::black);
+
+			if (!isTwoVal)
+			{
+				//g.setColour(slider.findColour(Slider::thumbColourId));
+				//g.fillRect(Rectangle<float>(static_cast<float> (thumbWidth*3), static_cast<float> (thumbWidth)).withCentre(isThreeVal ? thumbPoint : maxPoint));
+				g.drawImage(thumbOff, Rectangle<float>(static_cast<float> (thumbWidth * 4), static_cast<float> (thumbWidth * 4)).withCentre(isThreeVal ? thumbPoint : maxPoint), false);
+			}
+
+			if (isTwoVal || isThreeVal)
+			{
+				auto sr = jmin(trackWidth, (slider.isHorizontal() ? height : width) * 0.4f);
+				auto pointerColour = slider.findColour(Slider::thumbColourId);
+
+				if (slider.isHorizontal())
+				{
+					drawPointer(g, minSliderPos - sr,
+						jmax(0.0f, y + height * 0.5f - trackWidth * 2.0f),
+						trackWidth * 2.0f, pointerColour, 2);
+
+					drawPointer(g, maxSliderPos - trackWidth,
+						jmin(y + height - trackWidth * 2.0f, y + height * 0.5f),
+						trackWidth * 2.0f, pointerColour, 4);
+				}
+				else
+				{
+					drawPointer(g, jmax(0.0f, x + width * 0.5f - trackWidth * 2.0f),
+						minSliderPos - trackWidth,
+						trackWidth * 2.0f, pointerColour, 1);
+
+					drawPointer(g, jmin(x + width - trackWidth * 2.0f, x + width * 0.5f), maxSliderPos - sr,
+						trackWidth * 2.0f, pointerColour, 3);
+				}
+			}
+		}
+
+	}
+
+
+private:
+
+	Image thumbOff = ImageFileFormat::loadFrom(BinaryData::eq_thumb_off_png, BinaryData::eq_thumb_off_pngSize);
+
 };

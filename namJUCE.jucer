@@ -6,105 +6,123 @@
               pluginName="Neural Amp Modeler" version="1.0.0" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="fLUIGm" name="namJUCE">
     <GROUP id="{374B1152-41A2-5B5A-A64F-8F1AF7840A23}" name="Source">
-      <FILE id="Cs5Vi7" name="AssetManager.h" compile="0" resource="0" file="Source/AssetManager.h"/>
-      <FILE id="D1SwcU" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="WXmi05" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
-      <FILE id="Wphfv0" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="f5ihH7" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="dS7OKv" name="NamEditor.cpp" compile="1" resource="0" file="Source/NamEditor.cpp"/>
-      <FILE id="vRRhwL" name="NamEditor.h" compile="0" resource="0" file="Source/NamEditor.h"/>
-      <FILE id="TZr5zc" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
-      <FILE id="rbqsy9" name="NeuralAmpModeler.cpp" compile="1" resource="0"
-            file="Source/NeuralAmpModeler.cpp"/>
-      <FILE id="d9psb7" name="NeuralAmpModeler.h" compile="0" resource="0"
-            file="Source/NeuralAmpModeler.h"/>
-      <FILE id="wZ94Ex" name="architecture.hpp" compile="0" resource="0"
-            file="Source/architecture.hpp"/>
-      <GROUP id="{51D22307-FD11-E51E-C8E9-2974E2E869AB}" name="NeuralAmpModelerCore">
-        <GROUP id="{C4DA2F42-5DB3-AB74-ABED-4D0EA02595B2}" name="dsp">
-          <FILE id="taL0sx" name="CMakeLists.txt" compile="0" resource="1" file="Source/NeuralAmpModelerCore/dsp/CMakeLists.txt"/>
-          <FILE id="QoTm5Z" name="coredsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/coredsp.cpp"/>
-          <FILE id="C1rzRA" name="coredsp.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/coredsp.h"/>
-          <FILE id="QjXMcL" name="ImpulseResponse.cpp" compile="1" resource="0"
+      <GROUP id="{90CD07F4-D2DB-4460-BE38-804F65671A44}" name="NeuralAmpModelerCore">
+        <GROUP id="{F3B0FCD6-D539-7476-58CE-7EF1530C7F72}" name="dsp">
+          <FILE id="T0GUGM" name="coredsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/coredsp.cpp"/>
+          <FILE id="qnuOE3" name="coredsp.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/coredsp.h"/>
+          <FILE id="IJua0p" name="ImpulseResponse.cpp" compile="1" resource="0"
                 file="Source/NeuralAmpModelerCore/dsp/ImpulseResponse.cpp"/>
-          <FILE id="XWuKMC" name="ImpulseResponse.h" compile="0" resource="0"
+          <FILE id="IYdrCy" name="ImpulseResponse.h" compile="0" resource="0"
                 file="Source/NeuralAmpModelerCore/dsp/ImpulseResponse.h"/>
-          <FILE id="s6QbuC" name="NoiseGate.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/NoiseGate.cpp"/>
-          <FILE id="JfOPwu" name="NoiseGate.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/NoiseGate.h"/>
-          <FILE id="BegCsc" name="RecursiveLinearFilter.cpp" compile="1" resource="0"
+          <FILE id="n3bKyS" name="NoiseGate.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/NoiseGate.cpp"/>
+          <FILE id="eowurx" name="NoiseGate.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/NoiseGate.h"/>
+          <FILE id="tsZ3Er" name="RecursiveLinearFilter.cpp" compile="1" resource="0"
                 file="Source/NeuralAmpModelerCore/dsp/RecursiveLinearFilter.cpp"/>
-          <FILE id="rzkMSk" name="RecursiveLinearFilter.h" compile="0" resource="0"
+          <FILE id="V60kc7" name="RecursiveLinearFilter.h" compile="0" resource="0"
                 file="Source/NeuralAmpModelerCore/dsp/RecursiveLinearFilter.h"/>
-          <FILE id="IGmHvi" name="Resample.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/Resample.h"/>
-          <FILE id="ZT0LKP" name="wav.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/wav.cpp"/>
-          <FILE id="CqCCJP" name="wav.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/wav.h"/>
+          <FILE id="knzspP" name="Resample.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/Resample.h"/>
+          <FILE id="J68uxg" name="wav.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/dsp/wav.cpp"/>
+          <FILE id="XV8tBa" name="wav.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/dsp/wav.h"/>
         </GROUP>
-        <GROUP id="{AA399E0D-6CDA-E176-8EA2-23E510BEA979}" name="NAM">
-          <FILE id="BuFMY5" name="activations.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/activations.cpp"/>
-          <FILE id="wrUzA5" name="activations.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/activations.h"/>
-          <FILE id="ukoDuo" name="CMakeLists.txt" compile="0" resource="1" file="Source/NeuralAmpModelerCore/NAM/CMakeLists.txt"/>
-          <FILE id="MEUsAo" name="convnet.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/convnet.cpp"/>
-          <FILE id="BorfZm" name="convnet.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/convnet.h"/>
-          <FILE id="qcGxJd" name="get_dsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/get_dsp.cpp"/>
-          <FILE id="nHemWe" name="lstm.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/lstm.cpp"/>
-          <FILE id="qu8705" name="lstm.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/lstm.h"/>
-          <FILE id="SnrbPd" name="namdsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/namdsp.cpp"/>
-          <FILE id="ciFA0e" name="namdsp.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/namdsp.h"/>
-          <FILE id="B6zsJ1" name="util.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/util.cpp"/>
-          <FILE id="MvvYp0" name="util.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/util.h"/>
-          <FILE id="Sup1S8" name="version.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/version.h"/>
-          <FILE id="UI2Ki0" name="wavenet.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/wavenet.cpp"/>
-          <FILE id="MwGcOk" name="wavenet.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/wavenet.h"/>
+        <GROUP id="{B7178CB9-ADB0-AAA8-F988-7063A3ADF174}" name="NAM">
+          <FILE id="pYAatw" name="activations.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/activations.cpp"/>
+          <FILE id="gUrzoy" name="activations.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/activations.h"/>
+          <FILE id="AapYyq" name="CMakeLists.txt" compile="0" resource="1" file="Source/NeuralAmpModelerCore/NAM/CMakeLists.txt"/>
+          <FILE id="y4mjfS" name="convnet.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/convnet.cpp"/>
+          <FILE id="RjbM3a" name="convnet.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/convnet.h"/>
+          <FILE id="FPqBZk" name="get_dsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/get_dsp.cpp"/>
+          <FILE id="CXxX2X" name="lstm.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/lstm.cpp"/>
+          <FILE id="z5pnYI" name="lstm.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/lstm.h"/>
+          <FILE id="Kmy1wb" name="namdsp.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/namdsp.cpp"/>
+          <FILE id="DkMiU1" name="namdsp.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/namdsp.h"/>
+          <FILE id="klFHwE" name="util.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/util.cpp"/>
+          <FILE id="fV49JT" name="util.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/util.h"/>
+          <FILE id="dLl9OJ" name="version.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/version.h"/>
+          <FILE id="j9Fo6d" name="wavenet.cpp" compile="1" resource="0" file="Source/NeuralAmpModelerCore/NAM/wavenet.cpp"/>
+          <FILE id="gp2Qsp" name="wavenet.h" compile="0" resource="0" file="Source/NeuralAmpModelerCore/NAM/wavenet.h"/>
         </GROUP>
-        <FILE id="e8WiXx" name="CMakeLists.txt" compile="0" resource="1" file="Source/NeuralAmpModelerCore/CMakeLists.txt"/>
-        <FILE id="d2jQ05" name="format.sh" compile="0" resource="1" file="Source/NeuralAmpModelerCore/format.sh"/>
-        <FILE id="tnbFxV" name="LICENSE" compile="0" resource="1" file="Source/NeuralAmpModelerCore/LICENSE"/>
-        <FILE id="sCD1Y7" name="README.md" compile="0" resource="1" file="Source/NeuralAmpModelerCore/README.md"/>
+        <FILE id="QUfIVa" name="format.sh" compile="0" resource="1" file="Source/NeuralAmpModelerCore/format.sh"/>
+        <FILE id="Mdef91" name="LICENSE" compile="0" resource="1" file="Source/NeuralAmpModelerCore/LICENSE"/>
+        <FILE id="SdrGGJ" name="README.md" compile="0" resource="1" file="Source/NeuralAmpModelerCore/README.md"/>
       </GROUP>
+      <FILE id="hSijUv" name="architecture.hpp" compile="0" resource="0"
+            file="Source/architecture.hpp"/>
+      <FILE id="T2ThbK" name="AssetManager.h" compile="0" resource="0" file="Source/AssetManager.h"/>
+      <FILE id="NySez9" name="EqEditor.cpp" compile="1" resource="0" file="Source/EqEditor.cpp"/>
+      <FILE id="XG9miI" name="EqEditor.h" compile="0" resource="0" file="Source/EqEditor.h"/>
+      <FILE id="XmCi2O" name="EqProcessor.cpp" compile="1" resource="0" file="Source/EqProcessor.cpp"/>
+      <FILE id="Sr0GFa" name="EqProcessor.h" compile="0" resource="0" file="Source/EqProcessor.h"/>
+      <FILE id="SnfX3s" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
+      <FILE id="LjvGSH" name="NamEditor.cpp" compile="1" resource="0" file="Source/NamEditor.cpp"/>
+      <FILE id="BGKYjt" name="NamEditor.h" compile="0" resource="0" file="Source/NamEditor.h"/>
+      <FILE id="IWQAmC" name="NeuralAmpModeler.cpp" compile="1" resource="0"
+            file="Source/NeuralAmpModeler.cpp"/>
+      <FILE id="SiubVk" name="NeuralAmpModeler.h" compile="0" resource="0"
+            file="Source/NeuralAmpModeler.h"/>
+      <FILE id="DcrXWO" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="bsKwN7" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="zcgQqH" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="pHmDuC" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
     </GROUP>
     <GROUP id="{57A3CD4A-D5F9-0323-41BA-A03E0249546C}" name="Assets">
-      <GROUP id="{1F9680EB-D546-B35B-1ECC-5611DEEDDA9D}" name="Buttons">
-        <FILE id="Iq4r0g" name="00.png" compile="0" resource="1" file="Assets/Buttons/00.png"/>
-        <FILE id="UMEmla" name="01.png" compile="0" resource="1" file="Assets/Buttons/01.png"/>
-        <FILE id="m1b3B1" name="02.png" compile="0" resource="1" file="Assets/Buttons/02.png"/>
-        <FILE id="y2LZew" name="03.png" compile="0" resource="1" file="Assets/Buttons/03.png"/>
-        <FILE id="lFimfM" name="04.png" compile="0" resource="1" file="Assets/Buttons/04.png"/>
-        <FILE id="EY5LTh" name="05.png" compile="0" resource="1" file="Assets/Buttons/05.png"/>
-        <FILE id="fNEIVS" name="10.png" compile="0" resource="1" file="Assets/Buttons/10.png"/>
-        <FILE id="yydhmF" name="11.png" compile="0" resource="1" file="Assets/Buttons/11.png"/>
-        <FILE id="J0QxGw" name="12.png" compile="0" resource="1" file="Assets/Buttons/12.png"/>
-        <FILE id="jKcFj2" name="13.png" compile="0" resource="1" file="Assets/Buttons/13.png"/>
-        <FILE id="JHPbF3" name="14.png" compile="0" resource="1" file="Assets/Buttons/14.png"/>
-        <FILE id="az475f" name="15.png" compile="0" resource="1" file="Assets/Buttons/15.png"/>
-        <FILE id="VdfAvZ" name="clearButtonPressed.png" compile="0" resource="1"
+      <GROUP id="{E35DB40E-9A3D-3482-A112-A07D174E88EC}" name="Buttons">
+        <FILE id="SeHNAi" name="00.png" compile="0" resource="1" file="Assets/Buttons/00.png"/>
+        <FILE id="cQhMlE" name="01.png" compile="0" resource="1" file="Assets/Buttons/01.png"/>
+        <FILE id="I5iqTC" name="02.png" compile="0" resource="1" file="Assets/Buttons/02.png"/>
+        <FILE id="Hwdb4s" name="03.png" compile="0" resource="1" file="Assets/Buttons/03.png"/>
+        <FILE id="pw91v2" name="04.png" compile="0" resource="1" file="Assets/Buttons/04.png"/>
+        <FILE id="KILwgE" name="05.png" compile="0" resource="1" file="Assets/Buttons/05.png"/>
+        <FILE id="jL7WlZ" name="06.png" compile="0" resource="1" file="Assets/Buttons/06.png"/>
+        <FILE id="HSGXUR" name="07.png" compile="0" resource="1" file="Assets/Buttons/07.png"/>
+        <FILE id="uYzGd7" name="10.png" compile="0" resource="1" file="Assets/Buttons/10.png"/>
+        <FILE id="ammSA9" name="11.png" compile="0" resource="1" file="Assets/Buttons/11.png"/>
+        <FILE id="IQztuo" name="12.png" compile="0" resource="1" file="Assets/Buttons/12.png"/>
+        <FILE id="rzllRZ" name="13.png" compile="0" resource="1" file="Assets/Buttons/13.png"/>
+        <FILE id="glPy0F" name="14.png" compile="0" resource="1" file="Assets/Buttons/14.png"/>
+        <FILE id="evSUJR" name="15.png" compile="0" resource="1" file="Assets/Buttons/15.png"/>
+        <FILE id="xlJGD5" name="16.png" compile="0" resource="1" file="Assets/Buttons/16.png"/>
+        <FILE id="lFjqnm" name="17.png" compile="0" resource="1" file="Assets/Buttons/17.png"/>
+        <FILE id="TeWx4r" name="clearButtonPressed.png" compile="0" resource="1"
               file="Assets/Buttons/clearButtonPressed.png"/>
-        <FILE id="gVwILc" name="clearButtonUnpressed.png" compile="0" resource="1"
+        <FILE id="iPL9f8" name="clearButtonUnpressed.png" compile="0" resource="1"
               file="Assets/Buttons/clearButtonUnpressed.png"/>
-        <FILE id="KOpA08" name="loadButtonPushed.png" compile="0" resource="1"
+        <FILE id="UZ45iR" name="loadButtonPushed.png" compile="0" resource="1"
               file="Assets/Buttons/loadButtonPushed.png"/>
-        <FILE id="rDGCKu" name="loadButtonUnpushed.png" compile="0" resource="1"
+        <FILE id="G7AFGz" name="loadButtonUnpushed.png" compile="0" resource="1"
               file="Assets/Buttons/loadButtonUnpushed.png"/>
       </GROUP>
-      <FILE id="cf6OAh" name="background.png" compile="0" resource="1" file="Assets/background.png"/>
-      <FILE id="LEcY2T" name="buttonPressed.png" compile="0" resource="1"
-            file="Assets/buttonPressed.png"/>
-      <FILE id="lbaPN0" name="buttonUnpressed.png" compile="0" resource="1"
-            file="Assets/buttonUnpressed.png"/>
-      <FILE id="UMrm6u" name="knob.png" compile="0" resource="1" file="Assets/knob.png"/>
-      <FILE id="rT0JMa" name="screens.png" compile="0" resource="1" file="Assets/screens.png"/>
-      <FILE id="xQMmKr" name="ICON.png" compile="0" resource="1" file="Assets/ICON.png"/>
-      <FILE id="sFbmsF" name="arrowcontract.png" compile="0" resource="1"
+      <GROUP id="{C0E41664-8287-FF70-248B-CF43F3785CE3}" name="EQ">
+        <FILE id="Dghq3N" name="eq_background_off.png" compile="0" resource="1"
+              file="Assets/EQ/eq_background_off.png"/>
+        <FILE id="k4IgWc" name="eq_background_on.png" compile="0" resource="1"
+              file="Assets/EQ/eq_background_on.png"/>
+        <FILE id="PrTZBJ" name="eq_thumb_off.png" compile="0" resource="1"
+              file="Assets/EQ/eq_thumb_off.png"/>
+        <FILE id="d5w9WB" name="eq_thumb_on.png" compile="0" resource="1" file="Assets/EQ/eq_thumb_on.png"/>
+        <FILE id="Ih1K0C" name="xIcon.png" compile="0" resource="1" file="Assets/EQ/xIcon.png"/>
+      </GROUP>
+      <FILE id="eOq36I" name="arrowcontract.png" compile="0" resource="1"
             file="Assets/arrowcontract.png"/>
-      <FILE id="EWlXb3" name="arrowexpand.png" compile="0" resource="1" file="Assets/arrowexpand.png"/>
+      <FILE id="W4vQGU" name="arrowexpand.png" compile="0" resource="1" file="Assets/arrowexpand.png"/>
+      <FILE id="HmoFZg" name="background.png" compile="0" resource="1" file="Assets/background.png"/>
+      <FILE id="JYPVRC" name="buttonPressed.png" compile="0" resource="1"
+            file="Assets/buttonPressed.png"/>
+      <FILE id="p9KivR" name="buttonUnpressed.png" compile="0" resource="1"
+            file="Assets/buttonUnpressed.png"/>
+      <FILE id="Mg9OE5" name="ICON.png" compile="0" resource="1" file="Assets/ICON.png"/>
+      <FILE id="l93j5W" name="knob.png" compile="0" resource="1" file="Assets/knob.png"/>
+      <FILE id="HcflTN" name="knob_minimal.png" compile="0" resource="1"
+            file="Assets/knob_minimal.png"/>
+      <FILE id="feQtSN" name="screens.png" compile="0" resource="1" file="Assets/screens.png"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
                FF_AUDIO_ALLOW_ALLOCATIONS_IN_MEASURE_BLOCK="0"/>
   <EXPORTFORMATS>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" smallIcon="Mg9OE5" bigIcon="Mg9OE5">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="Neural Amp Modeler" headerPath="../../Modules/eigen&#10;../../Modules/json/include/&#10;../../Modules/json/include/nlohmann"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Neural Amp Modeler" headerPath="../../Modules/eigen&#10;../../Modules/json/include/&#10;../../Modules/json/include/nlohmann"/>
@@ -126,7 +144,7 @@
         <MODULEPATH id="ff_meters" path="Modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2022 targetFolder="Builds/VisualStudio2022" smallIcon="xQMmKr" bigIcon="xQMmKr">
+    <VS2022 targetFolder="Builds/VisualStudio2022" smallIcon="Mg9OE5" bigIcon="Mg9OE5">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\Modules\eigen&#10;..\..\Modules\json\include\&#10;..\..\Modules\json\include\nlohmann&#10;"
                        useRuntimeLibDLL="0" targetName="Neural Amp Modeler"/>
@@ -150,7 +168,7 @@
         <MODULEPATH id="ff_meters" path="Modules"/>
       </MODULEPATHS>
     </VS2022>
-    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="xQMmKr" bigIcon="xQMmKr">
+    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="Mg9OE5" bigIcon="Mg9OE5">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="../../Modules/eigen&#10;../../Modules/json/include/&#10;../../Modules/json/include/nlohmann"
                        targetName="Neural Amp Modeler" macOSDeploymentTarget="10.15"

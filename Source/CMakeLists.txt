@@ -10,6 +10,10 @@ PRIVATE
     PluginProcessor.h
     MyLookAndFeel.h
     AssetManager.h
+    EqEditor.cpp
+    EqEditor.h
+    EqProcessor.cpp
+    EqProcessor.h
     architecture.hpp
 )
 

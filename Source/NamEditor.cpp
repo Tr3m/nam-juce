@@ -1,20 +1,14 @@
 #include "NamEditor.h"
 
 NamEditor::NamEditor(NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p), audioProcessor (p), eqEditor(p)
 {
     assetManager.reset(new AssetManager());
 
-    //Meters
-    meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
-    meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
-    meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentWhite);
-
-    meterIn.setLookAndFeel(&meterlnf);
+    //Meters 
     meterIn.setMeterSource(&audioProcessor.getMeterInSource());
     addAndMakeVisible(meterIn);
-
-    meterOut.setLookAndFeel(&meterlnf);
+    
     meterOut.setMeterSource(&audioProcessor.getMeterOutSource());
     addAndMakeVisible(meterOut);
 
@@ -161,6 +155,39 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
         irToggle->setToggleState(!irToggle->getToggleState(), true);
         assetManager->setToggleButton(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"), AssetManager::Buttons::IR_BUTTON);
     };
+
+    eqButton.reset(new juce::ImageButton("EQButton"));
+    addAndMakeVisible(eqButton.get());
+    eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 50, sliders[PluginKnobs::NoiseGate]->getY() + sliders[PluginKnobs::NoiseGate]->getHeight() + 15, 100, 40);
+    assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);
+    
+    addAndMakeVisible(&eqEditor);
+    eqEditor.setVisible(false);
+
+    eqButton->onClick = [this]
+    {
+        //toneStackToggle->setToggleState(!toneStackToggle->getToggleState(), true);
+        audioProcessor.eqModuleVisible = !audioProcessor.eqModuleVisible;
+        eqEditor.setVisible(audioProcessor.eqModuleVisible);
+
+        if(audioProcessor.eqModuleVisible)
+        {
+            eqButton->setBounds(getWidth() - 43, 25, 20, 20);
+            eqButton->setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f, juce::Colours::transparentWhite, xIcon, 0.65f, juce::Colours::transparentWhite, 0);
+        }
+        else
+        {
+            eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 50, sliders[PluginKnobs::NoiseGate]->getY() + sliders[PluginKnobs::NoiseGate]->getHeight() + 15, 100, 40);
+            assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);
+        }
+
+        setMeterPosition(!audioProcessor.eqModuleVisible);
+    };
+
+    eqButton->toFront(true);
+    meterIn.toFront(true);
+    meterOut.toFront(true);
+    
 }
 
 NamEditor::~NamEditor()
@@ -186,10 +213,9 @@ void NamEditor::paint(juce::Graphics& g)
 
 void NamEditor::resized()
 {
-    int meterHeight = 172;
-    int meterWidth = 18;
-    meterIn.setBounds(juce::Rectangle<int>(26, 174, meterWidth, meterHeight));
-    meterOut.setBounds(juce::Rectangle<int>(getWidth() - meterWidth - 22, 174, meterWidth, meterHeight));
+    eqEditor.setBounds(getLocalBounds());
+    
+    setMeterPosition(!audioProcessor.eqModuleVisible); // Need to change this when more modules are added...
 }
 
 void NamEditor::timerCallback()
@@ -278,4 +304,32 @@ void NamEditor::initializeButton(const juce::String label, const juce::String bu
     button.reset(new juce::ImageButton(label));
     addAndMakeVisible(button.get());
     button->setBounds(x, y, width, height);
+}
+
+void NamEditor::setMeterPosition(bool isOnMainScreen)
+{
+    if(isOnMainScreen)
+    {
+        meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
+        meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
+        meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentWhite);
+        meterIn.setLookAndFeel(&meterlnf);
+        meterOut.setLookAndFeel(&meterlnf);
+
+        int meterHeight = 172;
+        int meterWidth = 18;
+        meterIn.setBounds(juce::Rectangle<int>(26, 174, meterWidth, meterHeight));
+        meterOut.setBounds(juce::Rectangle<int>(getWidth() - meterWidth - 21, 174, meterWidth, meterHeight));
+    }
+    else
+    {
+        meterlnf2.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
+        meterIn.setLookAndFeel(&meterlnf2);
+        meterOut.setLookAndFeel(&meterlnf2);
+        
+        int meterHeight = 255;
+        int meterWidth = 20;  
+        meterIn.setBounds(20, (getHeight() / 2) - (meterHeight / 2) + 10, meterWidth, meterHeight);
+        meterOut.setBounds(getWidth() - 30, (getHeight() / 2) - (meterHeight / 2) + 10, meterWidth, meterHeight);
+    }
 }

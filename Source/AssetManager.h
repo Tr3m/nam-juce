@@ -15,6 +15,8 @@ public:
         toggleButtonAssets[0][3] = juce::ImageFileFormat::loadFrom(BinaryData::_03_png, BinaryData::_03_pngSize);
         toggleButtonAssets[0][4] = juce::ImageFileFormat::loadFrom(BinaryData::_04_png, BinaryData::_04_pngSize);
         toggleButtonAssets[0][5] = juce::ImageFileFormat::loadFrom(BinaryData::_05_png, BinaryData::_05_pngSize);
+        toggleButtonAssets[0][6] = juce::ImageFileFormat::loadFrom(BinaryData::_06_png, BinaryData::_06_pngSize);
+        toggleButtonAssets[0][7] = juce::ImageFileFormat::loadFrom(BinaryData::_07_png, BinaryData::_07_pngSize);
 
         toggleButtonAssets[1][0] = juce::ImageFileFormat::loadFrom(BinaryData::_10_png, BinaryData::_10_pngSize); 
         toggleButtonAssets[1][1] = juce::ImageFileFormat::loadFrom(BinaryData::_11_png, BinaryData::_11_pngSize);
@@ -22,6 +24,8 @@ public:
         toggleButtonAssets[1][3] = juce::ImageFileFormat::loadFrom(BinaryData::_13_png, BinaryData::_13_pngSize);
         toggleButtonAssets[1][4] = juce::ImageFileFormat::loadFrom(BinaryData::_14_png, BinaryData::_14_pngSize);
         toggleButtonAssets[1][5] = juce::ImageFileFormat::loadFrom(BinaryData::_15_png, BinaryData::_15_pngSize);
+        toggleButtonAssets[1][6] = juce::ImageFileFormat::loadFrom(BinaryData::_16_png, BinaryData::_16_pngSize);
+        toggleButtonAssets[1][7] = juce::ImageFileFormat::loadFrom(BinaryData::_17_png, BinaryData::_17_pngSize);
     }
 
     ~AssetManager()
@@ -61,14 +65,17 @@ public:
         NORM_PRESSED,
         NORM_UNPRESSED,
         TS_PRESSED,
-        TS_UNPRESSED
+        TS_UNPRESSED,
+        EQ_PRESSED,
+        EQ_UNPRESSED
     };
 
     enum Buttons
     {
         IR_BUTTON = 0,
         NORMALIZE_BUTTON = 2,
-        TONESTACK_BUTTON = 4
+        TONESTACK_BUTTON = 4,
+        EQ_BUTTON = 6
     };
 
 private:
@@ -88,7 +95,7 @@ private:
     juce::Image buttonUnpressed = juce::ImageFileFormat::loadFrom(BinaryData::buttonUnpressed_png, BinaryData::buttonUnpressed_pngSize); 
 
     //Toggle Buttons
-    juce::Image toggleButtonAssets[2][6];
+    juce::Image toggleButtonAssets[2][8];
     
      
 };

@@ -1,5 +1,6 @@
 file(GLOB SRC_FILES    
     "Buttons/*.png"
+    "EQ/*.png"
 )
 
 juce_add_binary_data(BinaryData SOURCES
@@ -10,6 +11,7 @@ juce_add_binary_data(BinaryData SOURCES
     screens.png
     arrowexpand.png
     arrowcontract.png
+    knob_minimal.png
     ${SRC_FILES}
 )
 

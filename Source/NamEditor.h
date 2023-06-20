@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "MyLookAndFeel.h"
 #include "AssetManager.h"
+#include "EqEditor.h"
 
 #define NUM_SLIDERS 8
 
@@ -20,6 +21,8 @@ public:
     void sliderValueChanged(juce::Slider* slider);
 
     void setToneStackEnabled(bool toneStackEnabled);
+
+    void setMeterPosition(bool isOnMainScreen);
 
 
     void loadModelButtonClicked();
@@ -47,7 +50,7 @@ private:
     std::unique_ptr<AssetManager> assetManager;   
         
 
-    knobLookAndFeel lnf;
+    knobLookAndFeel lnf {knobLookAndFeel::KnobTypes::Main};
 
     juce::String ngThreshold {"Null"};
 
@@ -56,13 +59,16 @@ private:
     std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment;
 
-    std::unique_ptr<juce::ImageButton> toneStackButton, normalizeButton, irButton, loadModelButton, loadIRButton, clearIrButton, clearModelButton;
+    std::unique_ptr<juce::ImageButton> toneStackButton, normalizeButton, irButton, loadModelButton, loadIRButton, clearIrButton, clearModelButton, eqButton;
+    juce::Image xIcon = juce::ImageFileFormat::loadFrom(BinaryData::xIcon_png, BinaryData::xIcon_pngSize);
 
     std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
 
 
     foleys::LevelMeter meterIn{ foleys::LevelMeter::SingleChannel }, meterOut{ foleys::LevelMeter::SingleChannel };
-    MeterLookAndFeel meterlnf;
+    MeterLookAndFeel meterlnf, meterlnf2;
+
+    EqEditor eqEditor;
 
     NamJUCEAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamEditor)
