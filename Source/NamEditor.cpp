@@ -22,6 +22,10 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     int xStart = 75;
     int xOffsetMultiplier = 140;
 
+    lnf.setColour (Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+    lnf.setColour (Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
+    lnf.setColour (Slider::textBoxTextColourId, juce::Colours::ivory);
+
     //Setup sliders
     for(int slider = 0; slider < NUM_SLIDERS; ++slider)
     {
@@ -30,15 +34,21 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
         sliders[slider]->setLookAndFeel(&lnf);
         sliders[slider]->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
         sliders[slider]->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
-        sliders[slider]->setPopupDisplayEnabled(true, true, getTopLevelComponent());
+        //sliders[slider]->setPopupDisplayEnabled(true, true, getTopLevelComponent());
 
+        int size2 = 20;
+        
         if(slider >= PluginKnobs::LowCut)
         {
             xStart = sliders[PluginKnobs::Middle]->getX();
-            sliders[slider]->setBounds(xStart + ((slider - 6) * xOffsetMultiplier), 435, knobSize, knobSize);
+            sliders[slider]->setBounds(xStart + ((slider - 6) * xOffsetMultiplier) - 10, 435, knobSize + size2, knobSize + size2 + 15);
+            sliders[slider]->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 80, 20);
+            sliders[slider]->setTextValueSuffix(" Hz");
         }
         else
             sliders[slider]->setBounds(xStart + (slider * xOffsetMultiplier), 204, knobSize, knobSize);
+            
+            
     }
 
     sliders[PluginKnobs::NoiseGate]->addListener(this);
