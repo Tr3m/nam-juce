@@ -38,14 +38,14 @@ void PresetManagerComponent::constructUI()
     nextButton.onClick = [this]
     {
         const auto index = presetManager.loadNextPreset();
-        presetComboBox.setSelectedItemIndex(index, dontSendNotification);
+        presetComboBox.setSelectedItemIndex(index, sendNotification);
         
     };
 
     previousButton.onClick = [this]
     {
         const auto index = presetManager.loadPreviousPreset();
-        presetComboBox.setSelectedItemIndex(index, dontSendNotification);
+        presetComboBox.setSelectedItemIndex(index, sendNotification);
     };
 
     addAndMakeVisible(&saveButton);

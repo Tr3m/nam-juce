@@ -30,6 +30,8 @@ public:
         _16K
     };
 
+    void updateGraphics();
+
 private:
 
     juce::Image backgroundOn = juce::ImageFileFormat::loadFrom(BinaryData::eq_background_on_png, BinaryData::eq_background_on_pngSize);

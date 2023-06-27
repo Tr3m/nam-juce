@@ -3,7 +3,7 @@
 
 //==============================================================================
 NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), namEditor(p), pmc(p.getPresetManager())
+    : AudioProcessorEditor (&p), audioProcessor (p), namEditor(p)
 {
 
     setSize (950, 650);
@@ -27,10 +27,7 @@ NamJUCEAudioProcessorEditor::NamJUCEAudioProcessorEditor (NamJUCEAudioProcessor&
     };
 
     //Check every time the GUI is reconstructed
-    setPluginSize(*audioProcessor.apvts.getRawParameterValue("SMALL_WINDOW_ID"));
-
-    addAndMakeVisible(&pmc);
-    pmc.setColour(juce::Colours::transparentWhite, 0.0f);
+    setPluginSize(*audioProcessor.apvts.getRawParameterValue("SMALL_WINDOW_ID"));    
     
 }
 
@@ -47,7 +44,7 @@ void NamJUCEAudioProcessorEditor::paint (juce::Graphics& g)
 
 void NamJUCEAudioProcessorEditor::resized()
 {
-    pmc.setBounds(getWidth() / 2 - 105, 5, 260, 30);    
+    
 }
 
 void NamJUCEAudioProcessorEditor::setPluginSize(bool makeSmall)

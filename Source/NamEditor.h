@@ -4,10 +4,11 @@
 #include "MyLookAndFeel.h"
 #include "AssetManager.h"
 #include "EqEditor.h"
+#include "PresetManager/PresetManagerComponent.h"
 
 #define NUM_SLIDERS 8
 
-class NamEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener
+class NamEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener, public juce::ComboBox::Listener
 {
 public:
 
@@ -23,6 +24,8 @@ public:
     void setToneStackEnabled(bool toneStackEnabled);
 
     void setMeterPosition(bool isOnMainScreen);
+
+    void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
 
     void loadModelButtonClicked();
@@ -75,6 +78,8 @@ private:
 
     EqEditor eqEditor;
 
+    PresetManagerComponent pmc;
+    
     NamJUCEAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamEditor)
 

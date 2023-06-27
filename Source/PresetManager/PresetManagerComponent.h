@@ -15,6 +15,8 @@ public:
     void loadComboBox();
     void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
+    juce::ComboBox* getComboBox() {return &presetComboBox;};
+
     void setColour(juce::Colour colourToUse, float alpha);
     void setColour(juce::Colour colourToUse);
 

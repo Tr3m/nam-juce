@@ -33,14 +33,7 @@ EqEditor::EqEditor(NamJUCEAudioProcessor& p)
     bypass.setBounds(145, 315, 35, 35);
     bypass.onClick = [this]
     {
-        if (*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))        
-            for (int i = 0; i <= 9; ++i)
-                sliders[i].setLookAndFeel(&lnfOn);        
-        else           
-            for (int i = 0; i <= 9; ++i)
-                sliders[i].setLookAndFeel(&lnfOff);
-        
-        repaint();
+        updateGraphics();
     };  
 
     bypassButtonAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "EQ_BYPASS_STATE_ID", bypass));
@@ -111,4 +104,16 @@ void EqEditor::placeSliders()
     xSlider = xSlider + 60;
     
   }
+}
+
+void EqEditor::updateGraphics()
+{
+    if (*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))        
+            for (int i = 0; i <= 9; ++i)
+                sliders[i].setLookAndFeel(&lnfOn);        
+    else           
+        for (int i = 0; i <= 9; ++i)
+            sliders[i].setLookAndFeel(&lnfOff);
+    
+    repaint();
 }

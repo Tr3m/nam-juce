@@ -1,7 +1,7 @@
 #include "NamEditor.h"
 
 NamEditor::NamEditor(NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), eqEditor(p)
+    : AudioProcessorEditor (&p), audioProcessor (p), eqEditor(p), pmc(p.getPresetManager())
 {
     assetManager.reset(new AssetManager());
 
@@ -198,6 +198,11 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     meterIn.toFront(true);
     meterOut.toFront(true);
 
+    addAndMakeVisible(&pmc);
+    pmc.setColour(juce::Colours::transparentWhite, 0.0f);
+
+    pmc.getComboBox()->addListener(this);
+
     startTimer(30);
     
 }
@@ -231,6 +236,8 @@ void NamEditor::resized()
     eqEditor.setBounds(getLocalBounds());
     
     setMeterPosition(!audioProcessor.eqModuleVisible); // Need to change this when more modules are added...
+
+    pmc.setBounds(getWidth() / 2 - 105, 5, 260, 30);    
 }
 
 void NamEditor::timerCallback()
@@ -352,5 +359,23 @@ void NamEditor::setMeterPosition(bool isOnMainScreen)
         int meterWidth = 20;  
         meterIn.setBounds(20, (getHeight() / 2) - (meterHeight / 2) + 10, meterWidth, meterHeight);
         meterOut.setBounds(getWidth() - 30, (getHeight() / 2) - (meterHeight / 2) + 10, meterWidth, meterHeight);
+    }
+}
+
+void NamEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
+{
+    if(comboBoxThatHasChanged == pmc.getComboBox())
+    {
+        if(audioProcessor.eqModuleVisible)
+            eqButton->setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f, juce::Colours::transparentWhite, xIcon, 0.65f, juce::Colours::transparentWhite, 0);
+        else
+            assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);
+
+        eqEditor.updateGraphics();
+
+        assetManager->setToggleButton(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"), AssetManager::Buttons::NORMALIZE_BUTTON);
+        assetManager->setToggleButton(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"), AssetManager::Buttons::TONESTACK_BUTTON);
+        setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
+        assetManager->setToggleButton(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"), AssetManager::Buttons::IR_BUTTON);
     }
 }
