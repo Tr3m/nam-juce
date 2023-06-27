@@ -5,7 +5,7 @@
 #include "NeuralAmpModeler.h"
 #include <ff_meters/ff_meters.h>
 #include "EqProcessor.h"
-
+#include "PresetManager/PresetManager.h"
 //==============================================================================
 /**
 */
@@ -82,6 +82,8 @@ public:
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 
+    PresetManager& getPresetManager(){ return presetManager; };
+
     bool eqModuleVisible {false};
 
 
@@ -108,6 +110,8 @@ private:
 
     foleys::LevelMeterSource meterInSource;
     foleys::LevelMeterSource meterOutSource;
+
+    PresetManager presetManager;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamJUCEAudioProcessor)
 };

@@ -21,7 +21,8 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                      #endif
                        ), apvts(*this, nullptr, "Params", createParameters()),
                         lowCut(juce::dsp::IIR::Coefficients<float>::makeHighPass(44100, 20.0f, 1.0f)),
-                        highCut(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f))
+                        highCut(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f)),
+                        presetManager(apvts)
 #endif
 {
     

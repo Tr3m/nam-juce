@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "NamEditor.h"
+#include "PresetManager/PresetManagerComponent.h"
 
 //==============================================================================
 /**
@@ -31,6 +32,8 @@ private:
     
     juce::Image arrowExpand = juce::ImageFileFormat::loadFrom(BinaryData::arrowexpand_png, BinaryData::arrowexpand_pngSize); 
     juce::Image arrowContract = juce::ImageFileFormat::loadFrom(BinaryData::arrowcontract_png, BinaryData::arrowcontract_pngSize);
+
+    PresetManagerComponent pmc;
 
     NamJUCEAudioProcessor& audioProcessor;
 

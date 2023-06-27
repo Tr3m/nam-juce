@@ -19,3 +19,6 @@ PRIVATE
 
 add_subdirectory(NeuralAmpModelerCore)
 include_directories(NeuralAmpModelerCore)
+
+add_subdirectory(PresetManager)
+include_directories(PresetManager)

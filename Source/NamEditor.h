@@ -54,7 +54,7 @@ private:
 
     juce::String ngThreshold {"Null"};
 
-    int screensOffset = 27;
+    int screensOffset = 46;
 
     std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment;
