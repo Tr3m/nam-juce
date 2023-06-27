@@ -15,6 +15,8 @@ public:
     void loadComboBox();
     void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
+    void parameterChanged();
+
     juce::ComboBox* getComboBox() {return &presetComboBox;};
 
     void setColour(juce::Colour colourToUse, float alpha);
@@ -42,6 +44,8 @@ private:
 
     PresetManager& presetManager;
     std::unique_ptr<juce::FileChooser> fileChooser;
+
+    juce::TooltipWindow tooltipWindow { this, 300 };
 
     void constructUI();
 

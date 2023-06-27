@@ -38,8 +38,7 @@ void PresetManagerComponent::constructUI()
     nextButton.onClick = [this]
     {
         const auto index = presetManager.loadNextPreset();
-        presetComboBox.setSelectedItemIndex(index, sendNotification);
-        
+        presetComboBox.setSelectedItemIndex(index, sendNotification);        
     };
 
     previousButton.onClick = [this]
@@ -51,10 +50,11 @@ void PresetManagerComponent::constructUI()
     addAndMakeVisible(&saveButton);
     saveButton.setImages(false, true, true, saveUnpushed, 1.0f, juce::Colours::transparentBlack, saveUnpushed, 1.0f, juce::Colours::transparentBlack, savePushed, 1.0f, juce::Colours::transparentBlack, 0);
     saveButton.setMouseCursor(juce::MouseCursor::PointingHandCursor);
+    saveButton.setTooltip("Save Preset");
     saveButton.onClick = [this]
     {
         fileChooser = std::make_unique<FileChooser>(
-            "Please enter the name of the preset to save",
+            "Enter Preset Name",
             PresetManager::defaultPresetDirectory,
             "*." + PresetManager::presetExtension
         );
@@ -104,6 +104,11 @@ void PresetManagerComponent::resized()
     previousButton.setBounds(presetName.getX() - 30, (getHeight() / 2) - 12, 25, 25);
     nextButton.setBounds(presetName.getX() + presetName.getWidth() + 5, (getHeight() / 2) - 12, 25, 25);
     saveButton.setBounds(nextButton.getX() + nextButton.getWidth() + 5, (getHeight() / 2) - 12, 25, 25);
+    
+}
+
+void PresetManagerComponent::parameterChanged()
+{
     
 }
 

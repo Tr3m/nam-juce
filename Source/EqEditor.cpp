@@ -85,6 +85,12 @@ void EqEditor::resized()
     outGainSlider.setBounds(getWidth() - 140, 50, knobSize, knobSize);
 }
 
+void EqEditor::toggleEq()
+{
+    bypass.setToggleState(!bypass.getToggleState(), true);
+    updateGraphics();
+}
+
 void EqEditor::placeSliders()
 {
   int xSlider = 190;

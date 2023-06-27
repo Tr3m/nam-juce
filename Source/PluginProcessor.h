@@ -86,6 +86,8 @@ public:
 
     bool eqModuleVisible {false};
 
+    void loadFromPreset(juce::String modelPath, juce::String irPath);
+
 
 private:
     //==============================================================================

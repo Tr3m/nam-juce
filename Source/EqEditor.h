@@ -12,6 +12,8 @@ public:
 
     void paint(juce::Graphics&) override;
     void resized() override;
+    
+    void toggleEq();
 
     void placeSliders();
     void updateSliders();

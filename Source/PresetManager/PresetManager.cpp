@@ -1,9 +1,9 @@
 #include "PresetManager.h"
 
-const juce::File PresetManager::defaultPresetDirectory {juce::File::getSpecialLocation(juce::File::SpecialLocationType::commonApplicationDataDirectory)
-    .getChildFile(ProjectInfo::companyName).getChildFile(ProjectInfo::projectName)};
+const juce::File PresetManager::defaultPresetDirectory {juce::File::getSpecialLocation(juce::File::SpecialLocationType::userHomeDirectory)
+    .getChildFile(ProjectInfo::projectName).getChildFile("Presets")};
 
-const juce::String PresetManager::presetExtension{"preset"};
+const juce::String PresetManager::presetExtension{"nampreset"};
 const juce::String PresetManager::presetNameProperty{ "presetName" };
 
 PresetManager::PresetManager(juce::AudioProcessorValueTreeState& apvts):

@@ -173,25 +173,35 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     
     addAndMakeVisible(&eqEditor);
     eqEditor.setVisible(false);
-
+    
+    
     eqButton->onClick = [this]
     {
-        //toneStackToggle->setToggleState(!toneStackToggle->getToggleState(), true);
-        audioProcessor.eqModuleVisible = !audioProcessor.eqModuleVisible;
-        eqEditor.setVisible(audioProcessor.eqModuleVisible);
-
-        if(audioProcessor.eqModuleVisible)
+        auto modifiers = juce::ModifierKeys::getCurrentModifiers();
+        if (modifiers.isShiftDown() && !audioProcessor.eqModuleVisible)
         {
-            eqButton->setBounds(getWidth() - 43, 25, 20, 20);
-            eqButton->setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f, juce::Colours::transparentWhite, xIcon, 0.65f, juce::Colours::transparentWhite, 0);
+            eqEditor.toggleEq();
+            assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);            
         }
         else
         {
-            eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 50, sliders[PluginKnobs::NoiseGate]->getY() + sliders[PluginKnobs::NoiseGate]->getHeight() + 15, 100, 40);
-            assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);
-        }
+            //toneStackToggle->setToggleState(!toneStackToggle->getToggleState(), true);
+            audioProcessor.eqModuleVisible = !audioProcessor.eqModuleVisible;
+            eqEditor.setVisible(audioProcessor.eqModuleVisible);
 
-        setMeterPosition(!audioProcessor.eqModuleVisible);
+            if(audioProcessor.eqModuleVisible)
+            {
+                eqButton->setBounds(getWidth() - 43, 25, 20, 20);
+                eqButton->setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f, juce::Colours::transparentWhite, xIcon, 0.65f, juce::Colours::transparentWhite, 0);
+            }
+            else
+            {
+                eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 50, sliders[PluginKnobs::NoiseGate]->getY() + sliders[PluginKnobs::NoiseGate]->getHeight() + 15, 100, 40);
+                assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);
+            }
+
+            setMeterPosition(!audioProcessor.eqModuleVisible);
+        }
     };
 
     eqButton->toFront(true);
@@ -320,11 +330,10 @@ void NamEditor::initializeTextBox(const juce::String label, std::unique_ptr<juce
     textBox->setColour(juce::TextEditor::outlineColourId, juce::Colours::transparentBlack);
     juce::Font textBoxFont;
     textBoxFont.setHeight(18.0f);
-    textBoxFont.setBold(true);
+    //textBoxFont.setBold(true);
     textBox->setFont(textBoxFont);
     textBox->setAlpha(0.8f);
-    textBox->setBounds(x, y, width, height);
-    
+    textBox->setBounds(x, y, width, height);    
 }
 
 void NamEditor::initializeButton(const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y, int width, int height)
@@ -377,5 +386,36 @@ void NamEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
         assetManager->setToggleButton(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"), AssetManager::Buttons::TONESTACK_BUTTON);
         setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
         assetManager->setToggleButton(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"), AssetManager::Buttons::IR_BUTTON);
+
+        auto addons = audioProcessor.apvts.state.getOrCreateChildWithName ("addons", nullptr);
+        //DBG(addons.getProperty ("model_path", juce::String()).toString());
+        //DBG(addons.getProperty ("ir_path", juce::String()).toString());
+
+        audioProcessor.loadFromPreset(addons.getProperty ("model_path", juce::String()), addons.getProperty ("ir_path", juce::String()));               
+        
+        //Check the processor for Model and IR status after loading preset.
+        if(audioProcessor.getLastModelPath() != "null")
+        {        
+            audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
+            modelNameBox->setText(audioProcessor.getLastModelName());
+        }
+        else
+        {
+            modelNameBox->setText("");
+        }
+
+        if(audioProcessor.getLastIrPath() != "null")
+        {        
+            audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
+            irNameBox->setText(audioProcessor.getLastIrName());
+        } 
+        else
+        {
+            irNameBox->setText("");
+        }
+
+        clearModelButton->setVisible(audioProcessor.getNamModelStatus());       
+        clearIrButton->setVisible(audioProcessor.getIrStatus()); 
+        
     }
 }

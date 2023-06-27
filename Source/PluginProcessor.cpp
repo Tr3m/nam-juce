@@ -25,7 +25,7 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                         presetManager(apvts)
 #endif
 {
-    
+
 }
 
 NamJUCEAudioProcessor::~NamJUCEAudioProcessor()
@@ -141,6 +141,66 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     }
 }
 
+void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String irPath)
+{
+    this->suspendProcessing(true);
+    
+    if(modelPath != "null")
+    {
+        juce::File fileCheck{modelPath};
+        if(!fileCheck.exists())
+        {           
+            myNAM.clear(); 
+            lastModelName = "Model File Missing!"; 
+            lastModelPath = modelPath.toStdString();  
+        }
+        else
+        {
+            myNAM.loadModel(modelPath.toStdString());
+            lastModelPath = modelPath.toStdString();
+            lastModelName = fileCheck.getFileNameWithoutExtension().toStdString();
+        }
+    }
+    else
+    {
+        myNAM.clear();
+        lastModelPath = "null";
+        lastModelName = "";
+    }
+
+    //Load last IR
+    if(irPath != "null")
+    {        
+        juce::File fileCheck{irPath};
+        if(!fileCheck.exists())
+        {
+            clearIR();        
+            irFound = false;  
+            irLoaded = false; 
+            lastIrName = "IR File Missing!";
+            lastIrPath = irPath.toStdString();                        
+        }
+        else
+        {
+            irFound = true;
+            cab.loadImpulseResponse(juce::File(irPath), juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+            irLoaded = true;
+            lastIrPath = irPath.toStdString();
+            lastIrName = fileCheck.getFileNameWithoutExtension().toStdString();
+        }            
+    }
+    else
+    {
+        clearIR();
+        lastIrPath = "null";
+        lastIrName = "";
+    }
+
+    DBG("Loaded: \nModel: " + lastModelName + "\nIR: " + lastIrName);
+
+    this->suspendProcessing(false);
+}
+
 void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
 {
     std::string model_path = modelToLoad.getFullPathName().toStdString();
@@ -150,6 +210,9 @@ void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
 
     lastModelPath = model_path;
     lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
+
+    auto addons = apvts.state.getOrCreateChildWithName ("addons", nullptr);
+    addons.setProperty ("model_path", juce::String(lastModelPath), nullptr);
 }
 
 bool NamJUCEAudioProcessor::getIrStatus()
@@ -163,6 +226,7 @@ bool NamJUCEAudioProcessor::getTriggerStatus()
     return t_state->isGating();
 }
 
+
 void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
 {
     std::string ir_path = irToLoad.getFullPathName().toStdString();
@@ -170,6 +234,10 @@ void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
     irLoaded = true;
     lastIrPath = ir_path;
     lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
+
+    auto addons = apvts.state.getOrCreateChildWithName ("addons", nullptr);    
+    addons.setProperty ("ir_path", juce::String(lastIrPath), nullptr);
+    
 }
 
 void NamJUCEAudioProcessor::clearIR()
@@ -178,6 +246,9 @@ void NamJUCEAudioProcessor::clearIR()
     irLoaded = false;
     lastIrPath = "null";
     lastIrName = "null";
+
+    auto addons = apvts.state.getOrCreateChildWithName ("addons", nullptr);    
+    addons.setProperty ("ir_path", juce::String(lastIrPath), nullptr);
 }
 
 void NamJUCEAudioProcessor::releaseResources()
@@ -279,29 +350,32 @@ void NamJUCEAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     xml->setAttribute("ModelName", lastModelName);
     xml->setAttribute("IRPath", lastIrPath);
     xml->setAttribute("IRName", lastIrName);
+
     copyXmlToBinary(*xml, destData);
 }
 
 void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
+    DBG("Set State Info...");
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(apvts.state.getType()))
         {
             apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
+        
             //Try to load last NAM Model
             try
             {
                 lastModelPath = xmlState->getStringAttribute("ModelPath").toStdString();
-                lastModelName = xmlState->getStringAttribute("ModelName").toStdString();
+                lastModelName = xmlState->getStringAttribute("ModelName").toStdString();               
 
                 if(lastModelName != "null")
                 {
                     juce::File fileCheck{lastModelPath};
-                    if(!fileCheck.exists())
-                        lastModelName = "Model File Missing!";                    
-                }
+                    if(!fileCheck.exists())                    
+                        lastModelName = "Model File Missing!";                                       
+                }                  
             }
             catch(const std::exception& e)
             {
@@ -321,7 +395,7 @@ void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInByt
                     if(!fileCheck.exists())
                     {
                         lastIrName = "IR File Missing!";   
-                        irFound = false;                 
+                        irFound = false;          
                     }
                     else
                         irFound = true;
@@ -332,7 +406,7 @@ void NamJUCEAudioProcessor::setStateInformation (const void* data, int sizeInByt
                 lastIrPath = "null";
                 lastIrName = "";
                 irFound = false;
-            }
+            }               
         }
 }
 
@@ -343,9 +417,15 @@ bool NamJUCEAudioProcessor::getNamModelStatus()
 
 void NamJUCEAudioProcessor::clearNAM()
 {
+    this->suspendProcessing(true);
     myNAM.clear();
     lastModelPath = "null";
     lastModelName = "null";
+
+    auto addons = apvts.state.getOrCreateChildWithName ("addons", nullptr);    
+    addons.setProperty ("model_path", juce::String(lastModelPath), nullptr);
+
+    this->suspendProcessing(false);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::createParameters()
