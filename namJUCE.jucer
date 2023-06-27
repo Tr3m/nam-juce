@@ -3,7 +3,7 @@
 <JUCERPROJECT id="njospK" name="namJUCE" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               cppLanguageStandard="17" pluginManufacturer="Manos Labrakis"
-              pluginName="Neural Amp Modeler" version="1.0.0" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
+              pluginName="Neural Amp Modeler" version="0.3.0" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="fLUIGm" name="namJUCE">
     <GROUP id="{374B1152-41A2-5B5A-A64F-8F1AF7840A23}" name="Source">
       <GROUP id="{90CD07F4-D2DB-4460-BE38-804F65671A44}" name="NeuralAmpModelerCore">
@@ -44,6 +44,15 @@
         <FILE id="QUfIVa" name="format.sh" compile="0" resource="1" file="Source/NeuralAmpModelerCore/format.sh"/>
         <FILE id="Mdef91" name="LICENSE" compile="0" resource="1" file="Source/NeuralAmpModelerCore/LICENSE"/>
         <FILE id="SdrGGJ" name="README.md" compile="0" resource="1" file="Source/NeuralAmpModelerCore/README.md"/>
+      </GROUP>
+      <GROUP id="{E7ABC22E-4960-9FF1-F922-81FA7F3F3A4C}" name="PresetManager">
+        <FILE id="kfjdlk" name="PresetManager.cpp" compile="1" resource="0"
+              file="Source/PresetManager/PresetManager.cpp"/>
+        <FILE id="otblFY" name="PresetManager.h" compile="0" resource="0" file="Source/PresetManager/PresetManager.h"/>
+        <FILE id="sLlGG9" name="PresetManagerComponent.cpp" compile="1" resource="0"
+              file="Source/PresetManager/PresetManagerComponent.cpp"/>
+        <FILE id="pYxCtI" name="PresetManagerComponent.h" compile="0" resource="0"
+              file="Source/PresetManager/PresetManagerComponent.h"/>
       </GROUP>
       <FILE id="hSijUv" name="architecture.hpp" compile="0" resource="0"
             file="Source/architecture.hpp"/>
@@ -93,6 +102,18 @@
               file="Assets/Buttons/loadButtonPushed.png"/>
         <FILE id="ekgTr6" name="loadButtonUnpushed.png" compile="0" resource="1"
               file="Assets/Buttons/loadButtonUnpushed.png"/>
+      </GROUP>
+      <GROUP id="{3E001BEA-AEB0-0A30-99E8-BEA51E6FD611}" name="PresetManagerAssets">
+        <FILE id="PjeeXc" name="backpushed.png" compile="0" resource="1" file="Assets/PresetManagerAssets/backpushed.png"/>
+        <FILE id="I0RGwr" name="backunpushed.png" compile="0" resource="1"
+              file="Assets/PresetManagerAssets/backunpushed.png"/>
+        <FILE id="ikg4FV" name="forwardpushed.png" compile="0" resource="1"
+              file="Assets/PresetManagerAssets/forwardpushed.png"/>
+        <FILE id="YvBxpp" name="forwardunpushed.png" compile="0" resource="1"
+              file="Assets/PresetManagerAssets/forwardunpushed.png"/>
+        <FILE id="bDzJEw" name="savepushed.png" compile="0" resource="1" file="Assets/PresetManagerAssets/savepushed.png"/>
+        <FILE id="Hw4Zr7" name="saveunpushed.png" compile="0" resource="1"
+              file="Assets/PresetManagerAssets/saveunpushed.png"/>
       </GROUP>
       <GROUP id="{465BC252-6815-87E8-3E10-1380DD6D38FE}" name="EQ">
         <FILE id="s9fvtE" name="eq_background_off.png" compile="0" resource="1"

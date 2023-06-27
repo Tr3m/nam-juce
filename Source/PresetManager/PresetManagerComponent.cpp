@@ -38,13 +38,13 @@ void PresetManagerComponent::constructUI()
     nextButton.onClick = [this]
     {
         const auto index = presetManager.loadNextPreset();
-        presetComboBox.setSelectedItemIndex(index, sendNotification);        
+        presetComboBox.setSelectedItemIndex(index, juce::sendNotification);        
     };
 
     previousButton.onClick = [this]
     {
         const auto index = presetManager.loadPreviousPreset();
-        presetComboBox.setSelectedItemIndex(index, sendNotification);
+        presetComboBox.setSelectedItemIndex(index, juce::sendNotification);
     };
 
     addAndMakeVisible(&saveButton);
@@ -53,12 +53,12 @@ void PresetManagerComponent::constructUI()
     saveButton.setTooltip("Save Preset");
     saveButton.onClick = [this]
     {
-        fileChooser = std::make_unique<FileChooser>(
+        fileChooser = std::make_unique<juce::FileChooser>(
             "Enter Preset Name",
             PresetManager::defaultPresetDirectory,
             "*." + PresetManager::presetExtension
         );
-        fileChooser->launchAsync(FileBrowserComponent::saveMode, [&](const FileChooser& chooser)
+        fileChooser->launchAsync(juce::FileBrowserComponent::saveMode, [&](const juce::FileChooser& chooser)
             {
                 const auto resultFile = chooser.getResult();
                 presetManager.savePreset(resultFile.getFileNameWithoutExtension());
@@ -69,7 +69,7 @@ void PresetManagerComponent::constructUI()
 
 void PresetManagerComponent::loadComboBox()
 {
-    presetComboBox.clear(dontSendNotification);
+    presetComboBox.clear(juce::dontSendNotification);
     
     const auto allPresets = presetManager.getAllPresets();
     const auto currentPreset = presetManager.getCurrentPreset();

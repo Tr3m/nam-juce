@@ -1,7 +1,7 @@
 #include "PresetManager.h"
 
 const juce::File PresetManager::defaultPresetDirectory {juce::File::getSpecialLocation(juce::File::SpecialLocationType::userHomeDirectory)
-    .getChildFile(ProjectInfo::projectName).getChildFile("Presets")};
+    .getChildFile("Neural Amp Modeler").getChildFile("Presets")};
 
 const juce::String PresetManager::presetExtension{"nampreset"};
 const juce::String PresetManager::presetNameProperty{ "presetName" };
