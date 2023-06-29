@@ -113,7 +113,7 @@ int PresetManager::loadNextPreset()
     const auto currentIndex = allPresets.indexOf(currentPreset.toString());
     const auto nextIndex = currentIndex + 1 > (allPresets.size() - 1) ? 0 : currentIndex + 1;
     
-    loadPreset(allPresets.getReference(nextIndex)); //This will work on JUCE 6.1.5
+    //loadPreset(allPresets.getReference(nextIndex)); //This will work on JUCE 6.1.5
 
     return nextIndex; 
 }
@@ -127,7 +127,7 @@ int PresetManager::loadPreviousPreset()
     const auto currentIndex = allPresets.indexOf(currentPreset.toString());
     const auto previousIndex = currentIndex - 1 < 0 ? allPresets.size() - 1 : currentIndex - 1;
 
-    loadPreset(allPresets.getReference(previousIndex)); //This will work on JUCE 6.1.5
+    //loadPreset(allPresets.getReference(previousIndex)); //This will work on JUCE 6.1.5
 
     return previousIndex;
 }

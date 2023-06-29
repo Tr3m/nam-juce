@@ -1,7 +1,7 @@
 #include "NamEditor.h"
 
 NamEditor::NamEditor(NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), eqEditor(p), pmc(p.getPresetManager())
+    : AudioProcessorEditor (&p), audioProcessor (p), eqEditor(p), pmc(p.getPresetManager(), [&]() { updateAfterPresetLoad(); })
 {
     assetManager.reset(new AssetManager());
 
@@ -211,10 +211,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     addAndMakeVisible(&pmc);
     pmc.setColour(juce::Colours::transparentWhite, 0.0f);
 
-    pmc.getComboBox()->addListener(this);
-
-    startTimer(30);
-    
+    startTimer(30);    
 }
 
 NamEditor::~NamEditor()
@@ -371,51 +368,47 @@ void NamEditor::setMeterPosition(bool isOnMainScreen)
     }
 }
 
-void NamEditor::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
+void NamEditor::updateAfterPresetLoad()
 {
-    if(comboBoxThatHasChanged == pmc.getComboBox())
-    {
-        if(audioProcessor.eqModuleVisible)
-            eqButton->setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f, juce::Colours::transparentWhite, xIcon, 0.65f, juce::Colours::transparentWhite, 0);
-        else
-            assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);
+    if(audioProcessor.eqModuleVisible)
+        eqButton->setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f, juce::Colours::transparentWhite, xIcon, 0.65f, juce::Colours::transparentWhite, 0);
+    else
+        assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);
 
-        eqEditor.updateGraphics();
+    eqEditor.updateGraphics();
 
-        assetManager->setToggleButton(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"), AssetManager::Buttons::NORMALIZE_BUTTON);
-        assetManager->setToggleButton(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"), AssetManager::Buttons::TONESTACK_BUTTON);
-        setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
-        assetManager->setToggleButton(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"), AssetManager::Buttons::IR_BUTTON);
+    assetManager->setToggleButton(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"), AssetManager::Buttons::NORMALIZE_BUTTON);
+    assetManager->setToggleButton(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"), AssetManager::Buttons::TONESTACK_BUTTON);
+    setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
+    assetManager->setToggleButton(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"), AssetManager::Buttons::IR_BUTTON);
 
-        auto addons = audioProcessor.apvts.state.getOrCreateChildWithName ("addons", nullptr);
-        //DBG(addons.getProperty ("model_path", juce::String()).toString());
-        //DBG(addons.getProperty ("ir_path", juce::String()).toString());
+    auto addons = audioProcessor.apvts.state.getOrCreateChildWithName ("addons", nullptr);
+    //DBG(addons.getProperty ("model_path", juce::String()).toString());
+    //DBG(addons.getProperty ("ir_path", juce::String()).toString());
 
-        audioProcessor.loadFromPreset(addons.getProperty ("model_path", juce::String()), addons.getProperty ("ir_path", juce::String()));               
-        
-        //Check the processor for Model and IR status after loading preset.
-        if(audioProcessor.getLastModelPath() != "null")
-        {        
-            audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
-            modelNameBox->setText(audioProcessor.getLastModelName());
-        }
-        else
-        {
-            modelNameBox->setText("");
-        }
-
-        if(audioProcessor.getLastIrPath() != "null")
-        {        
-            audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
-            irNameBox->setText(audioProcessor.getLastIrName());
-        } 
-        else
-        {
-            irNameBox->setText("");
-        }
-
-        clearModelButton->setVisible(audioProcessor.getNamModelStatus());       
-        clearIrButton->setVisible(audioProcessor.getIrStatus()); 
-        
+    audioProcessor.loadFromPreset(addons.getProperty ("model_path", juce::String()), addons.getProperty ("ir_path", juce::String()));               
+    
+    //Check the processor for Model and IR status after loading preset.
+    if(audioProcessor.getLastModelPath() != "null")
+    {        
+        audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
+        modelNameBox->setText(audioProcessor.getLastModelName());
     }
+    else
+    {
+        modelNameBox->setText("");
+    }
+
+    if(audioProcessor.getLastIrPath() != "null")
+    {        
+        audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
+        irNameBox->setText(audioProcessor.getLastIrName());
+    } 
+    else
+    {
+        irNameBox->setText("");
+    }
+
+    clearModelButton->setVisible(audioProcessor.getNamModelStatus());       
+    clearIrButton->setVisible(audioProcessor.getIrStatus()); 
 }

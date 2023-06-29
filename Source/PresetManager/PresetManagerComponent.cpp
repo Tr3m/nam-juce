@@ -1,7 +1,7 @@
 #include "PresetManagerComponent.h"
 
-PresetManagerComponent::PresetManagerComponent(PresetManager& pm) :
-    presetManager(pm)
+PresetManagerComponent::PresetManagerComponent(PresetManager& pm, std::function<void()>&& updateFunction) :
+    presetManager(pm), parentUpdater(std::move(updateFunction))
 {   
     constructUI();
 }
@@ -115,5 +115,7 @@ void PresetManagerComponent::parameterChanged()
 void PresetManagerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 {
     presetName.setText(comboBoxThatHasChanged->getItemText(comboBoxThatHasChanged->getSelectedId() - 1));
-    presetManager.loadPreset(presetComboBox.getItemText(presetComboBox.getSelectedItemIndex()));
+    presetManager.loadPreset(comboBoxThatHasChanged->getItemText(comboBoxThatHasChanged->getSelectedItemIndex()));
+
+    parentUpdater();
 }

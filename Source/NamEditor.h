@@ -8,7 +8,7 @@
 
 #define NUM_SLIDERS 8
 
-class NamEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener, public juce::ComboBox::Listener
+class NamEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener
 {
 public:
 
@@ -24,9 +24,6 @@ public:
     void setToneStackEnabled(bool toneStackEnabled);
 
     void setMeterPosition(bool isOnMainScreen);
-
-    void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
-
 
     void loadModelButtonClicked();
     void loadIrButtonClicked();
@@ -86,4 +83,8 @@ private:
 private:
     void initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height);
     void initializeButton(const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y, int width, int height);
+
+    // Pass this to the Preset Manager for updating the gui after loading a new preset.
+    // Maybe not the best way of doing it...
+    void updateAfterPresetLoad(); 
 };
