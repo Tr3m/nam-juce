@@ -77,32 +77,6 @@
             file="Source/PluginProcessor.h"/>
     </GROUP>
     <GROUP id="{57A3CD4A-D5F9-0323-41BA-A03E0249546C}" name="Assets">
-      <GROUP id="{E35DB40E-9A3D-3482-A112-A07D174E88EC}" name="Buttons">
-        <FILE id="X1IUbF" name="00.png" compile="0" resource="1" file="Assets/Buttons/00.png"/>
-        <FILE id="RcNSis" name="01.png" compile="0" resource="1" file="Assets/Buttons/01.png"/>
-        <FILE id="nAan0M" name="02.png" compile="0" resource="1" file="Assets/Buttons/02.png"/>
-        <FILE id="eIAkio" name="03.png" compile="0" resource="1" file="Assets/Buttons/03.png"/>
-        <FILE id="Z9DBkX" name="04.png" compile="0" resource="1" file="Assets/Buttons/04.png"/>
-        <FILE id="GSt882" name="05.png" compile="0" resource="1" file="Assets/Buttons/05.png"/>
-        <FILE id="HyrmwX" name="06.png" compile="0" resource="1" file="Assets/Buttons/06.png"/>
-        <FILE id="BqFjNq" name="07.png" compile="0" resource="1" file="Assets/Buttons/07.png"/>
-        <FILE id="X15EzV" name="10.png" compile="0" resource="1" file="Assets/Buttons/10.png"/>
-        <FILE id="Y6pPay" name="11.png" compile="0" resource="1" file="Assets/Buttons/11.png"/>
-        <FILE id="gdmj2J" name="12.png" compile="0" resource="1" file="Assets/Buttons/12.png"/>
-        <FILE id="hs3mdU" name="13.png" compile="0" resource="1" file="Assets/Buttons/13.png"/>
-        <FILE id="LM21iK" name="14.png" compile="0" resource="1" file="Assets/Buttons/14.png"/>
-        <FILE id="pwe8bj" name="15.png" compile="0" resource="1" file="Assets/Buttons/15.png"/>
-        <FILE id="g2xCwM" name="16.png" compile="0" resource="1" file="Assets/Buttons/16.png"/>
-        <FILE id="aUoKXu" name="17.png" compile="0" resource="1" file="Assets/Buttons/17.png"/>
-        <FILE id="AddtSR" name="clearButtonPressed.png" compile="0" resource="1"
-              file="Assets/Buttons/clearButtonPressed.png"/>
-        <FILE id="wHDVt4" name="clearButtonUnpressed.png" compile="0" resource="1"
-              file="Assets/Buttons/clearButtonUnpressed.png"/>
-        <FILE id="eLiHwd" name="loadButtonPushed.png" compile="0" resource="1"
-              file="Assets/Buttons/loadButtonPushed.png"/>
-        <FILE id="ekgTr6" name="loadButtonUnpushed.png" compile="0" resource="1"
-              file="Assets/Buttons/loadButtonUnpushed.png"/>
-      </GROUP>
       <GROUP id="{3E001BEA-AEB0-0A30-99E8-BEA51E6FD611}" name="PresetManagerAssets">
         <FILE id="PjeeXc" name="backpushed.png" compile="0" resource="1" file="Assets/PresetManagerAssets/backpushed.png"/>
         <FILE id="I0RGwr" name="backunpushed.png" compile="0" resource="1"
@@ -114,6 +88,36 @@
         <FILE id="bDzJEw" name="savepushed.png" compile="0" resource="1" file="Assets/PresetManagerAssets/savepushed.png"/>
         <FILE id="Hw4Zr7" name="saveunpushed.png" compile="0" resource="1"
               file="Assets/PresetManagerAssets/saveunpushed.png"/>
+      </GROUP>
+      <GROUP id="{0633B4DA-431C-A66A-5FD5-E13E82BF7B5D}" name="Buttons">
+        <FILE id="Hrv6sL" name="00.png" compile="0" resource="1" file="Assets/Buttons/00.png"/>
+        <FILE id="KLVDgo" name="01.png" compile="0" resource="1" file="Assets/Buttons/01.png"/>
+        <FILE id="GNlUu2" name="02.png" compile="0" resource="1" file="Assets/Buttons/02.png"/>
+        <FILE id="NSfAr8" name="03.png" compile="0" resource="1" file="Assets/Buttons/03.png"/>
+        <FILE id="NmlwTq" name="04.png" compile="0" resource="1" file="Assets/Buttons/04.png"/>
+        <FILE id="sHn5LV" name="05.png" compile="0" resource="1" file="Assets/Buttons/05.png"/>
+        <FILE id="oOGvMj" name="06.png" compile="0" resource="1" file="Assets/Buttons/06.png"/>
+        <FILE id="juNXpk" name="07.png" compile="0" resource="1" file="Assets/Buttons/07.png"/>
+        <FILE id="f44YLk" name="10.png" compile="0" resource="1" file="Assets/Buttons/10.png"/>
+        <FILE id="BY1hL1" name="11.png" compile="0" resource="1" file="Assets/Buttons/11.png"/>
+        <FILE id="eZ8I6n" name="12.png" compile="0" resource="1" file="Assets/Buttons/12.png"/>
+        <FILE id="c4esRo" name="13.png" compile="0" resource="1" file="Assets/Buttons/13.png"/>
+        <FILE id="F4UvUH" name="14.png" compile="0" resource="1" file="Assets/Buttons/14.png"/>
+        <FILE id="D8Ki6I" name="15.png" compile="0" resource="1" file="Assets/Buttons/15.png"/>
+        <FILE id="xQGdCq" name="16.png" compile="0" resource="1" file="Assets/Buttons/16.png"/>
+        <FILE id="M82cU2" name="17.png" compile="0" resource="1" file="Assets/Buttons/17.png"/>
+        <FILE id="Nea1UC" name="clearButtonPressed.png" compile="0" resource="1"
+              file="Assets/Buttons/clearButtonPressed.png"/>
+        <FILE id="ddwh7C" name="clearButtonUnpressed.png" compile="0" resource="1"
+              file="Assets/Buttons/clearButtonUnpressed.png"/>
+        <FILE id="N3wL9F" name="loadButtonPushed.png" compile="0" resource="1"
+              file="Assets/Buttons/loadButtonPushed.png"/>
+        <FILE id="eAwRwT" name="loadButtonUnpushed.png" compile="0" resource="1"
+              file="Assets/Buttons/loadButtonUnpushed.png"/>
+        <FILE id="FQ4f1c" name="settingspushed.png" compile="0" resource="1"
+              file="Assets/Buttons/settingspushed.png"/>
+        <FILE id="UvMJDP" name="settingsunpushed.png" compile="0" resource="1"
+              file="Assets/Buttons/settingsunpushed.png"/>
       </GROUP>
       <GROUP id="{465BC252-6815-87E8-3E10-1380DD6D38FE}" name="EQ">
         <FILE id="s9fvtE" name="eq_background_off.png" compile="0" resource="1"
@@ -172,7 +176,7 @@
         <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\Modules\eigen&#10;..\..\Modules\json\include\&#10;..\..\Modules\json\include\nlohmann&#10;"
                        useRuntimeLibDLL="0" targetName="Neural Amp Modeler"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="..\..\Modules\eigen&#10;..\..\Modules\json\include\&#10;..\..\Modules\json\include\nlohmann&#10;"
-                       targetName="Neural Amp Modeler"/>
+                       targetName="Neural Amp Modeler" useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../juce"/>
