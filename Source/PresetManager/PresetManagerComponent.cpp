@@ -104,7 +104,6 @@ void PresetManagerComponent::resized()
     previousButton.setBounds(presetName.getX() - 30, (getHeight() / 2) - 12, 25, 25);
     nextButton.setBounds(presetName.getX() + presetName.getWidth() + 5, (getHeight() / 2) - 12, 25, 25);
     saveButton.setBounds(nextButton.getX() + nextButton.getWidth() + 5, (getHeight() / 2) - 12, 25, 25);
-    
 }
 
 void PresetManagerComponent::parameterChanged()

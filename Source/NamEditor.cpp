@@ -211,6 +211,16 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     addAndMakeVisible(&pmc);
     pmc.setColour(juce::Colours::transparentWhite, 0.0f);
 
+    if(JUCEApplication::isStandaloneApp())
+    {
+        settingsButton.reset(new juce::ImageButton("SettingsButton"));
+        addAndMakeVisible(settingsButton.get());
+        settingsButton->setImages(false, true, true, settingsUnpushed, 1.0f, juce::Colours::transparentBlack, settingsUnpushed, 1.0f, juce::Colours::transparentBlack, settingsPushed, 1.0f, juce::Colours::transparentBlack, 0);
+        settingsButton->setMouseCursor(juce::MouseCursor::PointingHandCursor);
+        settingsButton->setTooltip("Settings");
+        settingsButton->onClick = [this]{juce::StandalonePluginHolder::getInstance()->showAudioSettingsDialog();};
+    }
+
     startTimer(30);    
 }
 
@@ -244,7 +254,10 @@ void NamEditor::resized()
     
     setMeterPosition(!audioProcessor.eqModuleVisible); // Need to change this when more modules are added...
 
-    pmc.setBounds(getWidth() / 2 - 105, 5, 260, 30);    
+    pmc.setBounds(getWidth() / 2 - 105, 5, 260, 30); 
+
+    if(JUCEApplication::isStandaloneApp())   
+        settingsButton->setBounds(pmc.getX() - 30, pmc.getY() + 3, 25, 25);
 }
 
 void NamEditor::timerCallback()
