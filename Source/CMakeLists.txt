@@ -14,6 +14,8 @@ PRIVATE
     EqEditor.h
     EqProcessor.cpp
     EqProcessor.h
+    TopBarComponent.cpp
+    TopBarComponent.h
     architecture.hpp
 )
 

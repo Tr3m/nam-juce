@@ -4,8 +4,7 @@
 #include "MyLookAndFeel.h"
 #include "AssetManager.h"
 #include "EqEditor.h"
-#include "PresetManager/PresetManagerComponent.h"
-#include "juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h"
+#include "TopBarComponent.h"
 
 #define NUM_SLIDERS 8
 
@@ -59,7 +58,7 @@ private:
     std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment;
 
-    std::unique_ptr<juce::ImageButton> toneStackButton, normalizeButton, irButton, loadModelButton, loadIRButton, clearIrButton, clearModelButton, eqButton, settingsButton;
+    std::unique_ptr<juce::ImageButton> toneStackButton, normalizeButton, irButton, loadModelButton, loadIRButton, clearIrButton, clearModelButton, eqButton;
     juce::Image xIcon = juce::ImageFileFormat::loadFrom(BinaryData::xIcon_png, BinaryData::xIcon_pngSize);
 
     //// TODO: Move this into a dedicated component with its own timer
@@ -67,19 +66,14 @@ private:
     juce::Image led_on = juce::ImageFileFormat::loadFrom(BinaryData::led_on_png, BinaryData::led_on_pngSize);
     juce::Image led_to_draw;
 
-
-    juce::Image settingsPushed = juce::ImageFileFormat::loadFrom(BinaryData::settingspushed_png, BinaryData::settingspushed_pngSize);
-    juce::Image settingsUnpushed = juce::ImageFileFormat::loadFrom(BinaryData::settingsunpushed_png, BinaryData::settingsunpushed_pngSize);
-
     std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
-
 
     foleys::LevelMeter meterIn{ foleys::LevelMeter::SingleChannel }, meterOut{ foleys::LevelMeter::SingleChannel };
     MeterLookAndFeel meterlnf, meterlnf2;
 
     EqEditor eqEditor;
 
-    PresetManagerComponent pmc;
+    TopBarComponent topBar;
     
     NamJUCEAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NamEditor)

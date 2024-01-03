@@ -1,7 +1,7 @@
 #include "NamEditor.h"
 
 NamEditor::NamEditor(NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), eqEditor(p), pmc(p.getPresetManager(), [&]() { updateAfterPresetLoad(); })
+    : AudioProcessorEditor (&p), audioProcessor (p), eqEditor(p), topBar(p, [&]() { updateAfterPresetLoad(); })
 {
     assetManager.reset(new AssetManager());
 
@@ -170,6 +170,8 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     addAndMakeVisible(eqButton.get());
     eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 50, sliders[PluginKnobs::NoiseGate]->getY() + sliders[PluginKnobs::NoiseGate]->getHeight() + 15, 100, 40);
     assetManager->setToggleButton(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"), AssetManager::Buttons::EQ_BUTTON);
+    eqButton->setAlwaysOnTop(true);
+    eqButton->toFront(false);
     
     addAndMakeVisible(&eqEditor);
     eqEditor.setVisible(false);
@@ -208,18 +210,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     meterIn.toFront(true);
     meterOut.toFront(true);
 
-    addAndMakeVisible(&pmc);
-    pmc.setColour(juce::Colours::transparentWhite, 0.0f);
-
-    if(JUCEApplication::isStandaloneApp())
-    {
-        settingsButton.reset(new juce::ImageButton("SettingsButton"));
-        addAndMakeVisible(settingsButton.get());
-        settingsButton->setImages(false, true, true, settingsUnpushed, 1.0f, juce::Colours::transparentBlack, settingsUnpushed, 1.0f, juce::Colours::transparentBlack, settingsPushed, 1.0f, juce::Colours::transparentBlack, 0);
-        settingsButton->setMouseCursor(juce::MouseCursor::PointingHandCursor);
-        settingsButton->setTooltip("Settings");
-        settingsButton->onClick = [this]{juce::StandalonePluginHolder::getInstance()->showAudioSettingsDialog();};
-    }
+    addAndMakeVisible(&topBar);
 
     startTimer(30);    
 }
@@ -254,10 +245,7 @@ void NamEditor::resized()
     
     setMeterPosition(!audioProcessor.eqModuleVisible); // Need to change this when more modules are added...
 
-    pmc.setBounds(getWidth() / 2 - 105, 5, 260, 30); 
-
-    if(JUCEApplication::isStandaloneApp())   
-        settingsButton->setBounds(pmc.getX() - 30, pmc.getY() + 3, 25, 25);
+    topBar.setBounds(0, 0, getWidth(), 40);
 }
 
 void NamEditor::timerCallback()
@@ -273,15 +261,7 @@ void NamEditor::timerCallback()
 
 void NamEditor::sliderValueChanged(juce::Slider* slider)
 {
-    /*
-    //Temporary solution for displaying Noise Gate threshold on the GUI
-    if(slider == sliders[PluginKnobs::NoiseGate].get())
-        if(int(slider->getValue()) < -100)
-            ngThreshold = "OFF";
-        else
-            ngThreshold = std::to_string(int(slider->getValue())) + " dB";
-        repaint();
-    */
+    
 }
 
 void NamEditor::setToneStackEnabled(bool toneStackEnabled)
