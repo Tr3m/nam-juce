@@ -69,7 +69,7 @@ void TopBarComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
                 juce::StandalonePluginHolder::getInstance()->showAudioSettingsDialog();
             break;
         case DropdownOptions::GetModels:
-            std::cout<<"Browser window pops up here"<<std::endl;
+            openBrowserWindow();
             break;
         case DropdownOptions::Info:
             std::cout<<"Info window pops up here"<<std::endl;
@@ -82,4 +82,12 @@ void TopBarComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         settingsDropdown->setSelectedItemIndex(-1, juce::NotificationType::dontSendNotification);
         
     }
+}
+
+void TopBarComponent::openBrowserWindow()
+{
+    auto* dw = new WebComponent ("Tone Hunt", juce::Colours::black, juce::DocumentWindow::closeButton);
+    dw->centreWithSize (850, 650);
+    dw->setUsingNativeTitleBar(true);
+    dw->setVisible (true);
 }

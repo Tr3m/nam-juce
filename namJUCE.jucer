@@ -75,6 +75,11 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="pHmDuC" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
+      <FILE id="t6jBEi" name="TopBarComponent.cpp" compile="1" resource="0"
+            file="Source/TopBarComponent.cpp"/>
+      <FILE id="LWf5YS" name="TopBarComponent.h" compile="0" resource="0"
+            file="Source/TopBarComponent.h"/>
+      <FILE id="VnAxwF" name="WebComponent.h" compile="0" resource="0" file="Source/WebComponent.h"/>
     </GROUP>
     <GROUP id="{57A3CD4A-D5F9-0323-41BA-A03E0249546C}" name="Assets">
       <GROUP id="{3E001BEA-AEB0-0A30-99E8-BEA51E6FD611}" name="PresetManagerAssets">
@@ -147,7 +152,8 @@
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
-               FF_AUDIO_ALLOW_ALLOCATIONS_IN_MEASURE_BLOCK="0"/>
+               FF_AUDIO_ALLOW_ALLOCATIONS_IN_MEASURE_BLOCK="0" JUCE_WEB_BROWSER="1"
+               JUCE_USE_WIN_WEBVIEW2="1"/>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" smallIcon="roaI6D" bigIcon="roaI6D">
       <CONFIGURATIONS>

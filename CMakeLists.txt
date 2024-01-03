@@ -23,6 +23,7 @@ juce_add_plugin(NAM
     FORMATS AU VST3 Standalone                  
     PRODUCT_NAME "Neural Amp Modeler"
     JucePlugin_Manufacturer "Manos Labrakis"
+    NEEDS_WEB_BROWSER TRUE
     )        
     
 
@@ -48,7 +49,7 @@ target_sources(NAM
 target_compile_definitions(NAM
     PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
-        JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
+        JUCE_WEB_BROWSER=1  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
         JUCE_VST3_CAN_REPLACE_VST2=0
         JUCE_DISPLAY_SPLASH_SCREEN=0

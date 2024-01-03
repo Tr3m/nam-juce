@@ -170,6 +170,9 @@ private:
     juce::Image knobImage;
 };
 
+//===================================================================
+//===================================================================
+
 class MeterLookAndFeel : public foleys::LevelMeterLookAndFeel
 {
     juce::Rectangle<float> drawBackground(juce::Graphics& g, foleys::LevelMeter::MeterFlags meterType, juce::Rectangle<float> bounds) 
@@ -359,6 +362,9 @@ class MeterLookAndFeel : public foleys::LevelMeterLookAndFeel
     
 };
 
+//===================================================================
+//===================================================================
+
 class SliderOnLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
@@ -466,6 +472,9 @@ private:
 	
 };
 
+//===================================================================
+//===================================================================
+
 class SliderOffLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
@@ -570,5 +579,62 @@ public:
 private:
 
 	Image thumbOff = ImageFileFormat::loadFrom(BinaryData::eq_thumb_off_png, BinaryData::eq_thumb_off_pngSize);
+
+};
+
+//===================================================================
+//===================================================================
+
+class ButtonLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+
+    void drawButtonBackground (Graphics& g,
+        Button& button,
+        const Colour& backgroundColour,
+        bool shouldDrawButtonAsHighlighted,
+        bool shouldDrawButtonAsDown)
+{
+    auto cornerSize = 12.0f;
+    auto bounds = button.getLocalBounds().toFloat().reduced (0.5f, 0.5f);
+
+    auto baseColour = backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+                                      .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
+
+    if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
+        baseColour = baseColour.contrasting (shouldDrawButtonAsDown ? 0.2f : 0.05f);
+
+    g.setColour (baseColour);
+
+    auto flatOnLeft   = button.isConnectedOnLeft();
+    auto flatOnRight  = button.isConnectedOnRight();
+    auto flatOnTop    = button.isConnectedOnTop();
+    auto flatOnBottom = button.isConnectedOnBottom();
+
+    if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)
+    {
+        Path path;
+        path.addRoundedRectangle (bounds.getX(), bounds.getY(),
+                                  bounds.getWidth(), bounds.getHeight(),
+                                  cornerSize, cornerSize,
+                                  ! (flatOnLeft  || flatOnTop),
+                                  ! (flatOnRight || flatOnTop),
+                                  ! (flatOnLeft  || flatOnBottom),
+                                  ! (flatOnRight || flatOnBottom));
+
+        g.fillPath (path);
+
+        g.setColour (button.findColour (ComboBox::outlineColourId));
+        g.strokePath (path, PathStrokeType (1.0f));
+    }
+    else
+    {
+        g.fillRoundedRectangle (bounds, cornerSize);
+
+        g.setColour (button.findColour (ComboBox::outlineColourId));
+        g.drawRoundedRectangle (bounds, cornerSize, 1.0f);
+    }
+}
+private:
 
 };

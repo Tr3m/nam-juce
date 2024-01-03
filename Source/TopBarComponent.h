@@ -4,6 +4,7 @@
 #include "AssetManager.h"
 #include "PresetManager/PresetManagerComponent.h"
 #include "juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h"
+#include "WebComponent.h"
 
 class TopBarComponent : public juce::AudioProcessorEditor,
                         public juce::ComboBox::Listener
@@ -18,6 +19,7 @@ public:
     void setBackgroundColour(juce::Colour colour);
 
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void openBrowserWindow();
 
     enum DropdownOptions
     {
