@@ -595,7 +595,7 @@ public:
         bool shouldDrawButtonAsHighlighted,
         bool shouldDrawButtonAsDown)
 {
-    auto cornerSize = 12.0f;
+    auto cornerSize = 8.0f;
     auto bounds = button.getLocalBounds().toFloat().reduced (0.5f, 0.5f);
 
     auto baseColour = backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
@@ -624,14 +624,16 @@ public:
 
         g.fillPath (path);
 
-        g.setColour (button.findColour (ComboBox::outlineColourId));
+        //g.setColour (button.findColour (ComboBox::outlineColourId));
+        g.setColour (juce::Colours::ivory.withAlpha(0.55f));
         g.strokePath (path, PathStrokeType (1.0f));
     }
     else
     {
         g.fillRoundedRectangle (bounds, cornerSize);
 
-        g.setColour (button.findColour (ComboBox::outlineColourId));
+        g.setColour (juce::Colours::ivory.withAlpha(0.55f));
+        //g.setColour (button.findColour (ComboBox::outlineColourId));
         g.drawRoundedRectangle (bounds, cornerSize, 1.0f);
     }
 }

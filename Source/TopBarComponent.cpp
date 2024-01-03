@@ -72,7 +72,7 @@ void TopBarComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
             openBrowserWindow();
             break;
         case DropdownOptions::Info:
-            std::cout<<"Info window pops up here"<<std::endl;
+            openInfoWindow();
             break;
         default:
             break;
@@ -91,3 +91,34 @@ void TopBarComponent::openBrowserWindow()
     dw->setUsingNativeTitleBar(true);
     dw->setVisible (true);
 }
+
+void TopBarComponent::openInfoWindow()
+    {
+        String m;
+
+        m << "NEURAL AMP MODELER" << newLine << newLine << "Version 0.3.1"
+          << newLine << newLine
+          << "A JUCE implementation of the Neural Amp Modeler Plugin.";
+
+        juce::DialogWindow::LaunchOptions options;
+        auto* label = new Label();
+        label->setText (m, dontSendNotification);
+        label->setColour (Label::textColourId, Colours::whitesmoke);
+        label->setJustificationType(juce::Justification::centred);
+        options.content.setOwned (label);
+
+        Rectangle<int> area (0, 0, 300, 200);
+
+        options.content->setSize (area.getWidth(), area.getHeight());
+
+        options.dialogTitle                   = "Info";
+        options.dialogBackgroundColour        = Colour (0xf2e2e2d);
+        options.escapeKeyTriggersCloseButton  = true;
+        options.useNativeTitleBar             = true;
+        options.resizable                     = false;
+
+        dialogWindow = options.launchAsync();
+
+        if (dialogWindow != nullptr)
+            dialogWindow->centreWithSize (300, 200);
+    }

@@ -20,6 +20,7 @@ public:
 
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void openBrowserWindow();
+    void openInfoWindow();
 
     enum DropdownOptions
     {
@@ -42,6 +43,8 @@ private:
     juce::Colour backgroundColour {juce::Colours::transparentBlack};
 
     juce::LookAndFeel_V4 lnf;
+
+    SafePointer<DialogWindow> dialogWindow;
 
     NamJUCEAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TopBarComponent)

@@ -3,7 +3,7 @@
 <JUCERPROJECT id="njospK" name="namJUCE" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               cppLanguageStandard="17" pluginManufacturer="Manos Labrakis"
-              pluginName="Neural Amp Modeler" version="0.3.0" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
+              pluginName="Neural Amp Modeler" version="0.3.1" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="fLUIGm" name="namJUCE">
     <GROUP id="{374B1152-41A2-5B5A-A64F-8F1AF7840A23}" name="Source">
       <GROUP id="{90CD07F4-D2DB-4460-BE38-804F65671A44}" name="NeuralAmpModelerCore">
