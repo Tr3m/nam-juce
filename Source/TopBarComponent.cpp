@@ -112,7 +112,7 @@ void TopBarComponent::openInfoWindow()
         options.content->setSize (area.getWidth(), area.getHeight());
 
         options.dialogTitle                   = "Info";
-        options.dialogBackgroundColour        = Colour (0xf2e2e2d);
+        options.dialogBackgroundColour        = juce::Colours::darkgrey;
         options.escapeKeyTriggersCloseButton  = true;
         options.useNativeTitleBar             = true;
         options.resizable                     = false;
