@@ -3,7 +3,7 @@
 <JUCERPROJECT id="njospK" name="namJUCE" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               cppLanguageStandard="17" pluginManufacturer="Manos Labrakis"
-              pluginName="Neural Amp Modeler" version="0.3.1" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
+              pluginName="Neural Amp Modeler" version="0.3.2" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="fLUIGm" name="namJUCE">
     <GROUP id="{374B1152-41A2-5B5A-A64F-8F1AF7840A23}" name="Source">
       <GROUP id="{90CD07F4-D2DB-4460-BE38-804F65671A44}" name="NeuralAmpModelerCore">
@@ -79,7 +79,8 @@
             file="Source/TopBarComponent.cpp"/>
       <FILE id="LWf5YS" name="TopBarComponent.h" compile="0" resource="0"
             file="Source/TopBarComponent.h"/>
-      <FILE id="VnAxwF" name="WebComponent.h" compile="0" resource="0" file="Source/WebComponent.h"/>
+      <FILE id="Z2GeKO" name="DoublerProcessor.h" compile="0" resource="0"
+            file="Source/DoublerProcessor.h"/>
     </GROUP>
     <GROUP id="{57A3CD4A-D5F9-0323-41BA-A03E0249546C}" name="Assets">
       <GROUP id="{3E001BEA-AEB0-0A30-99E8-BEA51E6FD611}" name="PresetManagerAssets">
@@ -152,8 +153,7 @@
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
-               FF_AUDIO_ALLOW_ALLOCATIONS_IN_MEASURE_BLOCK="0" JUCE_WEB_BROWSER="1"
-               JUCE_USE_WIN_WEBVIEW2="1"/>
+               FF_AUDIO_ALLOW_ALLOCATIONS_IN_MEASURE_BLOCK="0" JUCE_WEB_BROWSER="0"/>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" smallIcon="roaI6D" bigIcon="roaI6D">
       <CONFIGURATIONS>
