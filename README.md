@@ -5,7 +5,7 @@ A JUCE implementation of Steven Atkinson's [NeuralAmpModelerPlugin](https://gith
 </br>
 
 <p align="center">
-  <img src="https://cdn.discordapp.com/attachments/580466872169005066/1123295273343528990/Screenshot_20230627_195347.png" />
+  <img src="https://cdn.discordapp.com/attachments/583093051614953511/1193219770661736478/Screenshot_20240106_174837.png" />
 </p>
 
 
@@ -34,7 +34,7 @@ cmake --build build --config Release
 
 ```bash
 git submodule update --init --recursive
-cmake -B build -DCMAKE_PREFIX_PATH=/path/to/JUCE/install -DCMAKE_BUILD_TYPE=Release
+cmake -B build -DCMAKE_PREFIX_PATH=/path/to/JUCE/install
 cmake --build build
 ```
 
