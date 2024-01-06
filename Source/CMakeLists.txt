@@ -16,6 +16,7 @@ PRIVATE
     EqProcessor.h
     TopBarComponent.cpp
     TopBarComponent.h
+    DoublerProcessor.h
     architecture.hpp
 )
 

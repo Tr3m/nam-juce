@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(NAM VERSION 0.3.1)
+project(NAM VERSION 0.3.2)
 set(PROJECT_NAME "NAM")
 
 set(CMAKE_CXX_STANDARD 17)
@@ -12,7 +12,7 @@ endif()
 find_package(JUCE CONFIG REQUIRED)
 
 juce_add_plugin(NAM
-    VERSION 0.3.1
+    VERSION 0.3.2
     ICON_BIG "Assets/ICON.png"
     ICON_SMALL "Assets/ICON.png"
     COMPANY_NAME "Manos Labrakis"
@@ -27,7 +27,6 @@ juce_add_plugin(NAM
     FORMATS AU VST3 Standalone                  
     PRODUCT_NAME "Neural Amp Modeler"
     JucePlugin_Manufacturer "Manos Labrakis"
-    NEEDS_WEB_BROWSER TRUE
     )        
     
 
@@ -53,7 +52,7 @@ target_sources(NAM
 target_compile_definitions(NAM
     PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
-        JUCE_WEB_BROWSER=1  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
+        JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
         JUCE_VST3_CAN_REPLACE_VST2=0
         JUCE_DISPLAY_SPLASH_SCREEN=0

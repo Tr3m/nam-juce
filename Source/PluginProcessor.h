@@ -5,6 +5,7 @@
 #include "NeuralAmpModeler.h"
 #include <ff_meters/ff_meters.h>
 #include "EqProcessor.h"
+#include "DoublerProcessor.h"
 #include "PresetManager/PresetManager.h"
 //==============================================================================
 /**
@@ -107,6 +108,7 @@ private:
     std::string lastIrName = "null";
 
     EqProcessor tenBandEq;
+    Doubler doubler;
 
     bool supportsDouble{ false };
 

@@ -29,7 +29,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     //Setup sliders
     for(int slider = 0; slider < NUM_SLIDERS; ++slider)
     {
-        sliders[slider].reset(new juce::Slider("slider" + std::to_string(slider)));
+        sliders[slider].reset(new CustomSlider());
         addAndMakeVisible(sliders[slider].get());
         sliders[slider]->setLookAndFeel(&lnf);
         sliders[slider]->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
@@ -51,6 +51,14 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
             
     }
 
+    sliders[PluginKnobs::Doubler]->setTextValueSuffix("");
+    sliders[PluginKnobs::Doubler]->setPopupDisplayEnabled(true, true, getTopLevelComponent());
+    sliders[PluginKnobs::Doubler]->setCustomSlider(CustomSlider::SliderTypes::Doubler);
+    sliders[PluginKnobs::Doubler]->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    sliders[PluginKnobs::Doubler]->setBounds(sliders[PluginKnobs::Output]->getX(), 435, knobSize, knobSize);
+    sliders[PluginKnobs::NoiseGate]->setPopupDisplayEnabled(true, true, getTopLevelComponent());
+    sliders[PluginKnobs::NoiseGate]->setCustomSlider(CustomSlider::SliderTypes::Gate);
+    sliders[PluginKnobs::NoiseGate]->setPopupDisplayEnabled(true, true, getTopLevelComponent());
     sliders[PluginKnobs::NoiseGate]->addListener(this);
 
     //Tone Stack Toggle
@@ -118,6 +126,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     sliderAttachments[PluginKnobs::LowCut] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "LOWCUT_ID", *sliders[PluginKnobs::LowCut]);
     sliderAttachments[PluginKnobs::HighCut] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "HIGHCUT_ID", *sliders[PluginKnobs::HighCut]);
+    sliderAttachments[PluginKnobs::Doubler] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "DOUBLER_SPREAD_ID", *sliders[PluginKnobs::Doubler]);
 
     toneStackToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "TONE_STACK_ON_ID", *toneStackToggle));
     normalizeToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "NORMALIZE_ID", *normalizeToggle));    

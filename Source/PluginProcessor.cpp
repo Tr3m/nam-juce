@@ -111,6 +111,8 @@ void NamJUCEAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 
     tenBandEq.prepare(spec);
     tenBandEq.hookParameters(apvts);
+
+    doubler.prepare(spec);
     
     lowCut.reset();
     lowCut.prepare(spec);
@@ -316,11 +318,19 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
         channelDataRight[sample] = channelDataLeft[sample];
 
 
+    // Filters
     *lowCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(getSampleRate(), *apvts.getRawParameterValue("LOWCUT_ID"), 1.0f);
     *highCut.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(getSampleRate(), *apvts.getRawParameterValue("HIGHCUT_ID"), 1.0f);
 
     lowCut.process(juce::dsp::ProcessContextReplacing<float>(block));
     highCut.process(juce::dsp::ProcessContextReplacing<float>(block));
+
+    // Doubler
+    if(*apvts.getRawParameterValue("DOUBLER_SPREAD_ID") > 0.0)
+    {
+        doubler.setDelayMs(*apvts.getRawParameterValue("DOUBLER_SPREAD_ID"));    
+        doubler.process(buffer);
+    }
 
     meterOutSource.measureBlock(buffer);
 }
@@ -445,6 +455,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
 
     parameters.push_back(std::make_unique<juce::AudioParameterInt>("LOWCUT_ID", "LOWCUT", 20, 2000, 20));
     parameters.push_back(std::make_unique<juce::AudioParameterInt>("HIGHCUT_ID", "HIGHCUT", 200, 20000, 20000));
+
+    auto normRange = NormalisableRange<float>(0.0, 20.0, 0.1f);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("DOUBLER_SPREAD_ID", "DOUBLER_SPREAD", normRange, 0.0));
 
     parameters.push_back(std::make_unique<juce::AudioParameterBool>("SMALL_WINDOW_ID", "SMALL_WINDOW", false, "SMALL_WINDOW"));
 

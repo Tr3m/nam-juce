@@ -6,7 +6,7 @@
 #include "EqEditor.h"
 #include "TopBarComponent.h"
 
-#define NUM_SLIDERS 8
+#define NUM_SLIDERS 9
 
 class NamEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener
 {
@@ -37,17 +37,20 @@ public:
         Treble,
         Output,
         LowCut,
-        HighCut
+        HighCut,
+        Doubler
     };
 
 
 private:
-    std::unique_ptr<juce::Slider> sliders[NUM_SLIDERS];
+    std::unique_ptr<CustomSlider> sliders[NUM_SLIDERS];
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[NUM_SLIDERS];
 
-    juce::String sliderIDs[NUM_SLIDERS] {"INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID"};
+    juce::String sliderIDs[NUM_SLIDERS] {"INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID", "DOUBLER_ID"};
 
-    std::unique_ptr<AssetManager> assetManager;           
+    std::unique_ptr<AssetManager> assetManager;
+
+    juce::TooltipWindow tooltipWindow{ this, 200 };
 
     knobLookAndFeel lnf {knobLookAndFeel::KnobTypes::Main};
 

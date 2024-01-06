@@ -585,58 +585,49 @@ private:
 //===================================================================
 //===================================================================
 
-class ButtonLookAndFeel : public juce::LookAndFeel_V4
+class CustomSlider : public juce::Slider
 {
 public:
 
-    void drawButtonBackground (Graphics& g,
-        Button& button,
-        const Colour& backgroundColour,
-        bool shouldDrawButtonAsHighlighted,
-        bool shouldDrawButtonAsDown)
-{
-    auto cornerSize = 8.0f;
-    auto bounds = button.getLocalBounds().toFloat().reduced (0.5f, 0.5f);
+	CustomSlider(int sliderIndex = 0)
+	{
+		this->sliderIndex = sliderIndex;
+	};
 
-    auto baseColour = backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
-                                      .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
-
-    if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
-        baseColour = baseColour.contrasting (shouldDrawButtonAsDown ? 0.2f : 0.05f);
-
-    g.setColour (baseColour);
-
-    auto flatOnLeft   = button.isConnectedOnLeft();
-    auto flatOnRight  = button.isConnectedOnRight();
-    auto flatOnTop    = button.isConnectedOnTop();
-    auto flatOnBottom = button.isConnectedOnBottom();
-
-    if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)
+    void setCustomSlider(int sliderIndex)
     {
-        Path path;
-        path.addRoundedRectangle (bounds.getX(), bounds.getY(),
-                                  bounds.getWidth(), bounds.getHeight(),
-                                  cornerSize, cornerSize,
-                                  ! (flatOnLeft  || flatOnTop),
-                                  ! (flatOnRight || flatOnTop),
-                                  ! (flatOnLeft  || flatOnBottom),
-                                  ! (flatOnRight || flatOnBottom));
+        this->sliderIndex = sliderIndex;
+    };
 
-        g.fillPath (path);
+	String getTextFromValue (double value) override
+	{
+		switch(sliderIndex)
+		{
+			case SliderTypes::Doubler:
+				if(value == 0)
+					return "OFF";
+				else
+					return juce::String(value) + " ms";
+				break;
+			case SliderTypes::Gate:
+				if(value == -101)
+					return "OFF";
+				else
+					return juce::String(value) + " dB";
+				break;
+            default:
+                return String(value) + this->getTextValueSuffix();
+                break;
+		}
+	};
 
-        //g.setColour (button.findColour (ComboBox::outlineColourId));
-        g.setColour (juce::Colours::ivory.withAlpha(0.55f));
-        g.strokePath (path, PathStrokeType (1.0f));
-    }
-    else
-    {
-        g.fillRoundedRectangle (bounds, cornerSize);
+	enum SliderTypes
+	{
+        Default = 0,
+        Doubler,
+        Gate
+	};
 
-        g.setColour (juce::Colours::ivory.withAlpha(0.55f));
-        //g.setColour (button.findColour (ComboBox::outlineColourId));
-        g.drawRoundedRectangle (bounds, cornerSize, 1.0f);
-    }
-}
 private:
-
+	int sliderIndex{0};
 };
