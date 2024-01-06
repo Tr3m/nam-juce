@@ -128,12 +128,14 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     {        
         audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
         modelNameBox->setText(audioProcessor.getLastModelName());
+        modelNameBox->setCaretPosition(0);
     }
 
     if(audioProcessor.getLastIrPath() != "null")
     {        
         audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
         irNameBox->setText(audioProcessor.getLastIrName());
+        irNameBox->setCaretPosition(0);
     }    
 
     toneStackButton.reset(new juce::ImageButton("ToneStackButton"));
@@ -284,6 +286,7 @@ void NamEditor::loadModelButtonClicked()
         audioProcessor.loadNamModel(model);
         modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
         modelNameBox->setText(model.getFileNameWithoutExtension());
+        modelNameBox->setCaretPosition(0);
     }
 
     clearModelButton->setVisible(audioProcessor.getNamModelStatus());
@@ -299,7 +302,8 @@ void NamEditor::loadIrButtonClicked()
         impulseResponse = chooser.getResult();
         audioProcessor.loadImpulseResponse(impulseResponse);
         irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        irNameBox->setText(impulseResponse.getFileNameWithoutExtension());        
+        irNameBox->setText(impulseResponse.getFileNameWithoutExtension());   
+        irNameBox->setCaretPosition(0);     
     }
 
     clearIrButton->setVisible(audioProcessor.getIrStatus());
@@ -386,6 +390,7 @@ void NamEditor::updateAfterPresetLoad()
     {        
         audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
         modelNameBox->setText(audioProcessor.getLastModelName());
+        modelNameBox->setCaretPosition(0);
     }
     else
     {
@@ -396,6 +401,7 @@ void NamEditor::updateAfterPresetLoad()
     {        
         audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red) : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);      
         irNameBox->setText(audioProcessor.getLastIrName());
+        irNameBox->setCaretPosition(0);
     } 
     else
     {

@@ -25,8 +25,8 @@ TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p, std::function<void()>
     addAndMakeVisible(settingsDropdown.get());
     settingsDropdown->setVisible(false);
     if(JUCEApplication::isStandaloneApp())
-        settingsDropdown->addItem (TRANS("Audio/Midi Settings"), 1);
-    settingsDropdown->addItem (TRANS("Get Models"), 2);
+        settingsDropdown->addItem (TRANS("Audio/Midi Settings..."), 1);
+    settingsDropdown->addItem (TRANS("Get Models..."), 2);
     settingsDropdown->addItem (TRANS("Info"), 3);
     settingsDropdown->addListener(this);
     settingsDropdown->setLookAndFeel(&lnf);
@@ -69,10 +69,10 @@ void TopBarComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
                 juce::StandalonePluginHolder::getInstance()->showAudioSettingsDialog();
             break;
         case DropdownOptions::GetModels:
-            openBrowserWindow();
+            modelsURL.launchInDefaultBrowser();
             break;
         case DropdownOptions::Info:
-            openInfoWindow();
+            openInfoWindow("NEURAL AMP MODELER\n\nVersion 0.3.1\n\nA JUCE implementation of the Neural Amp Modeler Plugin.");
             break;
         default:
             break;
@@ -84,41 +84,27 @@ void TopBarComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     }
 }
 
-void TopBarComponent::openBrowserWindow()
+void TopBarComponent::openInfoWindow(juce::String m)
 {
-    auto* dw = new WebComponent ("Tone Hunt", juce::Colours::black, juce::DocumentWindow::closeButton);
-    dw->centreWithSize (850, 650);
-    dw->setUsingNativeTitleBar(true);
-    dw->setVisible (true);
+    juce::DialogWindow::LaunchOptions options;
+    auto* label = new Label();
+    label->setText (m, dontSendNotification);
+    label->setColour (Label::textColourId, Colours::whitesmoke);
+    label->setJustificationType(juce::Justification::centred);
+    options.content.setOwned (label);
+
+    Rectangle<int> area (0, 0, 300, 200);
+
+    options.content->setSize (area.getWidth(), area.getHeight());
+
+    options.dialogTitle                   = "Info";
+    options.dialogBackgroundColour        = juce::Colours::darkgrey;
+    options.escapeKeyTriggersCloseButton  = true;
+    options.useNativeTitleBar             = true;
+    options.resizable                     = false;
+
+    dialogWindow = options.launchAsync();
+
+    if (dialogWindow != nullptr)
+        dialogWindow->centreWithSize (300, 200);
 }
-
-void TopBarComponent::openInfoWindow()
-    {
-        String m;
-
-        m << "NEURAL AMP MODELER" << newLine << newLine << "Version 0.3.1"
-          << newLine << newLine
-          << "A JUCE implementation of the Neural Amp Modeler Plugin.";
-
-        juce::DialogWindow::LaunchOptions options;
-        auto* label = new Label();
-        label->setText (m, dontSendNotification);
-        label->setColour (Label::textColourId, Colours::whitesmoke);
-        label->setJustificationType(juce::Justification::centred);
-        options.content.setOwned (label);
-
-        Rectangle<int> area (0, 0, 300, 200);
-
-        options.content->setSize (area.getWidth(), area.getHeight());
-
-        options.dialogTitle                   = "Info";
-        options.dialogBackgroundColour        = juce::Colours::darkgrey;
-        options.escapeKeyTriggersCloseButton  = true;
-        options.useNativeTitleBar             = true;
-        options.resizable                     = false;
-
-        dialogWindow = options.launchAsync();
-
-        if (dialogWindow != nullptr)
-            dialogWindow->centreWithSize (300, 200);
-    }

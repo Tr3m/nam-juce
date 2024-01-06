@@ -5,6 +5,10 @@ set(PROJECT_NAME "NAM")
 
 set(CMAKE_CXX_STANDARD 17)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 find_package(JUCE CONFIG REQUIRED)
 
 juce_add_plugin(NAM

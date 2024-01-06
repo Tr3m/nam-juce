@@ -16,7 +16,6 @@ PRIVATE
     EqProcessor.h
     TopBarComponent.cpp
     TopBarComponent.h
-    WebComponent.h
     architecture.hpp
 )
 

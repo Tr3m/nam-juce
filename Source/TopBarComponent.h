@@ -4,7 +4,6 @@
 #include "AssetManager.h"
 #include "PresetManager/PresetManagerComponent.h"
 #include "juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h"
-#include "WebComponent.h"
 
 class TopBarComponent : public juce::AudioProcessorEditor,
                         public juce::ComboBox::Listener
@@ -19,8 +18,7 @@ public:
     void setBackgroundColour(juce::Colour colour);
 
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
-    void openBrowserWindow();
-    void openInfoWindow();
+    void openInfoWindow(juce::String m);
 
     enum DropdownOptions
     {
@@ -45,6 +43,7 @@ private:
     juce::LookAndFeel_V4 lnf;
 
     SafePointer<DialogWindow> dialogWindow;
+    juce::URL modelsURL {"https://tonehunt.org"};
 
     NamJUCEAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TopBarComponent)
