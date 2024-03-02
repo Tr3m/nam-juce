@@ -5,7 +5,7 @@ A JUCE implementation of Steven Atkinson's [NeuralAmpModelerPlugin](https://gith
 </br>
 
 <p align="center">
-  <img src="https://cdn.discordapp.com/attachments/583093051614953511/1193219770661736478/Screenshot_20240106_174837.png" />
+  <img src="https://loudsample.com/images/assets/nam/Screenshot_20240226_125626.png" />
 </p>
 
 
