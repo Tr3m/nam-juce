@@ -506,8 +506,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
     parameters.push_back(std::make_unique<juce::AudioParameterInt>("HIGHCUT_ID", "HIGHCUT", 200, 20001, 20001));
 
     auto normRange = NormalisableRange<float>(0.0, 20.0, 0.1f);
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("DOUBLER_SPREAD_ID", "DOUBLER_SPREAD", normRange, 0.0));
-    parameters.push_back(std::make_unique<juce::AudioParameterBool>("SMALL_WINDOW_ID", "SMALL_WINDOW", false, "SMALL_WINDOW"));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("DOUBLER_SPREAD_ID", "DOUBLER_SPREAD", normRange, 0.0)); 
 
     tenBandEq.pushParametersToTree(parameters);
 

@@ -19,17 +19,10 @@ public:
     void timerCallback ();
     void sliderValueChanged (juce::Slider* slider);
 
-    void setPluginSize (bool makeSmall);
+    float calculateEditorScale(int currentWidth);
 
 private:
     NamEditor namEditor;
-
-    std::unique_ptr<juce::ImageButton> resizeButton;
-    std::unique_ptr<juce::ToggleButton> hiddenResizeToggle;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> resizeToggleAttachment;
-
-    juce::Image arrowExpand = juce::ImageFileFormat::loadFrom(BinaryData::arrowexpand_png, BinaryData::arrowexpand_pngSize);
-    juce::Image arrowContract = juce::ImageFileFormat::loadFrom(BinaryData::arrowcontract_png, BinaryData::arrowcontract_pngSize);
 
     NamJUCEAudioProcessor& audioProcessor;
 

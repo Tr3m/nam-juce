@@ -10,9 +10,7 @@ juce_add_binary_data(BinaryData SOURCES
     background.png
     buttonpushed.png
     buttonunpushed.png
-    screens.png
-    arrowexpand.png
-    arrowcontract.png
+    screens.png 
     knob_minimal.png
     led_off.png
     led_on.png
