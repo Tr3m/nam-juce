@@ -7,3 +7,5 @@ Installers/
 sdk/
 Scripts/venv
 venv
+compile_commands.json
+.cache/

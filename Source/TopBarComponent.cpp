@@ -68,7 +68,7 @@ void TopBarComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
                 break;
             case DropdownOptions::GetModels: modelsURL.launchInDefaultBrowser(); break;
             case DropdownOptions::Info:
-                openInfoWindow("NEURAL AMP MODELER\n\nVersion " + juce::String(PLUG_VERSION)
+                openInfoWindow("NEURAL AMP MODELER\n(nam-juce)\n\nVersion " + juce::String(PLUG_VERSION)
                                + "\n\nA JUCE implementation of the Neural Amp Modeler Plugin.");
                 break;
             default: break;

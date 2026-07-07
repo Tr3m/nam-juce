@@ -181,7 +181,7 @@ if (MSVC)
 else()
 	target_compile_options(${PROJECT_NAME} 
     PRIVATE
-		-Wall 
+		-w
 		"$<$<CONFIG:DEBUG>:-Og;-ggdb>"
 		"$<$<CONFIG:RELWITHDEBINFO>:-Ofast>"
 		"$<$<CONFIG:RELEASE>:-Ofast>"
