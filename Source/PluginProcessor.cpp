@@ -140,6 +140,8 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
             juce::File(lastIrPath), juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
         irLoaded = true;
     }
+
+    prepareCalled = true;
 }
 
 void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String irPath)
@@ -493,6 +495,9 @@ void NamJUCEAudioProcessor::setStateInformation(const void* data, int sizeInByte
                 lastIrSerachDir = "null";
             }
         }
+
+    if (this->prepareCalled)
+        this->prepareToPlay(getSampleRate(), getBlockSize());
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::createParameters()

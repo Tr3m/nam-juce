@@ -11,6 +11,7 @@ init_submodules()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     include_directories(SYSTEM /usr/local/include)
@@ -57,6 +58,7 @@ juce_add_plugin(${PROJECT_NAME}
     # PLUGIN_MANUFACTURER_CODE Juce             
     PLUGIN_CODE NMj0
     FORMATS AU VST3 Standalone                  
+    BUNDLE_ID "com.ManosLabrakis.NAM_JUCE"
     PRODUCT_NAME "Neural Amp Modeler"
     JucePlugin_Manufacturer "Manos Labrakis"
     )        
