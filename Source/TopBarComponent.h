@@ -42,7 +42,7 @@ private:
     juce::LookAndFeel_V4 lnf;
 
     SafePointer<DialogWindow> dialogWindow;
-    juce::URL modelsURL{"https://tonehunt.org"};
+    juce::URL modelsURL{"https://www.tone3000.com/"};
 
     NamJUCEAudioProcessor& audioProcessor;
 

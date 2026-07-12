@@ -53,9 +53,14 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    
+    bool loadNamModel (juce::File modelToLoad);
+    
+    // Somewhat inaccurate name since the modelLoaded
+    // boolean is updated during staging rather than loading.
+    // See NeuralAmpModeler.cpp loadModel().
+    bool isModelLoaded() { return myNAM.isModelLoaded(); };
 
-    void loadNamModel (juce::File modelToLoad);
-    bool getNamModelStatus ();
     void clearNAM ();
 
     void loadImpulseResponse (juce::File irToLoad);
@@ -85,6 +90,8 @@ public:
 
     void loadFromPreset (juce::String modelPath, juce::String irPath);
 
+    bool isA2Model() { return this->isA2; };
+
 
 private:
     //==============================================================================
@@ -96,6 +103,8 @@ private:
     };
 
     NeuralAmpModeler myNAM;
+
+    bool isA2 {false};
 
     juce::dsp::Convolution cab;
     bool irFound{false};
@@ -113,8 +122,6 @@ private:
 
     std::string lastModelSerachDir = "null";
     std::string lastIrSerachDir = "null";
-
-    bool namModelLoaded{false};
 
     EqProcessor tenBandEq;
     Doubler doubler;

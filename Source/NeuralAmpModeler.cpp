@@ -97,6 +97,11 @@ bool NeuralAmpModeler::loadModel(const std::string modelPath)
         }
 
         mStagedModel = std::move(temp);
+        
+        // Temporary workaround since modelLoaded status is needed
+        // to update the GUI immediately after loading a model or a preset.
+        if (mStagedModel)
+            this->modelLoaded = true;
 
         return true;
     }
@@ -145,6 +150,7 @@ void NeuralAmpModeler::applyDSPStaging()
     {
         mModel = nullptr;
         shouldRemoveModel = false;
+        modelLoaded = false;
         //_UpdateLatency();
     }
 

@@ -1,11 +1,3 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -117,27 +109,15 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
     meterOutSource.resize(getTotalNumOutputChannels(), sampleRate * 0.1 / samplesPerBlock);
 
     // Load last NAM Model
-    try
-    {
-        if (lastModelPath != "null")
-            namModelLoaded = myNAM.loadModel(lastModelPath);
-        else
-        {
-            myNAM.clearModel();
-            namModelLoaded = false;
-        }
-    }
-    catch (const std::exception& e)
-    {
+    if (lastModelPath != "null")
+        this->loadNamModel(juce::File(lastModelPath));
+    else
         myNAM.clearModel();
-        namModelLoaded = false;
-    }
 
     // Load last IR
-    if (lastIrPath != "null")
+    if (lastIrPath != "null" && irFound)
     {
-        cab.loadImpulseResponse(
-            juce::File(lastIrPath), juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+        this->loadImpulseResponse(juce::File(lastIrPath));
         irLoaded = true;
     }
 
@@ -156,14 +136,12 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
             myNAM.clearModel();
             lastModelName = "Model File Missing!";
             lastModelPath = modelPath.toStdString();
-            namModelLoaded = false;
         }
         else
         {
-            myNAM.loadModel(modelPath.toStdString());
-            lastModelPath = modelPath.toStdString();
-            lastModelName = fileCheck.getFileNameWithoutExtension().toStdString();
-            namModelLoaded = true;
+            this->loadNamModel(juce::File(modelPath.toStdString()));
+            // lastModelPath = modelPath.toStdString();
+            // lastModelName = fileCheck.getFileNameWithoutExtension().toStdString();
         }
     }
     else
@@ -171,7 +149,6 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
         myNAM.clearModel();
         lastModelPath = "null";
         lastModelName = "";
-        namModelLoaded = false;
     }
 
     // Load last IR
@@ -189,11 +166,10 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
         else
         {
             irFound = true;
-            cab.loadImpulseResponse(
-                juce::File(irPath), juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+            this->loadImpulseResponse(juce::File(irPath));
             irLoaded = true;
-            lastIrPath = irPath.toStdString();
-            lastIrName = fileCheck.getFileNameWithoutExtension().toStdString();
+            // lastIrPath = irPath.toStdString();
+            // lastIrName = fileCheck.getFileNameWithoutExtension().toStdString();
         }
     }
     else
@@ -208,24 +184,36 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
     this->suspendProcessing(false);
 }
 
-void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
+bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
 {
     std::string model_path = modelToLoad.getFullPathName().toStdString();
 
-    DBG("About to load: " + modelToLoad.getFullPathName());
+    DBG("About to load Model: " + modelToLoad.getFullPathName());
 
     this->suspendProcessing(true);
-    namModelLoaded = myNAM.loadModel(model_path);
+    bool loaded = myNAM.loadModel(model_path);
     this->suspendProcessing(false);
-
-    auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
-    lastModelPath = model_path;
-    lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
-    addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
 
     auto search_paths = apvts.state.getOrCreateChildWithName("search_paths", nullptr);
     lastModelSerachDir = modelToLoad.getParentDirectory().getFullPathName().toStdString();
     search_paths.setProperty("LastModelSearchDir", juce::String(lastModelSerachDir), nullptr);
+
+    if (loaded)
+    {
+        auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
+        lastModelPath = model_path;
+        lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
+        addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
+
+        this->isA2 = myNAM.isModelSlimmable();
+    }
+    else 
+    {
+        lastModelName = "";
+        this->isA2 = false;        
+    }
+
+    return loaded;
 }
 
 bool NamJUCEAudioProcessor::getTriggerStatus()
@@ -234,22 +222,16 @@ bool NamJUCEAudioProcessor::getTriggerStatus()
     return t_state->isGating();
 }
 
-bool NamJUCEAudioProcessor::getNamModelStatus()
-{
-    return this->namModelLoaded;
-}
-
 void NamJUCEAudioProcessor::clearNAM()
 {
     this->suspendProcessing(true);
     myNAM.clearModel();
     lastModelPath = "null";
     lastModelName = "null";
+    this->isA2 = false;
 
     auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
     addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
-
-    namModelLoaded = false;
 
     this->suspendProcessing(false);
 }
@@ -261,8 +243,12 @@ void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
 
     this->clearIR();
     std::string ir_path = irToLoad.getFullPathName().toStdString();
-    cab.loadImpulseResponse(
-        irToLoad, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+
+    DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
+
+    cab.loadImpulseResponse(irToLoad, juce::dsp::Convolution::Stereo::no,
+            juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+
     irLoaded = true;
     irFound = true;
 

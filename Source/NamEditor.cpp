@@ -99,12 +99,12 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     initializeButton(
         "ClearModelBtn", "X", clearModelButton, loadModelButton->getX() + loadModelButton->getWidth() + 10, loadModelButton->getY(), 48, 39);
-    clearModelButton->setVisible(audioProcessor.getNamModelStatus());
+    clearModelButton->setVisible(audioProcessor.isModelLoaded());
     assetManager->setClearButton(clearModelButton);
     clearModelButton->onClick = [this]
     {
         audioProcessor.clearNAM();
-        clearModelButton->setVisible(audioProcessor.getNamModelStatus());
+        clearModelButton->setVisible(audioProcessor.isModelLoaded());
         modelNameBox->setText("");
         modelNameBox->clear();
     };
@@ -142,7 +142,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     {
         audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
                                                                    : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        modelNameBox->setText(audioProcessor.getLastModelName());
+        modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
         modelNameBox->setCaretPosition(0);
     }
 
@@ -307,13 +307,15 @@ void NamEditor::loadModelButtonClicked()
     {
         juce::File model;
         model = chooser.getResult();
-        audioProcessor.loadNamModel(model);
-        modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        modelNameBox->setText(model.getFileNameWithoutExtension());
-        modelNameBox->setCaretPosition(0);
+        if (audioProcessor.loadNamModel(model))
+        {
+            modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+            modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + model.getFileNameWithoutExtension());
+            modelNameBox->setCaretPosition(0);
+            clearModelButton->setVisible(audioProcessor.isModelLoaded());
+        }
     }
 
-    clearModelButton->setVisible(audioProcessor.getNamModelStatus());
 }
 
 void NamEditor::loadIrButtonClicked()
@@ -429,7 +431,7 @@ void NamEditor::updateAfterPresetLoad()
     {
         audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
                                                                    : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        modelNameBox->setText(audioProcessor.getLastModelName());
+        modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
         modelNameBox->setCaretPosition(0);
     }
     else
@@ -449,6 +451,6 @@ void NamEditor::updateAfterPresetLoad()
         irNameBox->setText("");
     }
 
-    clearModelButton->setVisible(audioProcessor.getNamModelStatus());
+    clearModelButton->setVisible(audioProcessor.isModelLoaded());
     clearIrButton->setVisible(audioProcessor.getIrStatus());
 }
