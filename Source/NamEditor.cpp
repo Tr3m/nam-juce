@@ -238,6 +238,17 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     addAndMakeVisible(&topBar);
 
+    slimSlider.reset(new juce::Slider("SlimSlider"));
+    addAndMakeVisible(slimSlider.get());
+    slimSlider->setSliderStyle(juce::Slider::LinearHorizontal);
+    slimSlider->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    slimSlider->setPopupDisplayEnabled(true, true, getTopLevelComponent());
+    slimSlider->setRange(0.0, 1.0, 0.1);
+    slimSlider->addListener(this);
+    slimSlider->setValue(audioProcessor.getSlimmableSize(), juce::NotificationType::dontSendNotification);
+    int sliderWidth = eqButton->getWidth() / 2 + eqButton->getWidth() / 4;
+    slimSlider->setBounds(sliders[PluginKnobs::Input]->getX() + (sliders[PluginKnobs::Input]->getWidth() / 2) - 30, eqButton->getY() + eqButton->getHeight() / 3, sliderWidth, eqButton->getHeight() / 2);
+
     startTimer(30);
 }
 
@@ -285,7 +296,14 @@ void NamEditor::timerCallback()
     repaint();
 }
 
-void NamEditor::sliderValueChanged(juce::Slider* slider) {}
+void NamEditor::sliderValueChanged(juce::Slider* slider) 
+{
+    if (slider == slimSlider.get())
+    {
+        DBG("Slim Size: " + std::to_string(slimSlider->getValue()));
+        audioProcessor.setSlimmableSize(slimSlider->getValue());
+    }
+}
 
 void NamEditor::setToneStackEnabled(bool toneStackEnabled)
 {

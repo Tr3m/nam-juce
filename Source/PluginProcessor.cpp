@@ -92,6 +92,9 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
     myNAM.prepare(spec);
     myNAM.hookParameters(apvts);
 
+    DBG("Setting slim size to: " + std::to_string(this->slimSize));
+    myNAM.setSlimSize(this->slimSize);
+
     cab.reset();
     cab.prepare(spec);
 
@@ -236,6 +239,11 @@ void NamJUCEAudioProcessor::clearNAM()
     this->suspendProcessing(false);
 }
 
+void NamJUCEAudioProcessor::setSlimmableSize(double size)
+{
+    myNAM.setSlimSize(size);
+    this->slimSize = myNAM.getSlimSize();
+}
 
 void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
 {
@@ -393,6 +401,8 @@ void NamJUCEAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     xml->addTextElement("LastIrSearchDir");
     xml->setAttribute("LastIrSearchDir", lastIrSerachDir);
 
+    xml->setAttribute("SlimSize", int(this->slimSize * 10));
+
     copyXmlToBinary(*xml, destData);
 }
 
@@ -402,6 +412,10 @@ void NamJUCEAudioProcessor::setStateInformation(const void* data, int sizeInByte
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState.get() != nullptr)
+    {
+        if(xmlState->hasAttribute("SlimSize"))
+            this->slimSize = double(xmlState->getIntAttribute("SlimSize") / 10.0);
+
         if (xmlState->hasTagName(apvts.state.getType()))
         {
             apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
@@ -484,6 +498,7 @@ void NamJUCEAudioProcessor::setStateInformation(const void* data, int sizeInByte
                 lastIrSerachDir = "null";
             }
         }
+    }
 
     if (this->prepareCalled)
         this->prepareToPlay(getSampleRate(), getBlockSize());

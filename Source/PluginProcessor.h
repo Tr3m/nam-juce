@@ -63,6 +63,9 @@ public:
 
     void clearNAM ();
 
+    double getSlimmableSize() { return myNAM.getSlimSize(); };
+    void setSlimmableSize(double size);
+
     void loadImpulseResponse (juce::File irToLoad);
     bool getIrStatus ();
     void clearIR ();
@@ -103,6 +106,7 @@ private:
     };
 
     NeuralAmpModeler myNAM;
+    double slimSize {0.0};
 
     bool isA2 {false};
 
