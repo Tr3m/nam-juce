@@ -8,7 +8,7 @@ project(${PROJECT_NAME} VERSION ${PLUGIN_VERSION})
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/helpers.cmake")
 init_submodules()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -16,7 +16,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     include_directories(SYSTEM /usr/local/include)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	link_libraries(stdc++fs)
+    #link_libraries(stdc++fs)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     cmake_policy(SET CMP0091 NEW)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE INTERNAL "")
@@ -27,6 +27,15 @@ endif()
 
 add_definitions(-DNAM_SAMPLE_FLOAT)
 add_definitions(-DDSP_SAMPLE_FLOAT)
+
+set(NAM_DEPS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Modules/NeuralAmpModelerCore/Dependencies")
+set(AUDIO_DSP_TOOLS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Modules/NeuralAmpModelerCore/Dependencies/AudioDSPTools")
+
+add_subdirectory(Modules/NeuralAmpModelerCore/Dependencies/eigen)
+
+file(GLOB NAM_SOURCES_TOP "${CMAKE_CURRENT_SOURCE_DIR}/Modules/NeuralAmpModelerCore/NAM/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Modules/NeuralAmpModelerCore/NAM/*.c")
+file(GLOB NAM_SOURCES_SUB "${CMAKE_CURRENT_SOURCE_DIR}/Modules/NeuralAmpModelerCore/NAM/*/*.cpp")
+set(NAM_SOURCES ${NAM_SOURCES_TOP} ${NAM_SOURCES_SUB})
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -39,10 +48,10 @@ else()
     add_subdirectory(Modules/JUCE)
 endif()
 
-include_directories(SYSTEM Modules/NeuralAmpModelerCore)
-include_directories(SYSTEM Modules/AudioDSPTools)
-add_subdirectory(Modules/NeuralAmpModelerCore/Dependencies/eigen)
-add_subdirectory(Modules/json)
+# include_directories(SYSTEM Modules/NeuralAmpModelerCore)
+# include_directories(SYSTEM Modules/AudioDSPTools)
+# add_subdirectory(Modules/NeuralAmpModelerCore/Dependencies/eigen)
+# add_subdirectory(Modules/json)
 
 juce_add_plugin(${PROJECT_NAME}
     VERSION ${PLUGIN_VERSION}
@@ -62,33 +71,38 @@ juce_add_plugin(${PROJECT_NAME}
     PRODUCT_NAME "Neural Amp Modeler"
     JucePlugin_Manufacturer "Manos Labrakis"
     )        
-    
-juce_generate_juce_header(${PROJECT_NAME})
 
-#add_subdirectory(Assets)
+add_library(nam_core STATIC ${NAM_SOURCES})
 
-add_subdirectory(Assets)
-add_subdirectory(Source)
-include_directories(Source)
+set_target_properties(nam_core PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+)
+
+target_include_directories(nam_core PUBLIC
+    Modules/NeuralAmpModelerCore
+    Modules/NeuralAmpModelerCore/NAM
+    Modules/NeuralAmpModelerCore/Dependencies/eigen
+    Modules/NeuralAmpModelerCore/Dependencies/nlohmann
+)
 
 target_sources(${PROJECT_NAME}
 PRIVATE
     Modules/ff_meters/ff_meters.h
     Modules/ff_meters/ff_meters.cpp
-    Modules/NeuralAmpModelerCore/NAM/activations.cpp
-    Modules/NeuralAmpModelerCore/NAM/activations.h
-    Modules/NeuralAmpModelerCore/NAM/convnet.cpp
-    Modules/NeuralAmpModelerCore/NAM/convnet.h
-    Modules/NeuralAmpModelerCore/NAM/dsp.cpp
-    Modules/NeuralAmpModelerCore/NAM/dsp.h
-    Modules/NeuralAmpModelerCore/NAM/get_dsp.cpp
-    Modules/NeuralAmpModelerCore/NAM/lstm.cpp
-    Modules/NeuralAmpModelerCore/NAM/lstm.h
-    Modules/NeuralAmpModelerCore/NAM/util.cpp
-    Modules/NeuralAmpModelerCore/NAM/util.h
-    Modules/NeuralAmpModelerCore/NAM/version.h
-    Modules/NeuralAmpModelerCore/NAM/wavenet.cpp
-    Modules/NeuralAmpModelerCore/NAM/wavenet.h
+    # Modules/NeuralAmpModelerCore/NAM/activations.cpp
+    # Modules/NeuralAmpModelerCore/NAM/activations.h
+    # Modules/NeuralAmpModelerCore/NAM/convnet.cpp
+    # Modules/NeuralAmpModelerCore/NAM/convnet.h
+    # Modules/NeuralAmpModelerCore/NAM/dsp.cpp
+    # Modules/NeuralAmpModelerCore/NAM/dsp.h
+    # Modules/NeuralAmpModelerCore/NAM/get_dsp.cpp
+    # Modules/NeuralAmpModelerCore/NAM/lstm.cpp
+    # Modules/NeuralAmpModelerCore/NAM/lstm.h
+    # Modules/NeuralAmpModelerCore/NAM/util.cpp
+    # Modules/NeuralAmpModelerCore/NAM/util.h
+    # Modules/NeuralAmpModelerCore/NAM/version.h
+    # Modules/NeuralAmpModelerCore/NAM/wavenet.cpp
+    # Modules/NeuralAmpModelerCore/NAM/wavenet.h
     Modules/AudioDSPTools/dsp/dsp.cpp
     Modules/AudioDSPTools/dsp/dsp.h
     Modules/AudioDSPTools/dsp/ImpulseResponse.cpp
@@ -103,6 +117,17 @@ PRIVATE
     Modules/AudioDSPTools/dsp/wav.cpp
     Modules/AudioDSPTools/dsp/wav.h    
 )
+
+juce_generate_juce_header(${PROJECT_NAME})
+
+add_subdirectory(Assets)
+add_subdirectory(Source)
+include_directories(Source)
+
+option(NAM_ENABLE_A2_FAST "Build the A2 fast-path WaveNet" ON)
+if(NAM_ENABLE_A2_FAST)
+	add_compile_definitions(NAM_ENABLE_A2_FAST)
+endif()
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "(amd64)|(AMD64)|(x86_64)")
 	option(USE_NATIVE_ARCH "Enable architecture-specific optimizations" OFF)
@@ -147,12 +172,31 @@ target_link_libraries(${PROJECT_NAME}
         BinaryData
         juce::juce_audio_utils
         juce::juce_dsp
-        nlohmann_json::nlohmann_json
-        Eigen3::Eigen
+        #nlohmann_json::nlohmann_json
+        #Eigen3::Eigen
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
-        juce::juce_recommended_warning_flags)
+        juce::juce_recommended_warning_flags
+)
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+            -Wl,--whole-archive
+            nam_core
+            -Wl,--no-whole-archive
+    )
+else()
+  target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+        "$<LINK_LIBRARY:WHOLE_ARCHIVE,nam_core>"
+  )
+endif()
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_libraries(nam_core PUBLIC stdc++fs)
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -160,8 +204,8 @@ target_include_directories(${PROJECT_NAME}
         Modules/NeuralAmpModelerCore/Dependencies/eigen
         Modules/NeuralAmpModelerCore/Dependencies/nlohmann
         Modules/AudioDSPTools/dsp
-        Modules/json/include
-        Modules/json/include/nlohmann
+        # Modules/json/include
+        # Modules/json/include/nlohmann
         Modules/
     #INTERFACE
         #$<TARGET_PROPERTY:juce_plugin_modules,INCLUDE_DIRECTORIES>

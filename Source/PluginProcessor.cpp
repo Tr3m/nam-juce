@@ -211,6 +211,9 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
 void NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
 {
     std::string model_path = modelToLoad.getFullPathName().toStdString();
+
+    DBG("About to load: " + modelToLoad.getFullPathName());
+
     this->suspendProcessing(true);
     namModelLoaded = myNAM.loadModel(model_path);
     this->suspendProcessing(false);

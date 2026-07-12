@@ -9,6 +9,9 @@
 #include "StatusedTrigger.h"
 #include "architecture.hpp"
 
+#include "../Modules/NeuralAmpModelerCore/NAM/activations.h"
+#include "../Modules/NeuralAmpModelerCore/NAM/get_dsp.h"
+
 #include <juce_dsp/juce_dsp.h>
 #include <juce_audio_processors/juce_audio_processors.h>
 
@@ -26,6 +29,10 @@ public:
 
     bool isModelLoaded ();
     void clearModel ();
+
+    void setSlimSize(double size);
+    double getSlimSize() { return this->slimSize; };
+    bool isModelSlimmable() { return this->isSlimmable; };
 
     void createParameters (std::vector<std::unique_ptr<juce::RangedAudioParameter>>& parameters);
     void hookParameters (juce::AudioProcessorValueTreeState&);
@@ -59,6 +66,9 @@ private:
     bool modelLoaded{false};
     bool shouldRemoveModel{false};
 
+    double slimSize {0.0};
+    bool isSlimmable {false};
+
     std::unique_ptr<ResamplingNAM> mModel, mStagedModel;
     std::unique_ptr<dsp::tone_stack::AbstractToneStack> mToneStack;
 
@@ -83,6 +93,8 @@ private:
     void resetModel ();
 
     void normalizeOutput (float** input, int numChannels, int numSamples);
+
+    void applySlim(ResamplingNAM* nam, double size);
 
     void updateParameters ();
     double dB_to_linear (double db_value);

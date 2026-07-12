@@ -48,8 +48,8 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer)
         // Input Gain
         buffer.applyGain(dB_to_linear(params[Parameters::kInputLevel]->load()));
 
-        mModel->process(*inputPointer, *outputPointer, buffer.getNumSamples());
-        mModel->finalize_(buffer.getNumSamples());
+        mModel->process(inputPointer, outputPointer, buffer.getNumSamples());
+        //mModel->finalize_(buffer.getNumSamples());
 
         // Normalize loudness
         if (this->outputNormalized)
@@ -85,6 +85,17 @@ bool NeuralAmpModeler::loadModel(const std::string modelPath)
 
         temp->Reset(this->sampleRate, this->samplesPerBlock);
 
+        if (nam::SlimmableModel* slimmable = temp->GetSlimmableModel())
+        {
+            this->isSlimmable = true;
+            slimmable->SetSlimmableSize(this->slimSize);
+            DBG("Slimmable Model!");
+        }
+        else
+        {
+            this->isSlimmable = false;
+        }
+
         mStagedModel = std::move(temp);
 
         return true;
@@ -112,6 +123,19 @@ bool NeuralAmpModeler::isModelLoaded()
 void NeuralAmpModeler::clearModel()
 {
     this->shouldRemoveModel = true;
+}
+
+void NeuralAmpModeler::setSlimSize(double size)
+{
+    if (size < 0.0)
+        size = 0.0f;
+    if (size > 1.0)
+        size = 1.0f;
+
+    this->slimSize = size;
+
+    this->applySlim(mModel.get(), this->slimSize);
+    this->applySlim(mStagedModel.get(), this->slimSize);
 }
 
 void NeuralAmpModeler::applyDSPStaging()
@@ -162,6 +186,15 @@ void NeuralAmpModeler::normalizeOutput(float** input, int numChannels, int numSa
             input[c][f] *= gain;
         }
     }
+}
+
+void NeuralAmpModeler::applySlim(ResamplingNAM* nam, double size)
+{
+    if (nam == nullptr)
+        return;
+
+    if (nam::SlimmableModel* s = nam->GetSlimmableModel())
+        s->SetSlimmableSize(size);
 }
 
 void NeuralAmpModeler::updateParameters()
