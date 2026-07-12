@@ -104,7 +104,9 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     clearModelButton->onClick = [this]
     {
         audioProcessor.clearNAM();
-        clearModelButton->setVisible(audioProcessor.isModelLoaded());
+        // clearModelButton->setVisible(audioProcessor.isModelLoaded());
+        clearModelButton->setVisible(false); // TODO: Fix this
+        slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
         modelNameBox->setText("");
         modelNameBox->clear();
     };
@@ -176,6 +178,22 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
         normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
     };
 
+    
+    slimSlider.reset(new CustomSlider(CustomSlider::SliderTypes::Slim_Slider));
+    addAndMakeVisible(slimSlider.get());
+    slimSlider->setSliderStyle(juce::Slider::LinearHorizontal);
+    slimSlider->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    slimSlider->setPopupDisplayEnabled(true, true, getTopLevelComponent());
+    slimSlider->setRange(0.0, 1.0, 0.1);
+    slimSlider->addListener(this);
+    slimSlider->setValue(audioProcessor.getSlimmableSize(), juce::NotificationType::dontSendNotification);
+    int sliderWidth = normalizeButton->getWidth() - 20;
+    slimSlider->setBounds(sliders[PluginKnobs::Input]->getX() + (sliders[PluginKnobs::Input]->getWidth() / 2) - 37, normalizeButton->getY() + normalizeButton->getHeight() / 3 - 13, sliderWidth, normalizeButton->getHeight());
+
+    // slimSlider->setAlpha(0.45f);
+    // slimSlider->setColour(juce::Slider::trackColourId, juce::Colours::red);
+    slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
+
     assetManager->initializeButton(irButton, AssetManager::Buttons::IR_BUTTON);
     addAndMakeVisible(irButton.get());
     irButton->setBounds(sliders[PluginKnobs::Output]->getX() + (sliders[PluginKnobs::Output]->getWidth() / 2) - 45,
@@ -237,17 +255,6 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     meterOut.toFront(true);
 
     addAndMakeVisible(&topBar);
-
-    slimSlider.reset(new juce::Slider("SlimSlider"));
-    addAndMakeVisible(slimSlider.get());
-    slimSlider->setSliderStyle(juce::Slider::LinearHorizontal);
-    slimSlider->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
-    slimSlider->setPopupDisplayEnabled(true, true, getTopLevelComponent());
-    slimSlider->setRange(0.0, 1.0, 0.1);
-    slimSlider->addListener(this);
-    slimSlider->setValue(audioProcessor.getSlimmableSize(), juce::NotificationType::dontSendNotification);
-    int sliderWidth = eqButton->getWidth() / 2 + eqButton->getWidth() / 4;
-    slimSlider->setBounds(sliders[PluginKnobs::Input]->getX() + (sliders[PluginKnobs::Input]->getWidth() / 2) - 30, eqButton->getY() + eqButton->getHeight() / 3, sliderWidth, eqButton->getHeight() / 2);
 
     startTimer(30);
 }
@@ -331,6 +338,7 @@ void NamEditor::loadModelButtonClicked()
             modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + model.getFileNameWithoutExtension());
             modelNameBox->setCaretPosition(0);
             clearModelButton->setVisible(audioProcessor.isModelLoaded());
+            slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
         }
     }
 
@@ -471,4 +479,7 @@ void NamEditor::updateAfterPresetLoad()
 
     clearModelButton->setVisible(audioProcessor.isModelLoaded());
     clearIrButton->setVisible(audioProcessor.getIrStatus());
+
+
+    slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
 }

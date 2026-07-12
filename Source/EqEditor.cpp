@@ -2,6 +2,9 @@
 
 EqEditor::EqEditor(NamJUCEAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p)
 {
+    lnfOff.setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
+    lnfOn.setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
+        
     addAndMakeVisible(&inGainSlider);
     inGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     inGainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -96,13 +99,16 @@ void EqEditor::placeSliders()
     {
         addAndMakeVisible(&sliders[i]);
         sliders[i].setSliderStyle(Slider::SliderStyle::LinearVertical);
+        sliders[i].setPopupDisplayEnabled(true, true, getTopLevelComponent());
+        sliders[i].setTextValueSuffix(" dB");
+        sliders[i].setCustomSlider(CustomSlider::SliderTypes::EQ_Slider);
 
         if (*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))
             sliders[i].setLookAndFeel(&lnfOff);
         else
             sliders[i].setLookAndFeel(&lnfOn);
 
-        sliders[i].setBounds(xSlider, 235 + globalOffset, 30, 144);
+        sliders[i].setBounds(xSlider, 235 + globalOffset, 30, 158);
 
 
         xSlider = xSlider + 60;

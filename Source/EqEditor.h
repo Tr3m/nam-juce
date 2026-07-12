@@ -37,7 +37,9 @@ private:
     juce::Image backgroundOn = juce::ImageFileFormat::loadFrom(BinaryData::eq_background_on_png, BinaryData::eq_background_on_pngSize);
     juce::Image backgroundOff = juce::ImageFileFormat::loadFrom(BinaryData::eq_background_off_png, BinaryData::eq_background_off_pngSize);
 
-    juce::Slider sliders[10], inGainSlider, outGainSlider;
+    juce::Slider inGainSlider, outGainSlider;
+    CustomSlider sliders[10];
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[10], inputGainAttachment, outputGainAttachment;
 
     juce::Label inLevelLabel, outLevelLabel;
@@ -45,12 +47,12 @@ private:
     juce::ToggleButton bypass;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassButtonAttachment;
 
-    SliderOnLookAndFeel lnfOn;
-    SliderOffLookAndFeel lnfOff;
+    SliderLookAndFeel lnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Vertical};
+    SliderLookAndFeel lnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Vertical};
 
     knobLookAndFeel lnf{knobLookAndFeel::KnobTypes::Minimal};
 
-    int globalOffset{23};
+    int globalOffset{16};
 
     NamJUCEAudioProcessor& audioProcessor;
 

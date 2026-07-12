@@ -45,7 +45,7 @@ public:
 private:
     std::unique_ptr<CustomSlider> sliders[NUM_SLIDERS];
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[NUM_SLIDERS];
-    std::unique_ptr<juce::Slider> slimSlider;
+    std::unique_ptr<CustomSlider> slimSlider;
 
     juce::String sliderIDs[NUM_SLIDERS]{
         "INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID", "DOUBLER_ID"};
@@ -55,6 +55,8 @@ private:
     // juce::TooltipWindow tooltipWindow{ this, 200 };
 
     knobLookAndFeel lnf{knobLookAndFeel::KnobTypes::Main};
+    SliderLookAndFeel slimLnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Horizontal};
+    SliderLookAndFeel slimLnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Horizontal};
 
     juce::String ngThreshold{"Null"};
 

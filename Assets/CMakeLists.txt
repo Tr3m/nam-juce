@@ -14,6 +14,8 @@ juce_add_binary_data(BinaryData SOURCES
     knob_minimal.png
     led_off.png
     led_on.png
+    slim_thumb_off.png
+    slim_thumb_on.png
     ${SRC_FILES}
 )
 
