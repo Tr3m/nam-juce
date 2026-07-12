@@ -9,7 +9,7 @@
 
 #define NUM_SLIDERS 9
 
-class NamEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener
+class NamEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener, public juce::ComboBox::Listener
 {
 public:
     NamEditor(NamJUCEAudioProcessor&);
@@ -19,7 +19,8 @@ public:
     void resized () override;
 
     void timerCallback ();
-    void sliderValueChanged (juce::Slider* slider);
+    void sliderValueChanged (juce::Slider* slider) override;
+    void comboBoxChanged (juce::ComboBox* comboBox) override;
 
     void setToneStackEnabled (bool toneStackEnabled);
 
@@ -46,6 +47,7 @@ private:
     std::unique_ptr<CustomSlider> sliders[NUM_SLIDERS];
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[NUM_SLIDERS];
     std::unique_ptr<CustomSlider> slimSlider;
+    std::unique_ptr<juce::ComboBox> modelComboBox;
 
     juce::String sliderIDs[NUM_SLIDERS]{
         "INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID", "DOUBLER_ID"};
@@ -95,4 +97,6 @@ private:
     // Pass this to the Preset Manager for updating the gui after loading a new preset.
     // Maybe not the best way of doing it...
     void updateAfterPresetLoad ();
+
+    void populateModelComboBox();
 };

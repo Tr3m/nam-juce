@@ -55,6 +55,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     bool loadNamModel (juce::File modelToLoad);
+    bool loadNamModel (int modelIndex);
     
     // Somewhat inaccurate name since the modelLoaded
     // boolean is updated during staging rather than loading.
@@ -94,6 +95,8 @@ public:
     void loadFromPreset (juce::String modelPath, juce::String irPath);
 
     bool isA2Model() { return this->isA2; };
+
+    juce::StringArray getDirectoryModelNames() { return directoryModelNames; };
 
 
 private:
@@ -135,9 +138,13 @@ private:
     foleys::LevelMeterSource meterInSource;
     foleys::LevelMeterSource meterOutSource;
 
+    juce::StringArray directoryModelNames, directoryModelPaths;
+    int modelIndex {0};
+
     PresetManager presetManager;
 
     bool prepareCalled {false};
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)
 };

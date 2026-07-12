@@ -201,6 +201,18 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
     lastModelSerachDir = modelToLoad.getParentDirectory().getFullPathName().toStdString();
     search_paths.setProperty("LastModelSearchDir", juce::String(lastModelSerachDir), nullptr);
 
+    auto modelDir = modelToLoad.getParentDirectory();
+    const auto fileArray = modelDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.nam");
+
+    this->directoryModelNames.clear();
+    this->directoryModelPaths.clear();
+
+    for (juce::File f : fileArray)
+    {
+        this->directoryModelNames.add(f.getFileNameWithoutExtension());
+        this->directoryModelPaths.add(f.getFullPathName());
+    }
+
     if (loaded)
     {
         auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
@@ -214,6 +226,41 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
     {
         lastModelName = "";
         this->isA2 = false;        
+    }
+
+    return loaded;
+}
+
+bool NamJUCEAudioProcessor::loadNamModel(int modelIndex)
+{
+    if (modelIndex < 0 || modelIndex >= directoryModelPaths.size())
+    {
+        this->lastModelName = "";
+        this->isA2 = false;
+        return false;
+    }
+
+    juce::File modelToLoad(directoryModelPaths[modelIndex]);
+
+    std::string model_path = modelToLoad.getFullPathName().toStdString();
+    DBG("About to load: " + modelToLoad.getFullPathName());
+    this->suspendProcessing(true);
+    bool loaded = myNAM.loadModel(model_path);
+    this->suspendProcessing(false);
+
+    if (loaded)
+    {
+        lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
+        lastModelPath = model_path;
+        this->isA2 = myNAM.isModelSlimmable();
+        auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
+        addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
+        this->modelIndex = modelIndex;
+    }
+    else
+    {
+        lastModelName = "";
+        this->isA2 = false;
     }
 
     return loaded;
