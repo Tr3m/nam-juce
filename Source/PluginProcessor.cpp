@@ -221,6 +221,8 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
         addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
 
         this->isA2 = myNAM.isModelSlimmable();
+
+        DBG("Loaded Model: " + lastModelName + (isA2 ? " (Slimmable)" : ""));
     }
     else 
     {
@@ -256,6 +258,8 @@ bool NamJUCEAudioProcessor::loadNamModel(int modelIndex)
         auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
         addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
         this->modelIndex = modelIndex;
+
+        DBG("Loaded Model: " + lastModelName + (isA2 ? " (Slimmable)" : ""));
     }
     else
     {
@@ -292,32 +296,115 @@ void NamJUCEAudioProcessor::setSlimmableSize(double size)
     this->slimSize = myNAM.getSlimSize();
 }
 
-void NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
+bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
 {
-    this->suspendProcessing(true);
-
-    this->clearIR();
     std::string ir_path = irToLoad.getFullPathName().toStdString();
-
-    DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
-
-    cab.loadImpulseResponse(irToLoad, juce::dsp::Convolution::Stereo::no,
-            juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
-
-    irLoaded = true;
-    irFound = true;
-
-    auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
-    lastIrPath = ir_path;
-    lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
-    addons.setProperty("ir_path", juce::String(lastIrPath), nullptr);
 
     auto search_paths = apvts.state.getOrCreateChildWithName("search_paths", nullptr);
     lastIrSerachDir = irToLoad.getParentDirectory().getFullPathName().toStdString();
     search_paths.setProperty("LastIrSearchDir", juce::String(lastIrSerachDir), nullptr);
 
-    this->suspendProcessing(false);
+    auto irDir = irToLoad.getParentDirectory();
+    const auto fileArray = irDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.wav");
+
+    this->directoryIrNames.clear();
+    this->directoryIrPaths.clear();
+
+    for (juce::File f : fileArray)
+    {
+        this->directoryIrNames.add(f.getFileNameWithoutExtension());
+        this->directoryIrPaths.add(f.getFullPathName());
+    }
+
+    DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
+
+    if (isIrValidFormat(irToLoad))
+    {
+
+        this->suspendProcessing(true);
+        this->clearIR();
+
+        cab.loadImpulseResponse(irToLoad, juce::dsp::Convolution::Stereo::no,
+                juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+        
+        this->suspendProcessing(false);
+
+
+        irLoaded = true;
+        irFound = true;
+
+        auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
+        lastIrPath = ir_path;
+        lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
+        addons.setProperty("ir_path", juce::String(lastIrPath), nullptr);
+
+        DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
+
+        return true;
+    }
+    else
+    {
+        lastIrName = "";
+        return false;
+    }
 }
+
+bool NamJUCEAudioProcessor::loadImpulseResponse(int irIndex)
+{
+    if (irIndex < 0 || irIndex >= directoryIrPaths.size())
+    {
+        this->lastIrName = "";
+        return false;
+    }
+
+    juce::File irToLoad(directoryIrPaths[irIndex]);
+
+    std::string ir_path = irToLoad.getFullPathName().toStdString();
+
+    DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
+
+
+    if (isIrValidFormat(irToLoad))
+    {
+
+        this->suspendProcessing(true);
+        this->clearIR();
+
+        cab.loadImpulseResponse(irToLoad, juce::dsp::Convolution::Stereo::no,
+                juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+        
+        this->suspendProcessing(false);
+
+        irLoaded = true;
+        irFound = true;
+
+        auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
+        lastIrPath = ir_path;
+        lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
+        addons.setProperty("ir_path", juce::String(lastIrPath), nullptr);
+        this->irIndex = irIndex
+
+        DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
+
+        return true;
+    }
+    else
+    {
+        lastIrName = "";
+        return false;
+    }
+}
+
+bool NamJUCEAudioProcessor::isIrValidFormat(juce::File f)
+{
+    juce::AudioFormatManager formatManager;
+    formatManager.registerBasicFormats();
+
+    std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(f));
+
+    return reader ? true : false;
+}
+
 
 void NamJUCEAudioProcessor::clearIR()
 {

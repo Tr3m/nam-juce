@@ -122,6 +122,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
         clearIrButton->setVisible(audioProcessor.getIrStatus());
         irNameBox->setText("");
         irNameBox->clear();
+        irComboBox->clear(juce::NotificationType::dontSendNotification);
     };
 
     // Hook slider and button attacments
@@ -219,6 +220,13 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     modelComboBox->setBounds(modelNameBox->getBounds());
     modelComboBox->setLookAndFeel(&lnf);
 
+    // IR Combo Box
+    irComboBox.reset(new juce::ComboBox("IrComboBox"));
+    addAndMakeVisible(irComboBox.get());
+    irComboBox->addListener(this);
+    irComboBox->setAlpha(0.0f);
+    irComboBox->setBounds(irNameBox->getBounds());
+    irComboBox->setLookAndFeel(&lnf);
 
     eqButton->setAlwaysOnTop(true);
     eqButton->toFront(false);
@@ -268,6 +276,9 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     if (audioProcessor.isModelLoaded())
         populateModelComboBox();
+
+    if (audioProcessor.getIrStatus())
+        populateIrComboBox();
 
     startTimer(30);
 }
@@ -341,6 +352,18 @@ void NamEditor::comboBoxChanged (juce::ComboBox* comboBox)
 
         modelComboBox->setSelectedId(0, juce::NotificationType::dontSendNotification);
     }
+    else if (comboBox == irComboBox.get())
+    {
+        if (audioProcessor.loadImpulseResponse(irComboBox->getSelectedId() - 1))
+        {
+            irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+            irNameBox->setText(audioProcessor.getLastIrName());
+            irNameBox->setCaretPosition(0);
+            clearIrButton->setVisible(audioProcessor.getIrStatus());
+        }
+
+        irComboBox->setSelectedId(0, juce::NotificationType::dontSendNotification);
+    }
 }
 
 void NamEditor::setToneStackEnabled(bool toneStackEnabled)
@@ -388,13 +411,16 @@ void NamEditor::loadIrButtonClicked()
     {
         juce::File impulseResponse;
         impulseResponse = chooser.getResult();
-        audioProcessor.loadImpulseResponse(impulseResponse);
-        irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        irNameBox->setText(impulseResponse.getFileNameWithoutExtension());
-        irNameBox->setCaretPosition(0);
-    }
+        if(audioProcessor.loadImpulseResponse(impulseResponse))
+        {
+            irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+            irNameBox->setText(impulseResponse.getFileNameWithoutExtension());
+            irNameBox->setCaretPosition(0);
+            clearIrButton->setVisible(audioProcessor.getIrStatus());
+        }
 
-    clearIrButton->setVisible(audioProcessor.getIrStatus());
+        populateIrComboBox();
+    }
 }
 
 void NamEditor::initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height)
@@ -517,6 +543,7 @@ void NamEditor::updateAfterPresetLoad()
     slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
 
     populateModelComboBox();
+    populateIrComboBox();
 }
 
 void NamEditor::populateModelComboBox()
@@ -525,4 +552,9 @@ void NamEditor::populateModelComboBox()
     modelComboBox->addItemList(audioProcessor.getDirectoryModelNames(), 1);
 } 
 
+void NamEditor::populateIrComboBox()
+{
+    irComboBox->clear(juce::NotificationType::dontSendNotification);
+    irComboBox->addItemList(audioProcessor.getDirectoryIrNames(), 1);
+}
 

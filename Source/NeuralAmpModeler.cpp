@@ -89,7 +89,6 @@ bool NeuralAmpModeler::loadModel(const std::string modelPath)
         {
             this->isSlimmable = true;
             slimmable->SetSlimmableSize(this->slimSize);
-            DBG("Slimmable Model!");
         }
         else
         {

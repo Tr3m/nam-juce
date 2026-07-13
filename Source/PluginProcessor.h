@@ -54,7 +54,7 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    bool loadNamModel (juce::File modelToLoad);
+    bool loadNamModel (juce::File modelToirLoad);
     bool loadNamModel (int modelIndex);
     
     // Somewhat inaccurate name since the modelLoaded
@@ -67,7 +67,8 @@ public:
     double getSlimmableSize() { return myNAM.getSlimSize(); };
     void setSlimmableSize(double size);
 
-    void loadImpulseResponse (juce::File irToLoad);
+    bool loadImpulseResponse (juce::File irToLoad);
+    bool loadImpulseResponse (int index);
     bool getIrStatus ();
     void clearIR ();
 
@@ -97,6 +98,7 @@ public:
     bool isA2Model() { return this->isA2; };
 
     juce::StringArray getDirectoryModelNames() { return directoryModelNames; };
+    juce::StringArray getDirectoryIrNames() { return directoryIrNames; };
 
 
 private:
@@ -141,9 +143,14 @@ private:
     juce::StringArray directoryModelNames, directoryModelPaths;
     int modelIndex {0};
 
+    juce::StringArray directoryIrNames, directoryIrPaths;
+    int irIndex {0};
+
     PresetManager presetManager;
 
     bool prepareCalled {false};
+
+    bool isIrValidFormat(juce::File f);
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)

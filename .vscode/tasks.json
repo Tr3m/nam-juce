@@ -4,7 +4,7 @@
       {
         "label": "build-debug-linux",
         "type": "shell",
-        "command": "cmake -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_NATIVE_ARCH=1 && cmake --build build -- -j $(nproc)",
+        "command": "cmake -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build -- -j $(nproc)",
         "group": {
           "kind": "build",
           "isDefault": true

@@ -47,7 +47,7 @@ private:
     std::unique_ptr<CustomSlider> sliders[NUM_SLIDERS];
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachments[NUM_SLIDERS];
     std::unique_ptr<CustomSlider> slimSlider;
-    std::unique_ptr<juce::ComboBox> modelComboBox;
+    std::unique_ptr<juce::ComboBox> modelComboBox, irComboBox;
 
     juce::String sliderIDs[NUM_SLIDERS]{
         "INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID", "DOUBLER_ID"};
@@ -99,4 +99,5 @@ private:
     void updateAfterPresetLoad ();
 
     void populateModelComboBox();
+    void populateIrComboBox();
 };
