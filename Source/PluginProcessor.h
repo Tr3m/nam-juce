@@ -73,6 +73,7 @@ public:
     void clearIR ();
 
     bool getTriggerStatus ();
+    StatusedTrigger* getTrigger() { return myNAM.getTrigger(); };
 
     bool supportsDoublePrecisionProcessing () const override;
 
@@ -111,7 +112,7 @@ private:
     };
 
     NeuralAmpModeler myNAM;
-    double slimSize {0.0};
+    double slimSize {1.0};
 
     bool isA2 {false};
 

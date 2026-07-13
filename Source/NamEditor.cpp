@@ -280,11 +280,13 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     if (audioProcessor.getIrStatus())
         populateIrComboBox();
 
-    startTimer(30);
+    audioProcessor.getTrigger()->addValueListener(this);
 }
 
 NamEditor::~NamEditor()
 {
+    audioProcessor.getTrigger()->removeValueListener(this);
+
     for (int sliderAtt = 0; sliderAtt < NUM_SLIDERS; ++sliderAtt)
         sliderAttachments[sliderAtt] = nullptr;
 
@@ -301,9 +303,8 @@ void NamEditor::paint(juce::Graphics& g)
     g.setFont(15.0f);
 
     g.drawImageAt(assetManager->getBackground(), 0, 0);
-    g.drawImageAt(assetManager->getScreens(), 0, 0);
+    // g.drawImageAt(assetManager->getScreens(), 0, 0);
 
-    //// TODO: Move this into a dedicated component with its own timer
     g.drawImageAt(led_to_draw, 296, 168);
 }
 
@@ -316,23 +317,20 @@ void NamEditor::resized()
     topBar.setBounds(0, 0, getWidth(), 40);
 }
 
-void NamEditor::timerCallback()
-{
-    //// TODO: Move this into a dedicated component with its own timer
-
-    if (audioProcessor.getTriggerStatus() && static_cast<float>(*audioProcessor.apvts.getRawParameterValue("NGATE_ID")) > -101.0)
-        led_to_draw = led_on;
-    else
-        led_to_draw = led_off;
-    repaint();
-}
-
 void NamEditor::sliderValueChanged(juce::Slider* slider) 
 {
     if (slider == slimSlider.get())
     {
         DBG("Slim Size: " + std::to_string(slimSlider->getValue()));
         audioProcessor.setSlimmableSize(slimSlider->getValue());
+    }
+    else if (slider == sliders[PluginKnobs::NoiseGate].get())
+    {
+        if (slider->getValue() < -100.0)
+        {
+            this->led_to_draw = led_off;
+            repaint();
+        }
     }
 }
 
@@ -363,6 +361,19 @@ void NamEditor::comboBoxChanged (juce::ComboBox* comboBox)
         }
 
         irComboBox->setSelectedId(0, juce::NotificationType::dontSendNotification);
+    }
+}
+
+void NamEditor::valueChanged (Value& value)
+{
+    if (value == *(audioProcessor.getTrigger()->getGatingValue()) && static_cast<float>(*audioProcessor.apvts.getRawParameterValue("NGATE_ID")) > -101.0)
+    {
+       if(value.getValue()) //Is Gating
+           led_to_draw = led_on;
+       else
+           led_to_draw = led_off;
+
+       repaint();
     }
 }
 

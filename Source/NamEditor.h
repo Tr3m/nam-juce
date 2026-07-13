@@ -9,7 +9,10 @@
 
 #define NUM_SLIDERS 9
 
-class NamEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener, public juce::ComboBox::Listener
+class NamEditor : public juce::AudioProcessorEditor,
+                  juce::Slider::Listener, 
+                  juce::ComboBox::Listener,
+                  juce::Value::Listener
 {
 public:
     NamEditor(NamJUCEAudioProcessor&);
@@ -18,9 +21,9 @@ public:
     void paint (juce::Graphics&) override;
     void resized () override;
 
-    void timerCallback ();
     void sliderValueChanged (juce::Slider* slider) override;
     void comboBoxChanged (juce::ComboBox* comboBox) override;
+    void valueChanged (Value& value ) override;
 
     void setToneStackEnabled (bool toneStackEnabled);
 
@@ -54,8 +57,6 @@ private:
 
     std::unique_ptr<AssetManager> assetManager;
 
-    // juce::TooltipWindow tooltipWindow{ this, 200 };
-
     knobLookAndFeel lnf{knobLookAndFeel::KnobTypes::Main};
     SliderLookAndFeel slimLnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Horizontal};
     SliderLookAndFeel slimLnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Horizontal};
@@ -71,10 +72,9 @@ private:
     std::unique_ptr<LedButtonComponent> toneStackButton, normalizeButton, irButton, eqButton;
     juce::Image xIcon = juce::ImageFileFormat::loadFrom(BinaryData::xIcon_png, BinaryData::xIcon_pngSize);
 
-    //// TODO: Move this into a dedicated component with its own timer
     juce::Image led_off = juce::ImageFileFormat::loadFrom(BinaryData::led_off_png, BinaryData::led_off_pngSize);
     juce::Image led_on = juce::ImageFileFormat::loadFrom(BinaryData::led_on_png, BinaryData::led_on_pngSize);
-    juce::Image led_to_draw;
+    juce::Image led_to_draw {led_on};
 
     std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
 
@@ -88,7 +88,6 @@ private:
     NamJUCEAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamEditor)
 
-    // Private Functions
 private:
     void initializeTextBox (const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height);
     void initializeButton (const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y,

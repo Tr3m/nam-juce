@@ -11,6 +11,7 @@
 
 #include "../Modules/AudioDSPTools/dsp/dsp.h"
 #include "../Modules/AudioDSPTools/dsp/NoiseGate.h"
+#include <juce_data_structures/juce_data_structures.h>
 
 extern const double dsp::noise_gate::MINIMUM_LOUDNESS_DB;
 extern const double dsp::noise_gate::MINIMUM_LOUDNESS_POWER;
@@ -33,6 +34,9 @@ public:
     }
 
     bool isGating() { return this->gating; };
+    void addValueListener(juce::Value::Listener*);
+    void removeValueListener(juce::Value::Listener*);
+    juce::Value* getGatingValue() { return &isGatingValue; };
 
 private:
     enum class State
@@ -69,6 +73,7 @@ private:
     double level_to_db(const DSP_SAMPLE db) { return 10.0 * log10(db); };
 
     bool gating{false};
+    juce::Value isGatingValue {juce::var {false}};
 };
 
 #endif

@@ -382,7 +382,7 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(int irIndex)
         lastIrPath = ir_path;
         lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
         addons.setProperty("ir_path", juce::String(lastIrPath), nullptr);
-        this->irIndex = irIndex
+        this->irIndex = irIndex;
 
         DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
 

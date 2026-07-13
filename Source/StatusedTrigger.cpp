@@ -55,7 +55,10 @@ DSP_SAMPLE** StatusedTrigger::Process(DSP_SAMPLE** inputs, const size_t numChann
                     }
 
                     if (levelDB > threshold)
+                    {
                         this->gating = false;
+                        this->isGatingValue.setValue(juce::var(false));
+                    }
                 }
                 else if (targetGainReduction < this->mLastGainReductionDB[c])
                 {
@@ -67,6 +70,7 @@ DSP_SAMPLE** StatusedTrigger::Process(DSP_SAMPLE** inputs, const size_t numChann
                     }
 
                     gating = true;
+                    this->isGatingValue.setValue(juce::var(true));
                 }
                 this->mGainReductionDB[c][s] = this->mLastGainReductionDB[c];
             }
@@ -116,4 +120,14 @@ void StatusedTrigger::_PrepareBuffers(const size_t numChannels, const size_t num
             }
         }
     }
+}
+
+void StatusedTrigger::addValueListener(juce::Value::Listener* l)
+{
+    this->isGatingValue.addListener(l);
+}
+
+void StatusedTrigger::removeValueListener(juce::Value::Listener* l)
+{
+    this->isGatingValue.removeListener(l);
 }
