@@ -3,7 +3,7 @@
 #include "PluginProcessor.h"
 #include "MyLookAndFeel.h"
 #include "AssetManager.h"
-#include "EqEditor.h"
+#include "EQ/EqContainer.h"
 #include "TopBarComponent.h"
 #include "LedButtonComponent.h"
 
@@ -81,7 +81,7 @@ private:
     foleys::LevelMeter meterIn{foleys::LevelMeter::SingleChannel}, meterOut{foleys::LevelMeter::SingleChannel};
     MeterLookAndFeel meterlnf, meterlnf2;
 
-    EqEditor eqEditor;
+    EqContainer eqEditor;
 
     TopBarComponent topBar;
 

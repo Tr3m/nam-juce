@@ -4,7 +4,7 @@
 #include <juce_dsp/juce_dsp.h>
 #include "NeuralAmpModeler.h"
 #include <ff_meters/ff_meters.h>
-#include "EqProcessor.h"
+#include "EQ/EqProcessor.h"
 #include "DoublerProcessor.h"
 #include "PresetManager/PresetManager.h"
 //==============================================================================
@@ -101,6 +101,7 @@ public:
     juce::StringArray getDirectoryModelNames() { return directoryModelNames; };
     juce::StringArray getDirectoryIrNames() { return directoryIrNames; };
 
+    juce::Value& getEqStateValue() { return eqStateValue; };
 
 private:
     //==============================================================================
@@ -152,6 +153,8 @@ private:
     bool prepareCalled {false};
 
     bool isIrValidFormat(juce::File f);
+
+    juce::Value eqStateValue;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)

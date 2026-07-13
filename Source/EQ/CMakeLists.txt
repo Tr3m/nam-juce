@@ -1,0 +1,9 @@
+target_sources(${PROJECT_NAME}
+PRIVATE
+    EqEditor.cpp
+    EqEditor.h
+    EqProcessor.cpp
+    EqProcessor.h
+    EqContainer.cpp
+    EqContainer.h
+)

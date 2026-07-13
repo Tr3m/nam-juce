@@ -281,11 +281,13 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
         populateIrComboBox();
 
     audioProcessor.getTrigger()->addValueListener(this);
+    audioProcessor.getEqStateValue().addListener(this);
 }
 
 NamEditor::~NamEditor()
 {
     audioProcessor.getTrigger()->removeValueListener(this);
+    audioProcessor.getEqStateValue().removeListener(this);
 
     for (int sliderAtt = 0; sliderAtt < NUM_SLIDERS; ++sliderAtt)
         sliderAttachments[sliderAtt] = nullptr;
@@ -374,6 +376,10 @@ void NamEditor::valueChanged (Value& value)
            led_to_draw = led_off;
 
        repaint();
+    }
+    if (value == audioProcessor.getEqStateValue() && !audioProcessor.eqModuleVisible)
+    {
+        eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
     }
 }
 

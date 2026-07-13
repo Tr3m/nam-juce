@@ -1,12 +1,31 @@
 #pragma once
-// #include <JuceHeader.h>
+
 #include "PluginProcessor.h"
-#include "MyLookAndFeel.h"
+#include "../MyLookAndFeel.h"
+
+class EqFadeComponent : public juce::Component
+{
+public:
+
+    void paint(juce::Graphics& g) override
+    {
+        g.fillAll(juce::Colours::transparentBlack);
+        g.drawImageAt(eqFadeImage, 0, 38);
+    }
+
+    void resized() override
+    {
+
+    };
+
+private:    
+    juce::Image eqFadeImage = juce::ImageFileFormat::loadFrom(BinaryData::eq_fade_png, BinaryData::eq_fade_pngSize);
+};
 
 class EqEditor : public juce::AudioProcessorEditor
 {
 public:
-    EqEditor(NamJUCEAudioProcessor&);
+    EqEditor(NamJUCEAudioProcessor&, bool drawFade = false);
     ~EqEditor();
 
     void paint (juce::Graphics&) override;
@@ -53,6 +72,8 @@ private:
     knobLookAndFeel lnf{knobLookAndFeel::KnobTypes::Minimal};
 
     int globalOffset{16};
+
+    std::unique_ptr<EqFadeComponent> fadeComponent;
 
     NamJUCEAudioProcessor& audioProcessor;
 

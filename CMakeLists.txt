@@ -167,6 +167,11 @@ if(ASIO_PATH)
     endif()
 endif()
 
+if(UNIX AND NOT APPLE)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_JACK=1)
+    message("-- JACK support enabled")
+endif()
+
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         BinaryData

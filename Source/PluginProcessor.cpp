@@ -464,6 +464,8 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
     auto* channelDataLeft = buffer.getWritePointer(0);
     auto* channelDataRight = buffer.getWritePointer(1);
 
+    eqStateValue.setValue(juce::var(*apvts.getRawParameterValue("EQ_BYPASS_STATE_ID")));
+
     myNAM.processBlock(buffer);
 
     if (bool(*apvts.getRawParameterValue("CAB_ON_ID")) && irLoaded)

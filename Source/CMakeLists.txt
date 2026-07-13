@@ -15,15 +15,14 @@ PRIVATE
     PluginProcessor.h
     MyLookAndFeel.h
     AssetManager.h
-    EqEditor.cpp
-    EqEditor.h
-    EqProcessor.cpp
-    EqProcessor.h
     TopBarComponent.cpp
     TopBarComponent.h
     DoublerProcessor.h
     architecture.hpp
 )
+
+add_subdirectory(EQ)
+include_directories(EQ)
 
 add_subdirectory(CustomStandaloneWindow)
 include_directories(CustomStandaloneWindow)

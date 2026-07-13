@@ -1,6 +1,6 @@
 #include "EqEditor.h"
 
-EqEditor::EqEditor(NamJUCEAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p)
+EqEditor::EqEditor(NamJUCEAudioProcessor& p, bool drawFade) : AudioProcessorEditor(&p), audioProcessor(p)
 {
     lnfOff.setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
     lnfOn.setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
@@ -57,17 +57,26 @@ EqEditor::EqEditor(NamJUCEAudioProcessor& p) : AudioProcessorEditor(&p), audioPr
         std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "EQ_INPUT_GAIN_ID", inGainSlider);
     outputGainAttachment =
         std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "EQ_OUTPUT_GAIN_ID", outGainSlider);
+
+    if (drawFade)
+    {
+        fadeComponent.reset(new EqFadeComponent());
+        addAndMakeVisible(fadeComponent.get());
+    }
 }
 
 EqEditor::~EqEditor()
 {
     bypassButtonAttachment = nullptr;
+    fadeComponent = nullptr;
 
     for (int band = 0; band <= 9; ++band)
         sliderAttachments[band] = nullptr;
 
     inputGainAttachment = nullptr;
     outputGainAttachment = nullptr;
+
+    audioProcessor.eqModuleVisible = false;
 }
 
 void EqEditor::paint(juce::Graphics& g)
@@ -84,12 +93,15 @@ void EqEditor::resized()
     int knobSize = 70;
     inGainSlider.setBounds(70, 50, knobSize, knobSize);
     outGainSlider.setBounds(getWidth() - 140, 50, knobSize, knobSize);
+
+    if(fadeComponent != nullptr)
+        fadeComponent->setBounds(getLocalBounds());
 }
 
 void EqEditor::toggleEq()
 {
     bypass.setToggleState(!bypass.getToggleState(), true);
-    updateGraphics();
+    // updateGraphics();
 }
 
 void EqEditor::placeSliders()
