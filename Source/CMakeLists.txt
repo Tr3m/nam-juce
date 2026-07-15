@@ -19,6 +19,7 @@ PRIVATE
     TopBarComponent.h
     DoublerProcessor.h
     architecture.hpp
+    FileComparator.h
 )
 
 add_subdirectory(EQ)

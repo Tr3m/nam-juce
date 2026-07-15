@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "FileComparator.h"
 
 //==============================================================================
 NamJUCEAudioProcessor::NamJUCEAudioProcessor()
@@ -202,7 +203,10 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
     search_paths.setProperty("LastModelSearchDir", juce::String(lastModelSerachDir), nullptr);
 
     auto modelDir = modelToLoad.getParentDirectory();
-    const auto fileArray = modelDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.nam");
+    auto fileArray = modelDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.nam");
+
+    FileComparator comparator;
+    fileArray.sort(comparator);
 
     this->directoryModelNames.clear();
     this->directoryModelPaths.clear();
@@ -333,7 +337,10 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
     search_paths.setProperty("LastIrSearchDir", juce::String(lastIrSerachDir), nullptr);
 
     auto irDir = irToLoad.getParentDirectory();
-    const auto fileArray = irDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.wav");
+    auto fileArray = irDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.wav");
+
+    FileComparator comparator;
+    fileArray.sort(comparator);
 
     this->directoryIrNames.clear();
     this->directoryIrPaths.clear();

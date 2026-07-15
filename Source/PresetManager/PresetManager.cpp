@@ -1,4 +1,5 @@
 #include "PresetManager.h"
+#include "../FileComparator.h"
 
 const juce::File PresetManager::defaultPresetDirectory{
     juce::File::getSpecialLocation(juce::File::SpecialLocationType::userHomeDirectory).getChildFile("Neural Amp Modeler").getChildFile("Presets")};
@@ -89,7 +90,10 @@ void PresetManager::loadPreset(const juce::String& presetName)
 juce::StringArray PresetManager::getAllPresets() const
 {
     juce::StringArray presets;
-    const auto fileArray = defaultPresetDirectory.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*" + presetExtension);
+    auto fileArray = defaultPresetDirectory.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*" + presetExtension);
+
+    FileComparator comparator;
+    fileArray.sort(comparator);
 
     for (const auto& file : fileArray)
     {
