@@ -103,6 +103,12 @@ public:
 
     juce::Value& getEqStateValue() { return eqStateValue; };
 
+    void loadNextModel();
+    void loadPreviousModel();
+
+    void loadNextIR();
+    void loadPreviousIR();
+
 private:
     //==============================================================================
 

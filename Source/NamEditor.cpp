@@ -98,8 +98,8 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     loadIRButton->onClick = [this] { loadIrButtonClicked(); };
     assetManager->setLoadButton(loadIRButton);
 
-    initializeButton(
-        "ClearModelBtn", "X", clearModelButton, loadModelButton->getX() + loadModelButton->getWidth() + 10, loadModelButton->getY(), 48, 39);
+    initializeButton("ClearModelBtn", "X", clearModelButton, loadModelButton->getX() + loadModelButton->getWidth() + 65, loadModelButton->getY() + 7, 25, 25);
+    clearModelButton->setTooltip("Clear Model");
     clearModelButton->setVisible(audioProcessor.isModelLoaded());
     assetManager->setClearButton(clearModelButton);
     clearModelButton->onClick = [this]
@@ -113,7 +113,8 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
         modelComboBox->clear(juce::NotificationType::dontSendNotification);
     };
 
-    initializeButton("ClearIRbtn", "X", clearIrButton, loadIRButton->getX() + loadIRButton->getWidth() + 10, loadIRButton->getY(), 48, 39);
+    initializeButton("ClearIRbtn", "X", clearIrButton, loadIRButton->getX() + loadIRButton->getWidth() + 65, loadIRButton->getY() + 7, 25, 25);
+    clearIrButton->setTooltip("Clear Impulse Response");
     clearIrButton->setVisible(audioProcessor.getIrStatus());
     assetManager->setClearButton(clearIrButton);
     clearIrButton->onClick = [this]
@@ -227,6 +228,62 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     irComboBox->setAlpha(0.0f);
     irComboBox->setBounds(irNameBox->getBounds());
     irComboBox->setLookAndFeel(&lnf);
+
+    
+    initializeButton("PrevModelButton", "<", prevModelButton,
+            loadModelButton->getX() + loadModelButton->getWidth() + 5, loadModelButton->getY() + 7, 25, 25);
+    
+    prevModelButton->onClick = [this]
+    {
+        if (audioProcessor.isModelLoaded())
+        {
+            audioProcessor.loadPreviousModel();
+            updateModelBox();
+        }
+    };
+
+    initializeButton("NextModelButton", ">", nextModelButton,
+            prevModelButton->getX() + prevModelButton->getWidth() + 5, prevModelButton->getY(), 25, 25);
+
+    nextModelButton->onClick = [this]
+    {
+        if (audioProcessor.isModelLoaded())
+        {
+            audioProcessor.loadNextModel();
+            updateModelBox();
+        }
+    };
+
+    assetManager->setNextAndPrevButtons(prevModelButton, nextModelButton);
+
+
+    initializeButton("PrevIrButton", "<", prevIrButton,
+            loadIRButton->getX() + loadIRButton->getWidth() + 5, loadIRButton->getY() + 7, 25, 25);
+
+    prevIrButton->onClick = [this]
+    {
+        if (audioProcessor.getIrStatus())
+        {
+            audioProcessor.loadPreviousIR();
+            updateIrBox();
+        }
+    };
+
+
+    initializeButton("NextIrButton", ">", nextIrButton,
+            prevIrButton->getX() + prevIrButton->getWidth() + 5, prevIrButton->getY(), 25, 25);
+
+    nextIrButton->onClick = [this]
+    {
+        if (audioProcessor.getIrStatus())
+        {
+            audioProcessor.loadNextIR();
+            updateIrBox();
+        }
+    };
+
+    assetManager->setNextAndPrevButtons(prevIrButton, nextIrButton);
+
 
     eqButton->setAlwaysOnTop(true);
     eqButton->toFront(false);
@@ -343,11 +400,7 @@ void NamEditor::comboBoxChanged (juce::ComboBox* comboBox)
     {
         if(audioProcessor.loadNamModel(modelComboBox->getSelectedId() - 1))
         {
-            modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-            modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
-            modelNameBox->setCaretPosition(0);
-            clearModelButton->setVisible(audioProcessor.isModelLoaded());
-            slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
+            updateModelBox();
         }
 
         modelComboBox->setSelectedId(0, juce::NotificationType::dontSendNotification);
@@ -356,10 +409,7 @@ void NamEditor::comboBoxChanged (juce::ComboBox* comboBox)
     {
         if (audioProcessor.loadImpulseResponse(irComboBox->getSelectedId() - 1))
         {
-            irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-            irNameBox->setText(audioProcessor.getLastIrName());
-            irNameBox->setCaretPosition(0);
-            clearIrButton->setVisible(audioProcessor.getIrStatus());
+            updateIrBox();
         }
 
         irComboBox->setSelectedId(0, juce::NotificationType::dontSendNotification);
@@ -405,11 +455,7 @@ void NamEditor::loadModelButtonClicked()
         model = chooser.getResult();
         if (audioProcessor.loadNamModel(model))
         {
-            modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-            modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + model.getFileNameWithoutExtension());
-            modelNameBox->setCaretPosition(0);
-            clearModelButton->setVisible(audioProcessor.isModelLoaded());
-            slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
+            updateModelBox();
         }
 
         populateModelComboBox();
@@ -430,10 +476,7 @@ void NamEditor::loadIrButtonClicked()
         impulseResponse = chooser.getResult();
         if(audioProcessor.loadImpulseResponse(impulseResponse))
         {
-            irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-            irNameBox->setText(impulseResponse.getFileNameWithoutExtension());
-            irNameBox->setCaretPosition(0);
-            clearIrButton->setVisible(audioProcessor.getIrStatus());
+            updateIrBox();
         }
 
         populateIrComboBox();
@@ -575,3 +618,20 @@ void NamEditor::populateIrComboBox()
     irComboBox->addItemList(audioProcessor.getDirectoryIrNames(), 1);
 }
 
+
+void NamEditor::updateModelBox()
+{
+    modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+    modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
+    modelNameBox->setCaretPosition(0);
+    clearModelButton->setVisible(audioProcessor.isModelLoaded());
+    slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
+}
+
+void NamEditor::updateIrBox()
+{
+    irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+    irNameBox->setText(audioProcessor.getLastIrName());
+    irNameBox->setCaretPosition(0);
+    clearIrButton->setVisible(audioProcessor.getIrStatus());
+}

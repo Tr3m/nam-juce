@@ -221,6 +221,7 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
         addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
 
         this->isA2 = myNAM.isModelSlimmable();
+        this->modelIndex = directoryModelNames.indexOf(lastModelName);
 
         DBG("Loaded Model: " + lastModelName + (isA2 ? " (Slimmable)" : ""));
     }
@@ -269,6 +270,33 @@ bool NamJUCEAudioProcessor::loadNamModel(int modelIndex)
 
     return loaded;
 }
+
+void NamJUCEAudioProcessor::loadNextModel()
+{
+    if (directoryModelNames.size() > 1)
+    {
+        modelIndex = modelIndex + 1 >= directoryModelNames.size() ? 0 : modelIndex + 1; 
+
+        if(loadNamModel(modelIndex))
+            return;
+        else
+            loadNextModel();
+    }
+}
+
+void NamJUCEAudioProcessor::loadPreviousModel()
+{
+    if (directoryModelNames.size() > 1)
+    {
+        modelIndex = modelIndex - 1 < 0 ? directoryModelNames.size() - 1 : modelIndex - 1;
+
+        if(loadNamModel(modelIndex))
+            return;
+        else
+            loadPreviousModel();
+    }
+}
+
 
 bool NamJUCEAudioProcessor::getTriggerStatus()
 {
@@ -337,6 +365,8 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
         lastIrPath = ir_path;
         lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
         addons.setProperty("ir_path", juce::String(lastIrPath), nullptr);
+        
+        this->irIndex = directoryIrNames.indexOf(lastIrName);
 
         DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
 
@@ -403,6 +433,33 @@ bool NamJUCEAudioProcessor::isIrValidFormat(juce::File f)
     std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(f));
 
     return reader ? true : false;
+}
+
+
+void NamJUCEAudioProcessor::loadNextIR()
+{
+    if (directoryIrNames.size() > 1)
+    {
+        irIndex = irIndex + 1 >= directoryIrNames.size() ? 0 : irIndex + 1; 
+
+        if(loadImpulseResponse(irIndex))
+            return;
+        else
+            loadNextIR();
+    }
+}
+
+void NamJUCEAudioProcessor::loadPreviousIR()
+{
+    if (directoryIrNames.size() > 1)
+    {
+        irIndex = irIndex - 1 < 0 ? directoryIrNames.size() - 1 : irIndex - 1;
+
+        if(loadImpulseResponse(irIndex))
+            return;
+        else
+            loadPreviousIR();
+    }
 }
 
 

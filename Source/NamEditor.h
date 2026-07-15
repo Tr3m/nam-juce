@@ -68,7 +68,7 @@ private:
     std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment;
 
-    std::unique_ptr<juce::ImageButton> loadModelButton, loadIRButton, clearIrButton, clearModelButton;
+    std::unique_ptr<juce::ImageButton> loadModelButton, loadIRButton, clearIrButton, clearModelButton, prevModelButton, nextModelButton, prevIrButton, nextIrButton;
     std::unique_ptr<LedButtonComponent> toneStackButton, normalizeButton, irButton, eqButton;
     juce::Image xIcon = juce::ImageFileFormat::loadFrom(BinaryData::xIcon_png, BinaryData::xIcon_pngSize);
 
@@ -85,17 +85,23 @@ private:
 
     TopBarComponent topBar;
 
+    juce::TooltipWindow tooltipWindow{this, 300};
+
     NamJUCEAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamEditor)
 
 private:
     void initializeTextBox (const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height);
     void initializeButton (const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y,
+
                            int width, int height);
 
     // Pass this to the Preset Manager for updating the gui after loading a new preset.
     // Maybe not the best way of doing it...
     void updateAfterPresetLoad ();
+
+    void updateModelBox();
+    void updateIrBox();
 
     void populateModelComboBox();
     void populateIrComboBox();

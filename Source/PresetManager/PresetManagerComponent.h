@@ -41,8 +41,6 @@ private:
     PresetManager& presetManager;
     std::unique_ptr<juce::FileChooser> fileChooser;
 
-    juce::TooltipWindow tooltipWindow{this, 300};
-
     void constructUI ();
 
     std::function<void()> parentUpdater;

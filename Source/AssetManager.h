@@ -52,6 +52,17 @@ public:
                           toggleButtonAssets[int(moduleState)][buttonIndex], 1.0, juce::Colours::transparentWhite, 0);
     }
 
+    void setNextAndPrevButtons(std::unique_ptr<juce::ImageButton>& prevButton, std::unique_ptr<juce::ImageButton>& nextButton)
+    {
+        if (prevButton)
+            prevButton->setImages(false, true, true, backUnushed, 1.0f, juce::Colours::transparentBlack, 
+                    backUnushed, 1.0f, juce::Colours::transparentBlack, backPushed, 1.0f, juce::Colours::transparentBlack, 0);
+        
+        if (nextButton)
+            nextButton->setImages(false, true, true, forwardUnpushed, 1.0f, juce::Colours::transparentBlack,
+                    forwardUnpushed, 1.0f, juce::Colours::transparentBlack, forwardPushed, 1.0f, juce::Colours::transparentBlack, 0);
+    }
+
     juce::Image getButtonLabel(int button, int state) { return toggleButtonAssets[button][state]; }
 
     void initializeButton(std::unique_ptr<LedButtonComponent>& button, int buttonIndex)
@@ -81,10 +92,15 @@ private:
     juce::Image loadButtonPressed = juce::ImageFileFormat::loadFrom(BinaryData::loadButtonPushed_png, BinaryData::loadButtonPushed_pngSize);
     juce::Image loadButtonUnpressed = juce::ImageFileFormat::loadFrom(BinaryData::loadButtonUnpushed_png, BinaryData::loadButtonUnpushed_pngSize);
 
-    juce::Image clearButtonPressed = juce::ImageFileFormat::loadFrom(BinaryData::clearButtonPressed_png, BinaryData::clearButtonPressed_pngSize);
-    juce::Image clearButtonUnpressed =
-        juce::ImageFileFormat::loadFrom(BinaryData::clearButtonUnpressed_png, BinaryData::clearButtonUnpressed_pngSize);
+    juce::Image clearButtonPressed = juce::ImageFileFormat::loadFrom(BinaryData::clear_button_pushed_png, BinaryData::clear_button_pushed_pngSize);
+    juce::Image clearButtonUnpressed = juce::ImageFileFormat::loadFrom(BinaryData::clear_button_unpushed_png, BinaryData::clear_button_unpushed_pngSize);
 
     // Toggle Buttons
     juce::Image toggleButtonAssets[4][2];
+
+    // Next/Previous Buttons
+    juce::Image forwardPushed = juce::ImageFileFormat::loadFrom(BinaryData::forwardpushed_png, BinaryData::forwardpushed_pngSize);
+    juce::Image forwardUnpushed = juce::ImageFileFormat::loadFrom(BinaryData::forwardunpushed_png, BinaryData::forwardunpushed_pngSize);
+    juce::Image backPushed = juce::ImageFileFormat::loadFrom(BinaryData::backpushed_png, BinaryData::backpushed_pngSize);
+    juce::Image backUnushed = juce::ImageFileFormat::loadFrom(BinaryData::backunpushed_png, BinaryData::backunpushed_pngSize);
 };
