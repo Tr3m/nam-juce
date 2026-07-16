@@ -1,7 +1,7 @@
 #include "TopBarComponent.h"
 
-TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p, std::function<void()>&& updateFunction)
-    : AudioProcessorEditor(&p), audioProcessor(p), parentUpdater(std::move(updateFunction)), pmc(p.getPresetManager(), [&]() { parentUpdater(); })
+TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p, std::function<void()>&& updateFunction, std::function<void(juce::String)>&& showSavePresetDialogFunction)
+    : AudioProcessorEditor(&p), audioProcessor(p), pmc(p.getPresetManager(), std::move(updateFunction), std::move(showSavePresetDialogFunction))
 {
     lnf.setColour(juce::PopupMenu::backgroundColourId, Colours::grey.withAlpha(0.6f));
 

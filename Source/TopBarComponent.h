@@ -3,13 +3,12 @@
 #include "MyLookAndFeel.h"
 #include "AssetManager.h"
 #include "PresetManager/PresetManagerComponent.h"
-// #include "juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h"
 #include <CustomStandaloneWindow/CustomStandaloneFilterWindow.h>
 
 class TopBarComponent : public juce::AudioProcessorEditor, public juce::ComboBox::Listener
 {
 public:
-    TopBarComponent(NamJUCEAudioProcessor&, std::function<void()>&& updateFunction);
+    TopBarComponent(NamJUCEAudioProcessor&, std::function<void()>&& updateFunction, std::function<void(juce::String)>&& showSavePresetDialogFunction);
     ~TopBarComponent() override;
 
     void paint (juce::Graphics& g) override;
@@ -27,9 +26,10 @@ public:
         Info
     };
 
+    PresetManagerComponent* getPresetManagerComponent() { return &this->pmc; };
+
 private:
     PresetManagerComponent pmc;
-    std::function<void()> parentUpdater;
 
     std::unique_ptr<juce::ComboBox> settingsDropdown;
     std::unique_ptr<juce::ImageButton> settingsButton;

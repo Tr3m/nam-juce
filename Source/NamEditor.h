@@ -6,6 +6,7 @@
 #include "EQ/EqContainer.h"
 #include "TopBarComponent.h"
 #include "LedButtonComponent.h"
+#include "PresetManager/PresetDialogBoxWrapper.h"
 
 #define NUM_SLIDERS 9
 
@@ -84,6 +85,9 @@ private:
     EqContainer eqEditor;
 
     TopBarComponent topBar;
+
+    std::unique_ptr<PresetDialogBoxWrapper> presetDialog;
+    void showSaveDialog(const juce::String&);
 
     juce::TooltipWindow tooltipWindow{this, 300};
 

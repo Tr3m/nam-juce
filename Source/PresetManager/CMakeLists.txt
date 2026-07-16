@@ -3,5 +3,8 @@ target_sources(${PROJECT_NAME}
         PresetManager.h
         PresetManager.cpp
         PresetManagerComponent.h
-        PresetManagerComponent.cpp)
+        PresetManagerComponent.cpp
+        PresetDialogBox.h
+        PresetDialogBoxWrapper.h
+    )
 

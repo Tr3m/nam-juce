@@ -1,7 +1,8 @@
 #include "PresetManagerComponent.h"
 
-PresetManagerComponent::PresetManagerComponent(PresetManager& pm, std::function<void()>&& updateFunction)
-    : presetManager(pm), parentUpdater(std::move(updateFunction))
+PresetManagerComponent::PresetManagerComponent(PresetManager& pm, std::function<void()>&& updateFunction,
+    std::function<void(const juce::String& currentPreset)>&& presetDialogFunction)
+    : presetManager(pm), parentUpdater(std::move(updateFunction)), showPresetDialog(std::move(presetDialogFunction))
 {
     constructUI();
 }
@@ -41,12 +42,14 @@ void PresetManagerComponent::constructUI()
     {
         const auto index = presetManager.loadNextPreset();
         presetComboBox.setSelectedItemIndex(index, juce::sendNotification);
+        updateCurrentSelection();
     };
 
     previousButton.onClick = [this]
     {
         const auto index = presetManager.loadPreviousPreset();
         presetComboBox.setSelectedItemIndex(index, juce::sendNotification);
+        updateCurrentSelection();
     };
 
     addAndMakeVisible(&saveButton);
@@ -56,15 +59,7 @@ void PresetManagerComponent::constructUI()
     saveButton.setTooltip("Save Preset");
     saveButton.onClick = [this]
     {
-        fileChooser =
-            std::make_unique<juce::FileChooser>("Enter Preset Name", PresetManager::defaultPresetDirectory, "*." + PresetManager::presetExtension);
-        fileChooser->launchAsync(juce::FileBrowserComponent::saveMode,
-                                 [&](const juce::FileChooser& chooser)
-                                 {
-                                     const auto resultFile = chooser.getResult();
-                                     presetManager.savePreset(resultFile.getFileNameWithoutExtension());
-                                     loadComboBox();
-                                 });
+       showPresetDialog(presetComboBox.getItemText(presetComboBox.getSelectedItemIndex()));
     };
 }
 
@@ -116,3 +111,8 @@ void PresetManagerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChan
 
     parentUpdater();
 }
+
+void PresetManagerComponent::updateCurrentSelection()
+{
+    currentSelection = presetComboBox.getSelectedId();
+};

@@ -5,7 +5,7 @@
 class PresetManagerComponent : public juce::Component, public juce::ComboBox::Listener
 {
 public:
-    PresetManagerComponent(PresetManager&, std::function<void()>&& updateFunction);
+    PresetManagerComponent(PresetManager&, std::function<void()>&& updateFunction, std::function<void(const juce::String& currentPreset)>&& presetDialogFunction);
 
     void paint (juce::Graphics& g) override;
     void resized () override;
@@ -18,7 +18,13 @@ public:
     void setColour (juce::Colour colourToUse, float alpha);
     void setColour (juce::Colour colourToUse);
 
+    juce::ComboBox* getComboBox() { return &this->presetComboBox; };
+    int* getCurrentSelection() { return &this->currentSelection; };
+
 private:
+    int currentSelection;
+    void updateCurrentSelection();
+
     int barHeight{32};
     juce::Colour barColour{juce::Colours::whitesmoke};
     float barAlpha{0.4f};
@@ -44,6 +50,7 @@ private:
     void constructUI ();
 
     std::function<void()> parentUpdater;
+    std::function<void(const juce::String& currentPreset)> showPresetDialog;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PresetManagerComponent)
 };

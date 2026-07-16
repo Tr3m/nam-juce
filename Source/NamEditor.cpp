@@ -1,7 +1,8 @@
 #include "NamEditor.h"
 
 NamEditor::NamEditor(NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor(&p), audioProcessor(p), eqEditor(p), topBar(p, [&]() { updateAfterPresetLoad(); })
+    : AudioProcessorEditor(&p), audioProcessor(p), eqEditor(p),
+    topBar(p, [&]() { updateAfterPresetLoad(); }, [&](const juce::String& presetName) { showSaveDialog(presetName); })
 {
     assetManager.reset(new AssetManager());
 
@@ -343,6 +344,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
 NamEditor::~NamEditor()
 {
+    presetDialog = nullptr;
     audioProcessor.getTrigger()->removeValueListener(this);
     audioProcessor.getEqStateValue().removeListener(this);
 
@@ -634,4 +636,14 @@ void NamEditor::updateIrBox()
     irNameBox->setText(audioProcessor.getLastIrName());
     irNameBox->setCaretPosition(0);
     clearIrButton->setVisible(audioProcessor.getIrStatus());
+}
+
+void NamEditor::showSaveDialog(const juce::String& presetName)
+{
+    presetDialog.reset(new PresetDialogBoxWrapper(audioProcessor.getPresetManager(), topBar.getPresetManagerComponent(), presetDialog));
+    addAndMakeVisible(presetDialog.get());
+    presetDialog->setAlwaysOnTop(true);
+    presetDialog->toFront(false);
+    presetDialog->setInputFieldText(presetName);
+    presetDialog->setBounds(getLocalBounds());
 }
