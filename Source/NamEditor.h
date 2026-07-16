@@ -28,8 +28,6 @@ public:
 
     void setToneStackEnabled (bool toneStackEnabled);
 
-    void setMeterPosition (bool isOnMainScreen);
-
     void loadModelButtonClicked ();
     void loadIrButtonClicked ();
 
@@ -53,8 +51,7 @@ private:
     std::unique_ptr<CustomSlider> slimSlider;
     std::unique_ptr<juce::ComboBox> modelComboBox, irComboBox;
 
-    juce::String sliderIDs[NUM_SLIDERS]{
-        "INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID", "DOUBLER_ID"};
+    juce::String sliderIDs[NUM_SLIDERS]{"INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID", "DOUBLER_ID"};
 
     std::unique_ptr<AssetManager> assetManager;
 
@@ -62,16 +59,13 @@ private:
     SliderLookAndFeel slimLnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Horizontal};
     SliderLookAndFeel slimLnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Horizontal};
 
-    juce::String ngThreshold{"Null"};
-
     int screensOffset = 46;
 
-    std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment;
+    std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle, eqToggle;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment, eqToggleAttachment;
 
     std::unique_ptr<juce::ImageButton> loadModelButton, loadIRButton, clearIrButton, clearModelButton, prevModelButton, nextModelButton, prevIrButton, nextIrButton;
     std::unique_ptr<LedButtonComponent> toneStackButton, normalizeButton, irButton, eqButton;
-    juce::Image xIcon = juce::ImageFileFormat::loadFrom(BinaryData::xIcon_png, BinaryData::xIcon_pngSize);
 
     juce::Image led_off = juce::ImageFileFormat::loadFrom(BinaryData::led_off_png, BinaryData::led_off_pngSize);
     juce::Image led_on = juce::ImageFileFormat::loadFrom(BinaryData::led_on_png, BinaryData::led_on_pngSize);
@@ -80,9 +74,9 @@ private:
     std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
 
     foleys::LevelMeter meterIn{foleys::LevelMeter::SingleChannel}, meterOut{foleys::LevelMeter::SingleChannel};
-    MeterLookAndFeel meterlnf, meterlnf2;
+    MeterLookAndFeel meterlnf;
 
-    EqContainer eqEditor;
+    std::unique_ptr<EqContainer> eqEditor;
 
     TopBarComponent topBar;
 
@@ -96,9 +90,7 @@ private:
 
 private:
     void initializeTextBox (const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height);
-    void initializeButton (const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y,
-
-                           int width, int height);
+    void initializeButton (const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y, int width, int height);
 
     // Pass this to the Preset Manager for updating the gui after loading a new preset.
     // Maybe not the best way of doing it...
@@ -109,4 +101,6 @@ private:
 
     void populateModelComboBox();
     void populateIrComboBox();
+
+    void showEqModule();
 };

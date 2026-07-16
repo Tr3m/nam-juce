@@ -1,10 +1,17 @@
 #include "NamEditor.h"
 
 NamEditor::NamEditor(NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor(&p), audioProcessor(p), eqEditor(p),
-    topBar(p, [&]() { updateAfterPresetLoad(); }, [&](const juce::String& presetName) { showSaveDialog(presetName); })
+    : AudioProcessorEditor(&p), audioProcessor(p), topBar(p, [&]() { updateAfterPresetLoad(); },
+            [&](const juce::String& presetName) { showSaveDialog(presetName); })
 {
     assetManager.reset(new AssetManager());
+
+
+    meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
+    meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
+    meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentWhite);
+    meterIn.setLookAndFeel(&meterlnf);
+    meterOut.setLookAndFeel(&meterlnf);
 
     // Meters
     meterIn.setMeterSource(&audioProcessor.getMeterInSource());
@@ -200,6 +207,25 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 45,
                         sliders[PluginKnobs::NoiseGate]->getY() + sliders[PluginKnobs::NoiseGate]->getHeight() + 15, 90, 40);
     eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
+
+    eqToggle.reset(new juce::ToggleButton("ToneStackToggleButton"));
+    addAndMakeVisible(eqToggle.get());
+    eqToggle->setBounds(eqButton->getX(), eqButton->getY() + eqButton->getHeight() + 10, 30, 30);
+    eqToggle->setVisible(false);
+    eqToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "EQ_BYPASS_STATE_ID", *eqToggle));
+
+    eqButton->onClick = [this]
+    {
+        auto modifiers = juce::ModifierKeys::getCurrentModifiers();
+        if (modifiers.isShiftDown() && !audioProcessor.eqModuleVisible)
+        {
+            eqToggle->setToggleState(!eqToggle->getToggleState(), juce::NotificationType::sendNotification);
+        }
+        else
+        {
+            this->showEqModule();
+        }
+    };
     
     // Slimmable Model Slider    
     slimSlider.reset(new CustomSlider(CustomSlider::SliderTypes::Slim_Slider));
@@ -286,51 +312,9 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     assetManager->setNextAndPrevButtons(prevIrButton, nextIrButton);
 
 
-    eqButton->setAlwaysOnTop(true);
-    eqButton->toFront(false);
-
-    addAndMakeVisible(&eqEditor);
-    eqEditor.setVisible(false);
-
-
-    eqButton->onClick = [this]
-    {
-        auto modifiers = juce::ModifierKeys::getCurrentModifiers();
-        if (modifiers.isShiftDown() && !audioProcessor.eqModuleVisible)
-        {
-            eqEditor.toggleEq();
-            eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
-        }
-        else
-        {
-            audioProcessor.eqModuleVisible = !audioProcessor.eqModuleVisible;
-            eqEditor.setVisible(audioProcessor.eqModuleVisible);
-
-            if (audioProcessor.eqModuleVisible)
-            {
-                eqButton->setLabelVisible(false);
-                eqButton->setBounds(getWidth() - 43, 25, 20, 20);
-                eqButton->setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f, juce::Colours::transparentWhite,
-                                    xIcon, 0.65f, juce::Colours::transparentWhite, 0);
-            }
-            else
-            {
-                eqButton->setLabelVisible(true);
-                eqButton->reloadImages();
-                eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 45,
-                                    sliders[PluginKnobs::NoiseGate]->getY() + sliders[PluginKnobs::NoiseGate]->getHeight() + 15, 90, 40);
-                eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
-            }
-
-            setMeterPosition(!audioProcessor.eqModuleVisible);
-        }
-    };
-
-    eqButton->toFront(true);
-    meterIn.toFront(true);
-    meterOut.toFront(true);
-
     addAndMakeVisible(&topBar);
+    topBar.setAlwaysOnTop(true);
+    topBar.toFront(true);
 
     if (audioProcessor.isModelLoaded())
         populateModelComboBox();
@@ -340,10 +324,15 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     audioProcessor.getTrigger()->addValueListener(this);
     audioProcessor.getEqStateValue().addListener(this);
+
+    if (audioProcessor.eqModuleVisible)
+        showEqModule();
+
 }
 
 NamEditor::~NamEditor()
 {
+    eqEditor = nullptr;
     presetDialog = nullptr;
     audioProcessor.getTrigger()->removeValueListener(this);
     audioProcessor.getEqStateValue().removeListener(this);
@@ -354,6 +343,7 @@ NamEditor::~NamEditor()
     toneStackToggleAttachment = nullptr;
     normalizeToggleAttachment = nullptr;
     irToggleAttachment = nullptr;
+    eqToggleAttachment = nullptr;
 }
 
 void NamEditor::paint(juce::Graphics& g)
@@ -371,9 +361,10 @@ void NamEditor::paint(juce::Graphics& g)
 
 void NamEditor::resized()
 {
-    eqEditor.setBounds(getLocalBounds());
-
-    setMeterPosition(!audioProcessor.eqModuleVisible); // Need to change this when more modules are added...
+    int meterHeight = 172;
+    int meterWidth = 18;
+    meterIn.setBounds(juce::Rectangle<int>(26, 174, meterWidth, meterHeight));
+    meterOut.setBounds(juce::Rectangle<int>(getWidth() - meterWidth - 21, 174, meterWidth, meterHeight));
 
     topBar.setBounds(0, 0, getWidth(), 40);
 }
@@ -429,7 +420,7 @@ void NamEditor::valueChanged (Value& value)
 
        repaint();
     }
-    if (value == audioProcessor.getEqStateValue() && !audioProcessor.eqModuleVisible)
+    if (value == audioProcessor.getEqStateValue())
     {
         eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
     }
@@ -514,53 +505,8 @@ void NamEditor::initializeButton(const juce::String label, const juce::String bu
     button->setBounds(x, y, width, height);
 }
 
-void NamEditor::setMeterPosition(bool isOnMainScreen)
-{
-    if (isOnMainScreen)
-    {
-        meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
-        meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
-        meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentWhite);
-        meterIn.setLookAndFeel(&meterlnf);
-        meterOut.setLookAndFeel(&meterlnf);
-
-        int meterHeight = 172;
-        int meterWidth = 18;
-        meterIn.setBounds(juce::Rectangle<int>(26, 174, meterWidth, meterHeight));
-        meterOut.setBounds(juce::Rectangle<int>(getWidth() - meterWidth - 21, 174, meterWidth, meterHeight));
-    }
-    else
-    {
-        meterlnf2.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
-        meterIn.setLookAndFeel(&meterlnf2);
-        meterOut.setLookAndFeel(&meterlnf2);
-
-        int meterHeight = 255;
-        int meterWidth = 20;
-        meterIn.setBounds(20, (getHeight() / 2) - (meterHeight / 2) + 10, meterWidth, meterHeight);
-        meterOut.setBounds(getWidth() - 30, (getHeight() / 2) - (meterHeight / 2) + 10, meterWidth, meterHeight);
-    }
-}
-
 void NamEditor::updateAfterPresetLoad()
 {
-
-    if (audioProcessor.eqModuleVisible)
-    {
-        eqButton->setLabelVisible(false);
-        eqButton->setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f, juce::Colours::transparentWhite, xIcon,
-                            0.65f, juce::Colours::transparentWhite, 0);
-    }
-    else
-    {
-        eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
-        eqButton->setLabelVisible(true);
-        eqButton->reloadImages();
-    }
-
-
-    eqEditor.updateGraphics();
-
     setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
 
     normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
@@ -646,4 +592,12 @@ void NamEditor::showSaveDialog(const juce::String& presetName)
     presetDialog->toFront(false);
     presetDialog->setInputFieldText(presetName);
     presetDialog->setBounds(getLocalBounds());
+}
+
+void NamEditor::showEqModule()
+{
+    eqEditor.reset(new EqContainer(audioProcessor, eqEditor));
+    addAndMakeVisible(eqEditor.get());
+    audioProcessor.eqModuleVisible = true;
+    eqEditor->setBounds(0, 0, 950, 650);
 }

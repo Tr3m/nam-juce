@@ -76,7 +76,7 @@ EqEditor::~EqEditor()
     inputGainAttachment = nullptr;
     outputGainAttachment = nullptr;
 
-    audioProcessor.eqModuleVisible = false;
+    // audioProcessor.eqModuleVisible = false;
 }
 
 void EqEditor::paint(juce::Graphics& g)
@@ -96,12 +96,6 @@ void EqEditor::resized()
 
     if(fadeComponent != nullptr)
         fadeComponent->setBounds(getLocalBounds());
-}
-
-void EqEditor::toggleEq()
-{
-    bypass.setToggleState(!bypass.getToggleState(), true);
-    // updateGraphics();
 }
 
 void EqEditor::placeSliders()

@@ -1,20 +1,51 @@
 #include "EqContainer.h"
 
-EqContainer::EqContainer(NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor(&p), audioProcessor(p), eqEditor(p), dummyEditor(p, true)
+EqContainer::EqContainer(NamJUCEAudioProcessor& p, std::unique_ptr<EqContainer>& selfRef)
+    : AudioProcessorEditor(&p), audioProcessor(p), eqEditor(p), dummyEditor(p, true), self(selfRef)
 {
+    meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
+
+    meterIn.setLookAndFeel(&meterlnf);
+    meterOut.setLookAndFeel(&meterlnf);
+
+    // Meters
+    meterIn.setMeterSource(&audioProcessor.getMeterInSource());
+    addAndMakeVisible(meterIn);
+
+    meterOut.setMeterSource(&audioProcessor.getMeterOutSource());
+    addAndMakeVisible(meterOut);
+
+    meterIn.setAlpha(0.8);
+    meterOut.setAlpha(0.8);
+
+    meterIn.setSelectedChannel(0);
+    meterOut.setSelectedChannel(0);
     addAndMakeVisible(&dummyEditor);
     addAndMakeVisible(&eqEditor);
 
     dummyEditor.setEnabled(false);
     dummyEditor.setAlpha(0.78f);
+
+    addAndMakeVisible(&closeButton);
+    closeButton.setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f,
+            juce::Colours::transparentWhite, xIcon, 0.65f, juce::Colours::transparentWhite, 0.0f);
+
+    closeButton.onClick = [this] 
+    {
+        DBG("Goodbye EQ Container!");
+        audioProcessor.getEqStateValue().removeListener(this);
+        audioProcessor.eqModuleVisible = false;
+        self.reset();
+    };
     
     audioProcessor.getEqStateValue().addListener(this);
 }
 
 EqContainer::~EqContainer()
 {
+    DBG("Goodbye EQ Container! (Destructor)");
     audioProcessor.getEqStateValue().removeListener(this);
+    self.reset();
 }
 
 void EqContainer::paint (juce::Graphics& g)
@@ -27,12 +58,13 @@ void EqContainer::resized ()
     eqEditor.setBounds(getLocalBounds());
     dummyEditor.setBounds(0, eqEditor.getX() - 205, getWidth(), getHeight());
     dummyEditor.setTransform(juce::AffineTransform::verticalFlip(dummyEditor.getHeight()));
-}
 
+    closeButton.setBounds(getWidth() - 43, 25, 20, 20);
 
-void EqContainer::toggleEq()
-{
-    eqEditor.toggleEq();
+    int meterHeight = 255;
+    int meterWidth = 20;
+    meterIn.setBounds(20, (getHeight() / 2) - (meterHeight / 2) + 10, meterWidth, meterHeight);
+    meterOut.setBounds(getWidth() - 30, (getHeight() / 2) - (meterHeight / 2) + 10, meterWidth, meterHeight);
 }
 
 void EqContainer::updateGraphics()
