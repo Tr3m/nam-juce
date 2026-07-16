@@ -61,6 +61,12 @@ void PresetManagerComponent::constructUI()
     {
        showPresetDialog(presetComboBox.getItemText(presetComboBox.getSelectedItemIndex()));
     };
+
+    addAndMakeVisible(&deleteButton);
+    deleteButton.setImages(false, true, true, deleteUnpushed, 1.0f, juce::Colours::transparentBlack, deleteUnpushed, 1.0f, juce::Colours::transparentBlack, deletePushed, 1.0f, juce::Colours::transparentBlack, 0);
+    deleteButton.setTooltip("Delete Selected Preset");
+
+    deleteButton.onClick = [this] { this->deleteSelectedPreset(); };
 }
 
 void PresetManagerComponent::loadComboBox()
@@ -95,11 +101,19 @@ void PresetManagerComponent::paint(juce::Graphics& g)
 
 void PresetManagerComponent::resized()
 {
-    presetName.setBounds(getWidth() * 0.1 + 5, (getHeight() / 2) - 12, getWidth() * 0.58, getHeight() - 6);
-    presetComboBox.setBounds(getWidth() * 0.1 + 5, (getHeight() / 2) - 13, getWidth() * 0.58, getHeight() - 6);
+    int textBoxX = 31;
+    int textBoxWidth = 150;
+
+    presetName.setBounds(textBoxX, (getHeight() / 2) - 12, textBoxWidth, getHeight() - 6);
+    presetComboBox.setBounds(textBoxX, (getHeight() / 2) - 13, textBoxWidth, getHeight() - 6);
+
+    // presetName.setBounds(getWidth() * 0.1 + 5, (getHeight() / 2) - 12, getWidth() * 0.58, getHeight() - 6);
+    // presetComboBox.setBounds(getWidth() * 0.1 + 5, (getHeight() / 2) - 13, getWidth() * 0.58, getHeight() - 6);
+
     previousButton.setBounds(presetName.getX() - 30, (getHeight() / 2) - 12, 25, 25);
     nextButton.setBounds(presetName.getX() + presetName.getWidth() + 5, (getHeight() / 2) - 12, 25, 25);
     saveButton.setBounds(nextButton.getX() + nextButton.getWidth() + 5, (getHeight() / 2) - 12, 25, 25);
+    deleteButton.setBounds(saveButton.getX() + saveButton.getWidth() + 5, saveButton.getY(), 25, 25);
 }
 
 void PresetManagerComponent::parameterChanged() {}
@@ -115,4 +129,27 @@ void PresetManagerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChan
 void PresetManagerComponent::updateCurrentSelection()
 {
     currentSelection = presetComboBox.getSelectedId();
+};
+
+void PresetManagerComponent::deleteSelectedPreset()
+{
+
+    this->getLookAndFeel().setColour(juce::AlertWindow::backgroundColourId, juce::Colour::fromString("FF2E2E2E"));
+    this->getLookAndFeel().setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentBlack);
+    this->getLookAndFeel().setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::snow);
+    this->getLookAndFeel().setColour(juce::TextButton::ColourIds::textColourOffId, juce::Colours::snow);
+
+    auto pName = presetComboBox.getItemText(presetComboBox.getSelectedItemIndex());
+
+    if (!pName.trim().isEmpty())
+    {
+        auto shouldDelete = juce::AlertWindow::showOkCancelBox (juce::MessageBoxIconType::QuestionIcon, "Delete Preset", 
+            "Delete preset " + pName + "?", {}, {}, {}, nullptr);
+
+        if(shouldDelete)
+        {
+            presetManager.deletePreset(pName);
+            loadComboBox();
+        }
+    }
 };

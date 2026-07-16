@@ -35,7 +35,7 @@ private:
     juce::TextEditor presetName;
     juce::ComboBox presetComboBox;
 
-    juce::ImageButton saveButton, previousButton, nextButton;
+    juce::ImageButton saveButton, previousButton, nextButton, deleteButton;
 
     juce::Image savePushed = juce::ImageFileFormat::loadFrom(BinaryData::savepushed_png, BinaryData::savepushed_pngSize);
     juce::Image saveUnpushed = juce::ImageFileFormat::loadFrom(BinaryData::saveunpushed_png, BinaryData::saveunpushed_pngSize);
@@ -43,11 +43,14 @@ private:
     juce::Image backUnushed = juce::ImageFileFormat::loadFrom(BinaryData::backunpushed_png, BinaryData::backunpushed_pngSize);
     juce::Image forwardPushed = juce::ImageFileFormat::loadFrom(BinaryData::forwardpushed_png, BinaryData::forwardpushed_pngSize);
     juce::Image forwardUnpushed = juce::ImageFileFormat::loadFrom(BinaryData::forwardunpushed_png, BinaryData::forwardunpushed_pngSize);
+    juce::Image deletePushed = juce::ImageFileFormat::loadFrom(BinaryData::deletepushed_png, BinaryData::deletepushed_pngSize);
+    juce::Image deleteUnpushed = juce::ImageFileFormat::loadFrom(BinaryData::deleteunpushed_png, BinaryData::deleteunpushed_pngSize);
 
     PresetManager& presetManager;
     std::unique_ptr<juce::FileChooser> fileChooser;
 
     void constructUI ();
+    void deleteSelectedPreset();
 
     std::function<void()> parentUpdater;
     std::function<void(const juce::String& currentPreset)> showPresetDialog;

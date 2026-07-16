@@ -42,7 +42,7 @@ void TopBarComponent::paint(juce::Graphics& g)
 
 void TopBarComponent::resized()
 {
-    pmc.setBounds(getWidth() / 2 - 105, 5, 260, 30);
+    pmc.setBounds(getWidth() / 2 - 105, 5, 280, 30);
     settingsButton->setBounds(pmc.getX() - 30, pmc.getY() + 3, 25, 25);
     settingsDropdown->setBounds(settingsButton->getBounds());
 }
