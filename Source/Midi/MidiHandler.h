@@ -16,6 +16,8 @@ public:
     const juce::File midiDirectory {juce::File::getSpecialLocation(juce::File::SpecialLocationType::userHomeDirectory).getChildFile("Neural Amp Modeler").getChildFile("Midi")};
     const juce::File defaultMidiConfig {midiDirectory.getChildFile("DefaultMidi.xml")};
 
+    std::vector<MidiMappingDisplay> getMappingsForDisplay() const;
+
     enum MessageType 
     {
         ControlChange = 0,

@@ -110,6 +110,8 @@ public:
     void loadNextIR();
     void loadPreviousIR();
 
+    MidiHandler& getMidiHandler() { return this->midiHandler; };
+
 private:
     //==============================================================================
 

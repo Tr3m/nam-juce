@@ -2,7 +2,7 @@
 
 NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p), topBar(p, [&]() { updateAfterPresetLoad(); },
-            [&](const juce::String& presetName) { showSaveDialog(presetName); })
+            [&](const juce::String& presetName) { showSaveDialog(presetName); }, [&](){ showMappingsComponent(); })
 {
     assetManager.reset(new AssetManager());
 
@@ -600,4 +600,16 @@ void NamEditor::showEqModule()
     addAndMakeVisible(eqEditor.get());
     audioProcessor.eqModuleVisible = true;
     eqEditor->setBounds(0, 0, 950, 650);
+}
+
+void NamEditor::showMappingsComponent()
+{
+    if(mappingsComp == nullptr)
+    {
+        mappingsComp.reset(new MidiMappingsComponentWrapper(audioProcessor, mappingsComp));
+        addAndMakeVisible(mappingsComp.get());
+        mappingsComp->toFront(true);
+        mappingsComp->setAlwaysOnTop(true);
+        mappingsComp->setBounds(0, 0, 950, 650);
+    }
 }

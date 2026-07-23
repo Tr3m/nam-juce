@@ -7,6 +7,7 @@
 #include "TopBarComponent.h"
 #include "LedButtonComponent.h"
 #include "PresetManager/PresetDialogBoxWrapper.h"
+#include "Midi/MidiMappingsComponent/MidiMappingsComponent.h"
 
 #define NUM_SLIDERS 9
 
@@ -82,6 +83,9 @@ private:
 
     std::unique_ptr<PresetDialogBoxWrapper> presetDialog;
     void showSaveDialog(const juce::String&);
+
+    std::unique_ptr<MidiMappingsComponentWrapper> mappingsComp;
+    void showMappingsComponent();
 
     juce::TooltipWindow tooltipWindow{this, 300};
 

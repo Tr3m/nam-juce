@@ -6,3 +6,5 @@ PRIVATE
     Mappings.h
 )
 
+add_subdirectory(MidiMappingsComponent)
+include_directories(MidiMappingsComponent)

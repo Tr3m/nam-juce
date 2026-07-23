@@ -8,7 +8,10 @@
 class TopBarComponent : public juce::AudioProcessorEditor, public juce::ComboBox::Listener
 {
 public:
-    TopBarComponent(NamJUCEAudioProcessor&, std::function<void()>&& updateFunction, std::function<void(juce::String)>&& showSavePresetDialogFunction);
+    TopBarComponent(NamJUCEAudioProcessor&, std::function<void()>&& updateFunction, 
+                    std::function<void(juce::String)>&& showSavePresetDialogFunction,
+                    std::function<void()>&& showMidiMappingsFunction);
+
     ~TopBarComponent() override;
 
     void paint (juce::Graphics& g) override;
@@ -22,6 +25,7 @@ public:
     enum DropdownOptions
     {
         AudioSettings = 0,
+        MidiMappings,
         GetModels,
         Info
     };
@@ -43,6 +47,8 @@ private:
 
     SafePointer<DialogWindow> dialogWindow;
     juce::URL modelsURL{"https://www.tone3000.com/"};
+
+    std::function<void()> showMidiMappings;
 
     NamJUCEAudioProcessor& audioProcessor;
 

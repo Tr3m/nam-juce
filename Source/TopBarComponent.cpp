@@ -1,7 +1,7 @@
 #include "TopBarComponent.h"
 
-TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p, std::function<void()>&& updateFunction, std::function<void(juce::String)>&& showSavePresetDialogFunction)
-    : AudioProcessorEditor(&p), audioProcessor(p), pmc(p.getPresetManager(), std::move(updateFunction), std::move(showSavePresetDialogFunction))
+TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p, std::function<void()>&& updateFunction, std::function<void(juce::String)>&& showSavePresetDialogFunction, std::function<void()>&& showMidiMappingsFunction)
+    : AudioProcessorEditor(&p), audioProcessor(p), pmc(p.getPresetManager(), std::move(updateFunction), std::move(showSavePresetDialogFunction)), showMidiMappings(std::move(showMidiMappingsFunction))
 {
     lnf.setColour(juce::PopupMenu::backgroundColourId, Colours::grey.withAlpha(0.6f));
 
@@ -27,8 +27,9 @@ TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p, std::function<void()>
     settingsDropdown->setVisible(false);
     if (JUCEApplication::isStandaloneApp())
         settingsDropdown->addItem(TRANS("Audio/Midi Settings..."), 1);
-    settingsDropdown->addItem(TRANS("Get Models..."), 2);
-    settingsDropdown->addItem(TRANS("Info"), 3);
+    settingsDropdown->addItem(TRANS("Midi Mappings"), 2);
+    settingsDropdown->addItem(TRANS("Get Models..."), 3);
+    settingsDropdown->addItem(TRANS("Info"), 4);
     settingsDropdown->addListener(this);
     settingsDropdown->setLookAndFeel(&lnf);
 }
@@ -57,8 +58,7 @@ void TopBarComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
     if (comboBoxThatHasChanged == settingsDropdown.get())
     {
-        int selection =
-            JUCEApplication::isStandaloneApp() ? comboBoxThatHasChanged->getSelectedItemIndex() : comboBoxThatHasChanged->getSelectedItemIndex() + 1;
+        int selection = JUCEApplication::isStandaloneApp() ? comboBoxThatHasChanged->getSelectedItemIndex() : comboBoxThatHasChanged->getSelectedItemIndex() + 1;
 
         switch (selection)
         {
@@ -66,7 +66,12 @@ void TopBarComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
                 if (JUCEApplication::isStandaloneApp())
                     juce::StandalonePluginHolder::getInstance()->showAudioSettingsDialog();
                 break;
-            case DropdownOptions::GetModels: modelsURL.launchInDefaultBrowser(); break;
+            case DropdownOptions::MidiMappings:
+                showMidiMappings();
+                break;
+            case DropdownOptions::GetModels: 
+                modelsURL.launchInDefaultBrowser(); 
+                break;
             case DropdownOptions::Info:
                 openInfoWindow("NEURAL AMP MODELER\n(nam-juce)\n\nVersion " + juce::String(PLUG_VERSION)
                                + "\n\nA JUCE implementation of the Neural Amp Modeler Plugin.");

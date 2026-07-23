@@ -12,4 +12,11 @@ struct ControlChangeMapping
 
 struct ProgramChangeMapping {};
 
+struct MidiMappingDisplay
+{
+    juce::String parameterName;
+    int ccNumber;
+    int channel;
+};
+
 #endif // __MAPPINGS_H__

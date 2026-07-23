@@ -122,3 +122,14 @@ int MidiHandler::getMessageType(const juce::MidiMessage& msg)
     else
         return -1;
 }
+
+std::vector<MidiMappingDisplay> MidiHandler::getMappingsForDisplay() const
+{
+    std::vector<MidiMappingDisplay> result;
+
+    for (int cc = 0; cc < 128; ++cc)
+        for (const auto& mapping : ccMappings[cc])
+            result.push_back({mapping.parameter->getName(32), cc, mapping.channel});
+
+    return result;
+}
