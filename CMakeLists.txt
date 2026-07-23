@@ -59,7 +59,7 @@ juce_add_plugin(${PROJECT_NAME}
     ICON_SMALL "Assets/ICON.png"
     COMPANY_NAME "Manos Labrakis"
     # IS_SYNTH TRUE/FALSE                 
-    # NEEDS_MIDI_INPUT TRUE/FALSE           
+    NEEDS_MIDI_INPUT TRUE           
     # NEEDS_MIDI_OUTPUT TRUE/FALSE        
     # IS_MIDI_EFFECT TRUE/FALSE         
     # EDITOR_WANTS_KEYBOARD_FOCUS TRUE/FALSE

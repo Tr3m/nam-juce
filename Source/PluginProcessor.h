@@ -7,6 +7,7 @@
 #include "EQ/EqProcessor.h"
 #include "DoublerProcessor.h"
 #include "PresetManager/PresetManager.h"
+#include "Midi/MidiHandler.h"
 //==============================================================================
 /**
  */
@@ -162,6 +163,7 @@ private:
 
     juce::Value eqStateValue;
 
+    MidiHandler midiHandler;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)
 };

@@ -124,6 +124,8 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
         this->loadImpulseResponse(juce::File(lastIrPath));
         irLoaded = true;
     }
+    
+    midiHandler.loadConfig(midiHandler.defaultMidiConfig, apvts);
 
     prepareCalled = true;
 }
@@ -522,6 +524,8 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
+
+    midiHandler.processMidiBuffer(midiMessages);
 
     juce::dsp::AudioBlock<float> block(buffer);
 

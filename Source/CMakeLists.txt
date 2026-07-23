@@ -31,3 +31,6 @@ include_directories(CustomStandaloneWindow)
 add_subdirectory(PresetManager)
 include_directories(PresetManager)
 
+add_subdirectory(Midi)
+include_directories(Midi)
+
