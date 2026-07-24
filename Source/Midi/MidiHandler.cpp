@@ -38,6 +38,7 @@ void MidiHandler::loadConfig(const juce::File& configFile, juce::AudioProcessorV
         return;
     
     this->populateLookupTable(routings, apvts);
+    this->rebuildLookUpTable();
 }
 
 void MidiHandler::processMidiBuffer(juce::MidiBuffer& midiBuffer)
@@ -85,17 +86,25 @@ void MidiHandler::populateLookupTable(juce::XmlElement* routings, juce::AudioPro
             continue;
         }
 
-        ccMappings[cc].push_back({parameter, cc, channel});
+        mappings.push_back({ nextID++, parameterID, parameter, cc, channel });
         entries += 1;
     }
 
     DBG("Loaded " + juce::String(entries) + " MIDI mappings!");
 }
 
+void MidiHandler::rebuildLookUpTable()
+{
+    this->clearLookupTable();
+    
+    for (auto& mapping : mappings)
+        ccLookup[mapping.ccNumber].push_back(&mapping);
+}
+
 void MidiHandler::clearLookupTable()
 {
-    for (auto& mappings : ccMappings)
-        mappings.clear();
+    for (auto& bucket : ccLookup)
+            bucket.clear();
 }
 
 void MidiHandler::handleCC(const juce::MidiMessage& msg)
@@ -104,12 +113,12 @@ void MidiHandler::handleCC(const juce::MidiMessage& msg)
 
     float value = msg.getControllerValue() / 127.0f;
 
-    for (const auto& mapping : ccMappings[cc])
+    for (auto* mapping : ccLookup[cc])
     {
-        if (mapping.channel != 0 && mapping.channel != msg.getChannel())
+        if (mapping->channel != 0 && mapping->channel != msg.getChannel())
             continue;
 
-        mapping.parameter->setValueNotifyingHost(value);
+        mapping->parameter->setValueNotifyingHost(value);
     }
 }
 
@@ -127,9 +136,95 @@ std::vector<MidiMappingDisplay> MidiHandler::getMappingsForDisplay() const
 {
     std::vector<MidiMappingDisplay> result;
 
-    for (int cc = 0; cc < 128; ++cc)
-        for (const auto& mapping : ccMappings[cc])
-            result.push_back({mapping.parameter->getName(32), cc, mapping.channel});
+    for (const auto& mapping : mappings)
+    {
+        result.push_back({ mapping.uid, mapping.parameter->getName(32), mapping.parameterID, mapping.ccNumber, mapping.channel });
+    }
 
     return result;
+}
+
+void MidiHandler::addMapping(const juce::String& parameterID, int cc, int channel, juce::AudioProcessorValueTreeState& apvts)
+{
+    auto* parameter = apvts.getParameter(parameterID);
+
+    if (parameter == nullptr)
+        return;
+
+    mappings.push_back({ nextID++, parameterID, parameter, cc, channel });
+
+    rebuildLookUpTable();
+
+}
+
+void MidiHandler::removeMapping(uint32_t id)
+{
+    DBG("Removing mapping " + juce::String(id));
+    auto it = std::remove_if(mappings.begin(), mappings.end(),
+            [id](const auto& mapping)
+            {
+                return mapping.uid == id;
+            });
+
+    mappings.erase(it, mappings.end());
+
+    rebuildLookUpTable();
+}
+
+
+void MidiHandler::setMappingCC(uint32_t id, int newCC)
+{
+    auto* mapping = findMapping(id);
+
+    if (mapping == nullptr)
+        return;
+
+    mapping->ccNumber = newCC;
+
+    this->rebuildLookUpTable();
+}
+
+
+void MidiHandler::setMappingChannel(uint32_t id, int channel)
+{
+    auto* mapping = findMapping(id);
+
+    if (mapping == nullptr)
+        return;
+
+    mapping->channel = channel;
+
+    this->rebuildLookUpTable();
+}
+
+void MidiHandler::setMappingParameter(uint32_t id, const juce::String& parameterID, juce::AudioProcessorValueTreeState& apvts)
+{
+    auto* mapping = findMapping(id);
+
+    if (mapping == nullptr)
+        return;
+
+    auto* parameter = apvts.getParameter(parameterID);
+
+    if (parameter == nullptr)
+        return;
+
+    mapping->parameter = parameter;
+    mapping->parameterID = parameterID;
+
+    this->rebuildLookUpTable();
+}
+
+ControlChangeMapping* MidiHandler::findMapping(uint32_t id)
+{
+    auto it = std::find_if(mappings.begin(), mappings.end(),
+            [id](const auto& mapping)
+            {
+                return mapping.uid == id;
+            });
+
+    if (it == mappings.end())
+        return nullptr;
+
+    return &(*it);
 }

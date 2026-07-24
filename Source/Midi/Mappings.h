@@ -5,6 +5,8 @@
 
 struct ControlChangeMapping
 {
+    uint32_t uid;
+    juce::String parameterID;
     juce::RangedAudioParameter* parameter;
     int ccNumber {1};
     int channel {0}; // Omni
@@ -14,7 +16,9 @@ struct ProgramChangeMapping {};
 
 struct MidiMappingDisplay
 {
+    uint32_t uid;
     juce::String parameterName;
+    juce::String parameterID;
     int ccNumber;
     int channel;
 };

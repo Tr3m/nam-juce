@@ -8,8 +8,15 @@ class MidiEntryComponent : public juce::Component,
                            public juce::ComboBox::Listener
 {
 public:
-    MidiEntryComponent(const MidiMappingDisplay& mapping, juce::StringArray paramIDs, juce::StringArray paramNames)
-        : paramNames(paramNames), paramIDs(paramIDs)
+    MidiEntryComponent(MidiMappingDisplay midiMapping, juce::StringArray paramIDs, juce::StringArray paramNames,
+            std::function<void(uint32_t)>&& deleteEntry,
+            std::function<void(uint32_t, int)>&& changeCC, 
+            std::function<void(uint32_t, int)>&& changeChannel,
+            std::function<void(uint32_t id, const juce::String& parameterID)>&& changeParameter)
+        : paramNames(paramNames), paramIDs(paramIDs), 
+            mapping(midiMapping), deletePressed(std::move(deleteEntry)),
+            ccChanged(std::move(changeCC)), channelChanged(std::move(changeChannel)),
+            paramIdChanged(std::move(changeParameter))
     {
         paramComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(paramComboBox.get());
@@ -17,7 +24,7 @@ public:
             paramComboBox->addItem(paramNames[i], i+1);
         
         paramComboBox->setSelectedId(paramNames.indexOf(mapping.parameterName) + 1, juce::NotificationType::dontSendNotification);
-
+        paramComboBox->addListener(this);
 
         valueComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(valueComboBox.get());
@@ -25,6 +32,7 @@ public:
             valueComboBox->addItem("#" + juce::String(i), i);
 
         valueComboBox->setSelectedId(mapping.ccNumber, juce::NotificationType::dontSendNotification);
+        valueComboBox->addListener(this);
 
         channelComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(channelComboBox.get());
@@ -33,10 +41,16 @@ public:
             channelComboBox->addItem(juce::String(i - 1), i);
 
         channelComboBox->setSelectedId(mapping.channel + 1, juce::NotificationType::dontSendNotification);
+        channelComboBox->addListener(this);
 
         deleteButton.reset(new juce::TextButton());
         addAndMakeVisible(deleteButton.get());
         deleteButton->setButtonText("X");
+        deleteButton->onClick = [this]
+        { 
+            DBG("Deleting mapping for " + mapping.parameterName);
+            deletePressed(mapping.uid); 
+        };
     };
 
 
@@ -59,7 +73,6 @@ public:
     {
         juce::Rectangle<int> r (getWidth(), getHeight());
         int spacing = 20;
-        // int width = r.proportionOfWidth(0.6) + getHeight() + (3 * spacing);
         int width = r.proportionOfWidth(0.6) + (2 * spacing);
 
         paramComboBox->setBounds(getWidth() / 2 - width / 2, 0, r.proportionOfWidth(0.3f) - spacing, getHeight());
@@ -70,13 +83,40 @@ public:
 
     void comboBoxChanged(juce::ComboBox* cb) override
     {
+        if (cb == paramComboBox.get())
+        {
+            DBG("Chaning paramterer" + juce::String(mapping.uid) + " from " + mapping.parameterName + " to "
+                    + paramIDs[paramComboBox->getSelectedId() - 1]);
 
+            paramIdChanged(mapping.uid, paramIDs[paramComboBox->getSelectedId() - 1]);
+        }
+        else if (cb == valueComboBox.get())
+        {
+            DBG("Changing CC of " + mapping.parameterID + " (" + juce::String(mapping.uid) + ") to "
+                    + juce::String(valueComboBox->getSelectedId()));
+
+            ccChanged(mapping.uid, valueComboBox->getSelectedId());
+        }
+        else if (cb == channelComboBox.get())
+        {
+            DBG("Changing Channel of " + mapping.parameterID + " (" + juce::String(mapping.uid) + ") to "
+                    + juce::String(channelComboBox->getSelectedId() - 1));
+
+            channelChanged(mapping.uid, channelComboBox->getSelectedId() - 1);
+        }
     };
 
 private:
+    MidiMappingDisplay mapping;
     std::unique_ptr<juce::ComboBox> paramComboBox, valueComboBox, channelComboBox;
     std::unique_ptr<juce::TextButton> deleteButton;
     juce::StringArray paramIDs, paramNames;
+    
+    // Parent Callbacks
+    std::function<void(uint32_t)> deletePressed;
+    std::function<void(uint32_t, int)> ccChanged;
+    std::function<void(uint32_t, int)> channelChanged;
+    std::function<void(uint32_t id, const juce::String& parameterID)> paramIdChanged;
 
 };
 
