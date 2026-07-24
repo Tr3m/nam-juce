@@ -127,6 +127,7 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
         irLoaded = true;
     }
     
+    midiHandler.clearMappings();
     midiHandler.loadConfig(midiHandler.defaultMidiConfig, apvts);
 
     prepareCalled = true;
@@ -535,6 +536,9 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
     auto* channelDataRight = buffer.getWritePointer(1);
 
     eqStateValue.setValue(juce::var(*apvts.getRawParameterValue("EQ_BYPASS_STATE_ID")));
+    cabStateValue.setValue(juce::var(*apvts.getRawParameterValue("CAB_ON_ID")));
+    normStateValue.setValue(juce::var(*apvts.getRawParameterValue("NORMALIZE_ID")));
+    toneStackStateValue.setValue(juce::var(*apvts.getRawParameterValue("TONE_STACK_ON_ID")));
 
     myNAM.processBlock(buffer);
 

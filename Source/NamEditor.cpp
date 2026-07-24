@@ -324,6 +324,9 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     audioProcessor.getTrigger()->addValueListener(this);
     audioProcessor.getEqStateValue().addListener(this);
+    audioProcessor.getCabStateValue().addListener(this);
+    audioProcessor.getNormStateValue().addListener(this);
+    audioProcessor.getTonestackStateValue().addListener(this);
 
     if (audioProcessor.eqModuleVisible)
         showEqModule();
@@ -336,6 +339,9 @@ NamEditor::~NamEditor()
     presetDialog = nullptr;
     audioProcessor.getTrigger()->removeValueListener(this);
     audioProcessor.getEqStateValue().removeListener(this);
+    audioProcessor.getCabStateValue().removeListener(this);
+    audioProcessor.getNormStateValue().removeListener(this);
+    audioProcessor.getTonestackStateValue().removeListener(this);
 
     for (int sliderAtt = 0; sliderAtt < NUM_SLIDERS; ++sliderAtt)
         sliderAttachments[sliderAtt] = nullptr;
@@ -420,10 +426,19 @@ void NamEditor::valueChanged (Value& value)
 
        repaint();
     }
+
     if (value == audioProcessor.getEqStateValue())
-    {
         eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
-    }
+
+    if(value == audioProcessor.getNormStateValue())
+        normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
+
+    if(value == audioProcessor.getCabStateValue())
+        irButton->setLedState(*audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
+
+    if(value == audioProcessor.getTonestackStateValue())
+        toneStackButton->setLedState(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
+
 }
 
 void NamEditor::setToneStackEnabled(bool toneStackEnabled)

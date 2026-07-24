@@ -103,6 +103,9 @@ public:
     juce::StringArray getDirectoryIrNames() { return directoryIrNames; };
 
     juce::Value& getEqStateValue() { return eqStateValue; };
+    juce::Value& getCabStateValue() { return cabStateValue; };
+    juce::Value& getTonestackStateValue() { return toneStackStateValue; };
+    juce::Value& getNormStateValue() { return normStateValue; };
 
     void loadNextModel();
     void loadPreviousModel();
@@ -166,7 +169,7 @@ private:
 
     bool isIrValidFormat(juce::File f);
 
-    juce::Value eqStateValue;
+    juce::Value eqStateValue, cabStateValue, toneStackStateValue, normStateValue;
 
     MidiHandler midiHandler;
 
