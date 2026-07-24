@@ -41,6 +41,26 @@ void MidiHandler::loadConfig(const juce::File& configFile, juce::AudioProcessorV
     this->rebuildLookUpTable();
 }
 
+bool MidiHandler::saveConfig(const juce::File& file)
+{
+    auto xml = std::make_unique<juce::XmlElement>("MidiConfig");
+
+    auto* routings = xml->createNewChildElement("Routings");
+
+    for (const auto& mapping : mappings)
+    {
+        auto* entry = routings->createNewChildElement("Entry");
+
+        entry->setAttribute("parameter_id", mapping.parameterID);
+        entry->setAttribute("cc_no", mapping.ccNumber);
+        entry->setAttribute("channel", mapping.channel);
+    }
+
+    DBG("Saving MIDI Preset " + file.getFullPathName());
+
+    return xml->writeTo(file);
+}
+
 void MidiHandler::processMidiBuffer(juce::MidiBuffer& midiBuffer)
 {
     for (const auto& metadata : midiBuffer)
@@ -214,6 +234,14 @@ void MidiHandler::setMappingParameter(uint32_t id, const juce::String& parameter
 
     this->rebuildLookUpTable();
 }
+
+void MidiHandler::clearMappings()
+{
+   this->clearLookupTable(); 
+   mappings.clear();
+   this->nextID = 1;
+}
+
 
 ControlChangeMapping* MidiHandler::findMapping(uint32_t id)
 {

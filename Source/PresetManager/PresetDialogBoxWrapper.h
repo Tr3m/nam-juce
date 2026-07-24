@@ -25,17 +25,18 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        g.fillAll(juce::Colours::black.withAlpha(0.4f));
+        g.fillAll(juce::Colours::black.withAlpha(0.6f));
 
-        g.setColour(juce::Colours::white.withAlpha(0.6f));
-        g.drawRect(dBox->getBounds().withSizeKeepingCentre(dBox->getWidth() + 2, dBox->getHeight() + 2), 1);
+        g.setColour(juce::Colour::fromString("ff252525"));
+        g.fillRoundedRectangle(componentBounds.toFloat(), 8.0f);
     };
 
     void resized() override
     {
         int boxWidth = getWidth() / 4;
         int boxHeight = getHeight() / 4;
-        dBox->setBounds((getWidth() / 2) - (boxWidth / 2), (getHeight() / 2) - (boxHeight / 2), boxWidth, boxHeight);
+        componentBounds.setBounds(getWidth() / 2 - boxWidth / 2, getHeight() / 2 - boxHeight / 2, boxWidth, boxHeight);
+        dBox->setBounds(componentBounds);
         repaint();
     };
 
@@ -61,6 +62,7 @@ public:
 private:
     std::unique_ptr<PresetDialogBox> dBox;
     std::unique_ptr<PresetDialogBoxWrapper>& self;
+    juce::Rectangle<int> componentBounds;
 
     void mouseUp(const juce::MouseEvent& event) override
     {

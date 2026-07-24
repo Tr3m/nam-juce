@@ -592,6 +592,7 @@ void NamEditor::showSaveDialog(const juce::String& presetName)
     presetDialog->toFront(false);
     presetDialog->setInputFieldText(presetName);
     presetDialog->setBounds(getLocalBounds());
+    presetDialog->grabKeyboardFocus();
 }
 
 void NamEditor::showEqModule()

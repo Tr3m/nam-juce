@@ -3,5 +3,7 @@ PRIVATE
     MidiMappingsComponent.h
     MidiEntryComponent.h
     MidiEntriesListComponent.h
+    MidiDialogBox.h
+    MidiDialogBoxWrapper.h
 )
 

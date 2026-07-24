@@ -5,6 +5,7 @@
 #include "../../PluginProcessor.h"
 #include "MidiEntriesListComponent.h"
 #include "../../MyLookAndFeel.h"
+#include "MidiDialogBoxWrapper.h"
 
 class MidiMappingsComponent : public juce::Component
 {
@@ -12,6 +13,7 @@ public:
     MidiMappingsComponent(NamJUCEAudioProcessor& p)
         : audioProcessor(p), entriesComp(p)
     {
+
         addAndMakeVisible(&viewport);
         viewport.setViewedComponent(&entriesComp, false);
         viewport.setScrollBarsShown(true, false, false, false);
@@ -21,6 +23,31 @@ public:
             buttons[i].reset(new juce::TextButton(buttonLabels[i]));
             addAndMakeVisible(buttons[i].get());
         }
+
+        buttons[Buttons::New]->onClick = [this]
+        {
+            audioProcessor.getMidiHandler().clearMappings();
+            entriesComp.reconstructUI();
+        };
+
+        buttons[Buttons::Open]->onClick = [this] { this->browseForPreset(); };
+
+        buttons[Buttons::OpenDefault]->onClick = [this]
+        {
+            auto& mh = audioProcessor.getMidiHandler();
+            mh.clearMappings();
+            mh.loadConfig(mh.defaultMidiConfig, audioProcessor.apvts);
+            entriesComp.reconstructUI();
+        };
+
+        buttons[Buttons::SaveAs]->onClick = [this] { showSaveDialog(); };
+        buttons[Buttons::SaveAsDefault]->onClick = [this] 
+        {
+            auto& mh = audioProcessor.getMidiHandler();
+            mh.saveConfig(mh.defaultMidiConfig);
+        };
+
+
     };
 
     ~MidiMappingsComponent()
@@ -129,10 +156,37 @@ private:
     juce::Rectangle<int> topBarArea, listArea, titlesArea, bottomBarArea;
     MidiEntriesListComponent entriesComp;
     juce::Viewport viewport;
+    std::unique_ptr<MidiDialogBoxWrapper> saveDialog;
 
 
     std::unique_ptr<juce::TextButton> buttons[5];
     const std::vector<juce::String> buttonLabels {"New", "Open", "Open Default", "Save As", "Save as Default"};
+
+    void showSaveDialog()
+    {
+        if (saveDialog == nullptr)
+        {
+            saveDialog.reset(new MidiDialogBoxWrapper(audioProcessor, saveDialog));
+            addAndMakeVisible(saveDialog.get());
+            saveDialog->setBounds(getLocalBounds());
+            saveDialog->grabKeyboardFocus();
+        }
+    }
+
+    void browseForPreset()
+    {
+        auto& mh = audioProcessor.getMidiHandler();
+        juce::FileChooser chooser("Choose an Preset to load", mh.midiDirectory, "*.xml", true, false);
+
+        if (chooser.browseForFileToOpen())
+        {
+            mh.clearMappings();
+            juce::File preset;
+            preset = chooser.getResult();
+            mh.loadConfig(preset, audioProcessor.apvts);
+            entriesComp.reconstructUI();
+        }
+    };
 };
 
 class MidiMappingsComponentWrapper : public juce::Component,
@@ -146,6 +200,7 @@ public:
         lnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
         lnf.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
         lnf.setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
+        lnf.setColour(juce::TextEditor::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
 
         mappingsComp.reset(new MidiMappingsComponent(p));
         mappingsComp->setLookAndFeel(&lnf);

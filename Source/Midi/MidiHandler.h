@@ -11,6 +11,7 @@ public:
     ~MidiHandler();
 
     void loadConfig(const juce::File& configFile, juce::AudioProcessorValueTreeState& apvts);
+    bool saveConfig(const juce::File& file);
     void processMidiBuffer(juce::MidiBuffer& midiBuffer);
 
     const juce::File midiDirectory {juce::File::getSpecialLocation(juce::File::SpecialLocationType::userHomeDirectory).getChildFile("Neural Amp Modeler").getChildFile("Midi")};
@@ -23,6 +24,7 @@ public:
     void setMappingCC(uint32_t id, int newCC);
     void setMappingChannel(uint32_t id, int channel);
     void setMappingParameter(uint32_t id, const juce::String& parameterID, juce::AudioProcessorValueTreeState& apvts);
+    void clearMappings();
 
     enum MessageType 
     {
