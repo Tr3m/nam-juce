@@ -20,7 +20,7 @@ public:
         
         for (const auto& mapping : mappings)
         {
-            MidiEntryComponent* m = new MidiEntryComponent(mapping);
+            MidiEntryComponent* m = new MidiEntryComponent(mapping, audioProcessor.getParameterIDs(), audioProcessor.getParameterNames());
             addAndMakeVisible(*m);
             entries.push_back(std::move(m));
         }

@@ -112,6 +112,9 @@ public:
 
     MidiHandler& getMidiHandler() { return this->midiHandler; };
 
+    const juce::StringArray getParameterIDs() { return this->parameterIDs; };
+    const juce::StringArray getParameterNames() { return this->parameterNames; };
+
 private:
     //==============================================================================
 
@@ -166,6 +169,9 @@ private:
     juce::Value eqStateValue;
 
     MidiHandler midiHandler;
+
+    void exportParameters(juce::StringArray& ids, juce::StringArray& names);
+    juce::StringArray parameterIDs, parameterNames;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)
 };

@@ -8,10 +8,16 @@ class MidiEntryComponent : public juce::Component,
                            public juce::ComboBox::Listener
 {
 public:
-    MidiEntryComponent(const MidiMappingDisplay& mapping)
+    MidiEntryComponent(const MidiMappingDisplay& mapping, juce::StringArray paramIDs, juce::StringArray paramNames)
+        : paramNames(paramNames), paramIDs(paramIDs)
     {
         paramComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(paramComboBox.get());
+        for (int i = 0; i < paramIDs.size(); ++i)
+            paramComboBox->addItem(paramNames[i], i+1);
+        
+        paramComboBox->setSelectedId(paramNames.indexOf(mapping.parameterName) + 1, juce::NotificationType::dontSendNotification);
+
 
         valueComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(valueComboBox.get());
@@ -70,6 +76,7 @@ public:
 private:
     std::unique_ptr<juce::ComboBox> paramComboBox, valueComboBox, channelComboBox;
     std::unique_ptr<juce::TextButton> deleteButton;
+    juce::StringArray paramIDs, paramNames;
 
 };
 

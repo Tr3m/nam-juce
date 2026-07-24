@@ -19,6 +19,8 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
 {
     filterCuttofs[OutputFilters::LowCutF] = apvts.getRawParameterValue("LOWCUT_ID");
     filterCuttofs[OutputFilters::HighCutF] = apvts.getRawParameterValue("HIGHCUT_ID");
+
+    this->exportParameters(parameterIDs, parameterNames);
 }
 
 NamJUCEAudioProcessor::~NamJUCEAudioProcessor() {}
@@ -736,4 +738,19 @@ bool NamJUCEAudioProcessor::supportsDoublePrecisionProcessing() const
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new NamJUCEAudioProcessor();
+}
+
+
+void NamJUCEAudioProcessor::exportParameters(juce::StringArray& ids, juce::StringArray& names)
+{
+    ids.clear();
+    names.clear();
+
+    auto params = this->getParameters();
+
+    for (auto* param : params )
+    {
+        names.add(param->getName(32));
+        ids.add(dynamic_cast<juce::AudioProcessorParameterWithID*>(param)->getParameterID());
+    }
 }
