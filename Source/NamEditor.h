@@ -7,7 +7,7 @@
 #include "TopBarComponent.h"
 #include "LedButtonComponent.h"
 #include "PresetManager/PresetDialogBoxWrapper.h"
-#include "Midi/MidiMappingsComponent/MidiMappingsComponent.h"
+#include "Midi/MidiMappingsComponent/MidiMappingsComponentWrapper.h"
 
 #define NUM_SLIDERS 9
 

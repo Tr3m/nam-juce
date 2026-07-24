@@ -5,5 +5,6 @@ PRIVATE
     MidiEntriesListComponent.h
     MidiDialogBox.h
     MidiDialogBoxWrapper.h
+    MidiMappingsComponentWrapper.h
 )
 
