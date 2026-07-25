@@ -10,7 +10,7 @@ class ProgramChangeMappingsComponent : public juce::Component
 {
 public:
     ProgramChangeMappingsComponent(NamJUCEAudioProcessor& p)
-        : audioProcessor(p), entriesComp(audioProcessor.getAllPresets())
+        : audioProcessor(p), entriesComp(p)
     {
         addAndMakeVisible(&viewport);
         viewport.setViewedComponent(&entriesComp, false);

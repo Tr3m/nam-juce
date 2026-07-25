@@ -47,6 +47,49 @@ struct MidiUtils
         return xml->writeTo(midiFile);
     }
 
+    static inline void checkDefaultPcMappings()
+    {
+        const juce::File defaultConfigDirectory{juce::File::getSpecialLocation(juce::File::
+                SpecialLocationType::userApplicationDataDirectory).getChildFile("NamJuce")};
+
+        const juce::File pcMappingsFile {defaultConfigDirectory.getChildFile("PcMappings.xml")};
+
+        if (!pcMappingsFile.existsAsFile())
+        {
+            DBG("Creating default PC Mappings file...");
+            createPcMappingsConfig(pcMappingsFile, nullptr);
+        }
+    }
+
+    static inline bool createPcMappingsConfig(const juce::File& pcMappingsFile, juce::ValueTree* config)
+    {
+        juce::ValueTree rootNode("MidiConfig");
+        juce::ValueTree routings("ProgramChangeRoutings");
+ 
+        if (config != nullptr)
+            routings.appendChild(*config, nullptr);
+        else
+        {
+            for (int i = 0; i < 128; ++i)
+            {
+                juce::ValueTree entry ("Entry");
+                entry.setProperty("program", i, nullptr);
+                entry.setProperty("preset", "", nullptr);
+                routings.addChild(entry, i, nullptr);
+            }
+        }
+
+        rootNode.appendChild(routings, nullptr);
+
+        auto xml = rootNode.createXml();
+
+        if (xml == nullptr)
+            return false;
+
+        return xml->writeTo(pcMappingsFile);
+
+    }
+
 };
 
 #endif // __MIDI_UTILS_H__

@@ -93,6 +93,14 @@ void PresetManagerComponent::setColour(juce::Colour colourToUse)
     repaint();
 }
 
+void PresetManagerComponent::updateAfterMidiLoad()
+{
+    const auto allPresets = presetManager.getAllPresets();
+    const auto currentPreset = presetManager.getCurrentPreset();
+    presetComboBox.setSelectedItemIndex(allPresets.indexOf(currentPreset), juce::dontSendNotification);
+    updateCurrentSelection();
+}
+
 void PresetManagerComponent::paint(juce::Graphics& g)
 {
     g.fillAll(barColour.withAlpha(barAlpha));

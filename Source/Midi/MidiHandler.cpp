@@ -1,8 +1,13 @@
 #include "MidiHandler.h"
 
-MidiHandler::MidiHandler()
+MidiHandler::MidiHandler(PresetManager& presetMgr, juce::Value& presetValue, std::function<void()>&& loadModelAndIrFuntion)
+    : presetManager(presetMgr), presetValue(presetValue), presetChanged(std::move(loadModelAndIrFuntion))
 {
     MidiUtils::checkDefaultConfig(midiDirectory);
+    MidiUtils::checkDefaultPcMappings();
+
+    juce::StringArray dummy;
+    this->loadPcConfig(dummy);
 }
 
 MidiHandler::~MidiHandler() {}
@@ -41,6 +46,44 @@ void MidiHandler::loadConfig(const juce::File& configFile, juce::AudioProcessorV
     this->rebuildLookUpTable();
 }
 
+void MidiHandler::loadPcConfig(juce::StringArray& pcMappings)
+{
+    pcMappings.clear();
+    DBG("Reading PC Mappings file");
+    auto xml = juce::XmlDocument::parse(this->pcMappingsFile);
+
+    if (xml == nullptr)
+    {
+        DBG("Couldn't parse PC MIDI config.");
+        return;
+    }
+
+    auto* routings = xml->getChildByName("ProgramChangeRoutings");
+
+    if (routings == nullptr)
+        return;
+
+    for (auto* entry = routings->getFirstChildElement(); entry != nullptr; entry = entry->getNextElement())
+    {
+        if (!entry->hasTagName("Entry"))
+            continue;
+
+        pcMappings.add(entry->getStringAttribute("preset"));
+    }
+
+    if (pcMappings.size() < 128)
+    {
+        DBG("Tampered config loaded!");
+
+        for (int i = pcMappings.size(); i < 128; ++i)
+            pcMappings.add("");
+    }
+
+    this->presetMappings.clear();
+    this->presetMappings = pcMappings;
+
+};
+
 bool MidiHandler::saveConfig(const juce::File& file)
 {
     auto xml = std::make_unique<juce::XmlElement>("MidiConfig");
@@ -61,6 +104,24 @@ bool MidiHandler::saveConfig(const juce::File& file)
     return xml->writeTo(file);
 }
 
+bool MidiHandler::savePcConfig(const juce::StringArray& pcMappings)
+{
+    auto xml = std::make_unique<juce::XmlElement>("MidiConfig");
+    auto* routings = xml->createNewChildElement("ProgramChangeRoutings");
+
+    for (int i = 0; i < 128; ++i)
+    {
+        auto* entry = routings->createNewChildElement("Entry");
+        entry->setAttribute("program", i);
+        entry->setAttribute("preset", pcMappings[i]);
+    }
+
+    this->presetMappings.clear();
+    this->presetMappings = pcMappings;
+
+    return xml->writeTo(pcMappingsFile);
+}
+
 void MidiHandler::processMidiBuffer(juce::MidiBuffer& midiBuffer)
 {
     for (const auto& metadata : midiBuffer)
@@ -71,6 +132,9 @@ void MidiHandler::processMidiBuffer(juce::MidiBuffer& midiBuffer)
         {
         case MessageType::ControlChange:
             handleCC(msg);
+            break;
+        case MessageType::ProgramChange:
+            handlePC(msg);
             break;
         default:
             break;
@@ -139,6 +203,19 @@ void MidiHandler::handleCC(const juce::MidiMessage& msg)
             continue;
 
         mapping->parameter->setValueNotifyingHost(value);
+    }
+}
+
+void MidiHandler::handlePC(const juce::MidiMessage& msg)
+{
+    int index = msg.getProgramChangeNumber();
+
+    if(!presetMappings[index].isEmpty())
+    {
+        DBG("(MIDI) Loading preset " + presetMappings[index]);
+        presetManager.loadPreset(presetMappings[index]);
+        presetChanged();
+        presetValue.setValue(juce::var(!presetValue.getValue())); // flip to trigger a gui reload.
     }
 }
 

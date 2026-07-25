@@ -66,11 +66,13 @@ public:
     {
         PropertiesFile::Options options;
 
+        const juce::File defaultConfigDirectory{juce::File::getSpecialLocation(juce::File::SpecialLocationType::userApplicationDataDirectory).getChildFile("NamJuce")};
         options.applicationName     = appName;
         options.filenameSuffix      = ".settings";
         options.osxLibrarySubFolder = "Application Support";
        #if JUCE_LINUX || JUCE_BSD
-        options.folderName          = "~/.config";
+        // options.folderName          = "~/.config";
+        options.folderName          = defaultConfigDirectory.getFullPathName();
        #else
         options.folderName          = "";
        #endif

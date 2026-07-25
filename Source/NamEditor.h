@@ -98,7 +98,7 @@ private:
 
     // Pass this to the Preset Manager for updating the gui after loading a new preset.
     // Maybe not the best way of doing it...
-    void updateAfterPresetLoad ();
+    void updateAfterPresetLoad (bool isFromMidi = false);
 
     void updateModelBox();
     void updateIrBox();

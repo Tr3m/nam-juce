@@ -21,6 +21,8 @@ public:
     juce::ComboBox* getComboBox() { return &this->presetComboBox; };
     int* getCurrentSelection() { return &this->currentSelection; };
 
+    void updateAfterMidiLoad(); // For PC Change
+
 private:
     int currentSelection;
     void updateCurrentSelection();

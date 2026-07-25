@@ -151,7 +151,7 @@ private:
             mappingsComp.reset();
         }
 
-        if (mappingsComp == nullptr)
+        if (pcMappingsComp == nullptr)
         {
             pcMappingsComp.reset(new ProgramChangeMappingsComponent(audioProcessor));
             addAndMakeVisible(pcMappingsComp.get());

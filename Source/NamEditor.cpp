@@ -327,6 +327,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     audioProcessor.getCabStateValue().addListener(this);
     audioProcessor.getNormStateValue().addListener(this);
     audioProcessor.getTonestackStateValue().addListener(this);
+    audioProcessor.getPresetStateValue().addListener(this);
 
     if (audioProcessor.eqModuleVisible)
         showEqModule();
@@ -342,6 +343,7 @@ NamEditor::~NamEditor()
     audioProcessor.getCabStateValue().removeListener(this);
     audioProcessor.getNormStateValue().removeListener(this);
     audioProcessor.getTonestackStateValue().removeListener(this);
+    audioProcessor.getPresetStateValue().removeListener(this);
 
     for (int sliderAtt = 0; sliderAtt < NUM_SLIDERS; ++sliderAtt)
         sliderAttachments[sliderAtt] = nullptr;
@@ -417,7 +419,7 @@ void NamEditor::comboBoxChanged (juce::ComboBox* comboBox)
 
 void NamEditor::valueChanged (Value& value)
 {
-    if (value == *(audioProcessor.getTrigger()->getGatingValue()) && static_cast<float>(*audioProcessor.apvts.getRawParameterValue("NGATE_ID")) > -101.0)
+    if (value.refersToSameSourceAs(*(audioProcessor.getTrigger()->getGatingValue())) && static_cast<float>(*audioProcessor.apvts.getRawParameterValue("NGATE_ID")) > -101.0)
     {
        if(value.getValue()) //Is Gating
            led_to_draw = led_on;
@@ -427,17 +429,23 @@ void NamEditor::valueChanged (Value& value)
        repaint();
     }
 
-    if (value == audioProcessor.getEqStateValue())
+    else if (value.refersToSameSourceAs(audioProcessor.getEqStateValue()))
         eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
 
-    if(value == audioProcessor.getNormStateValue())
+    else if(value.refersToSameSourceAs(audioProcessor.getNormStateValue()))
         normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
 
-    if(value == audioProcessor.getCabStateValue())
+    else if(value.refersToSameSourceAs(audioProcessor.getCabStateValue()))
         irButton->setLedState(*audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
 
-    if(value == audioProcessor.getTonestackStateValue())
+    else if(value.refersToSameSourceAs(audioProcessor.getTonestackStateValue()))
         toneStackButton->setLedState(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
+
+    else if (value.refersToSameSourceAs(audioProcessor.getPresetStateValue()))
+    {
+        this->updateAfterPresetLoad(true);
+        topBar.getPresetManagerComponent()->updateAfterMidiLoad();
+    }
 
 }
 
@@ -520,7 +528,7 @@ void NamEditor::initializeButton(const juce::String label, const juce::String bu
     button->setBounds(x, y, width, height);
 }
 
-void NamEditor::updateAfterPresetLoad()
+void NamEditor::updateAfterPresetLoad(bool isFromMidi)
 {
     setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
 
@@ -532,7 +540,8 @@ void NamEditor::updateAfterPresetLoad()
     // DBG(addons.getProperty ("model_path", juce::String()).toString());
     // DBG(addons.getProperty ("ir_path", juce::String()).toString());
 
-    audioProcessor.loadFromPreset(addons.getProperty("model_path", juce::String()), addons.getProperty("ir_path", juce::String()));
+    if (!isFromMidi)
+        audioProcessor.loadFromPreset(addons.getProperty("model_path", juce::String()), addons.getProperty("ir_path", juce::String()));
 
     // Check the processor for Model and IR status after loading preset.
     if (audioProcessor.getLastModelPath() != "null")

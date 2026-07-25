@@ -8,14 +8,15 @@ class ProgramChangeEntryComponent : public juce::Component,
 {
 
 public:
-    ProgramChangeEntryComponent(int programNumber, const juce::StringArray& presetList)
-        : presetList(presetList)
+    ProgramChangeEntryComponent(int programNumber, const juce::StringArray& presetList, std::function<void(int, const juce::String&)>&& setPresetMapping, const juce::String currentPreset)
+        : presetList(presetList), presetChanged(std::move(setPresetMapping))
     {
         this->programNumber = programNumber;
 
         presetSelect.reset(new juce::ComboBox());
         addAndMakeVisible(presetSelect.get());
         presetSelect->addItemList(this->presetList, 1);
+        presetSelect->setSelectedId(presetList.indexOf(currentPreset) + 1, juce::NotificationType::dontSendNotification);
         presetSelect->addListener(this); 
     };
 
@@ -48,7 +49,7 @@ public:
 
     void comboBoxChanged(juce::ComboBox* cb)
     {
-
+        presetChanged(this->programNumber, cb->getItemText(cb->getSelectedItemIndex()));
     };
 
 private:
@@ -56,6 +57,8 @@ private:
     juce::Rectangle<int> labelArea;
     std::unique_ptr<juce::ComboBox> presetSelect;
     juce::StringArray presetList;
+
+    std::function<void(int, const juce::String&)> presetChanged;
 };
 
 #endif //__PROGRAM_CHANGE_ENTRY_COMPONENT_H__

@@ -2,23 +2,28 @@
 #define __PROGRAM_CHANGE_LIST_COPMPONENT_H__
 
 #include "ProgramChangeEntryComponent.h"
+#include "../../PluginProcessor.h"
 
 class ProgramChangeListComponent : public juce::Component
 {
 public:
-    ProgramChangeListComponent(const juce::StringArray& presetList)
-        : presetList(presetList)
+    ProgramChangeListComponent(NamJUCEAudioProcessor& p)
+        : audioProcessor(p), presetList(p.getAllPresets())
     {
-        for (int i = 1; i <= 128; ++i) 
+        audioProcessor.getMidiHandler().loadPcConfig(mappings);
+
+        for (int i = 0; i < 128; ++i) 
         {
-            ProgramChangeEntryComponent* m = new ProgramChangeEntryComponent(i, this->presetList);
+            ProgramChangeEntryComponent* m = new ProgramChangeEntryComponent(i, this->presetList,
+                    [&](int index, const juce::String& presetName){setNewMapping(index, presetName);}, mappings[i]);
+
             addAndMakeVisible(*m);
             entries.push_back(std::move(m));
         }
     };
 
     ~ProgramChangeListComponent()
-    {
+    { 
         for (auto* entry : entries)
             delete entry;
 
@@ -61,9 +66,24 @@ public:
         this->setSize(parentWidth, this->getLowestY());
     }
 
+    void setNewMapping(int index, const juce::String& preset)
+    {
+        if (index < mappings.size())
+            mappings.set(index, preset);
+
+        // Write to file
+        DBG("Set Program " + juce::String(index) + " to preset " + preset);
+        DBG(mappings.size());
+
+        audioProcessor.getMidiHandler().savePcConfig(mappings);
+    }
+
 private:
     std::vector<ProgramChangeEntryComponent*> entries;
     juce::StringArray presetList;
+    juce::StringArray mappings;
+
+    NamJUCEAudioProcessor& audioProcessor;
 };
 
 #endif //__PROGRAM_CHANGE_LIST_COPMPONENT_H__

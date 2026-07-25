@@ -14,7 +14,8 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
     #endif
                          ),
       apvts(*this, nullptr, "Params", createParameters()), lowCut(juce::dsp::IIR::Coefficients<float>::makeHighPass(44100, 20.0f, 1.0f)),
-      highCut(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f)), presetManager(apvts)
+      highCut(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f)), presetManager(apvts),
+      midiHandler(presetManager, presetStateValue, [&](){loadLastModelAndIr();})
 #endif
 {
     filterCuttofs[OutputFilters::LowCutF] = apvts.getRawParameterValue("LOWCUT_ID");
@@ -489,6 +490,12 @@ void NamJUCEAudioProcessor::clearIR()
 bool NamJUCEAudioProcessor::getIrStatus()
 {
     return irLoaded;
+}
+
+void NamJUCEAudioProcessor::loadLastModelAndIr()
+{
+    auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
+    this->loadFromPreset(addons.getProperty("model_path", juce::String()), addons.getProperty("ir_path", juce::String()));
 }
 
 void NamJUCEAudioProcessor::releaseResources() {}

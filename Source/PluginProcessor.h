@@ -106,6 +106,7 @@ public:
     juce::Value& getCabStateValue() { return cabStateValue; };
     juce::Value& getTonestackStateValue() { return toneStackStateValue; };
     juce::Value& getNormStateValue() { return normStateValue; };
+    juce::Value& getPresetStateValue() { return presetStateValue; };
 
     void loadNextModel();
     void loadPreviousModel();
@@ -171,12 +172,14 @@ private:
 
     bool isIrValidFormat(juce::File f);
 
-    juce::Value eqStateValue, cabStateValue, toneStackStateValue, normStateValue;
+    juce::Value eqStateValue, cabStateValue, toneStackStateValue, normStateValue, presetStateValue{juce::var(false)};
 
     MidiHandler midiHandler;
 
     void exportParameters(juce::StringArray& ids, juce::StringArray& names);
     juce::StringArray parameterIDs, parameterNames;
+
+    void loadLastModelAndIr();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)
 };
