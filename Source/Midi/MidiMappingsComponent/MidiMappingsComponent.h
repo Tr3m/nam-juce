@@ -10,8 +10,8 @@
 class MidiMappingsComponent : public juce::Component
 {
 public:
-    MidiMappingsComponent(NamJUCEAudioProcessor& p)
-        : audioProcessor(p), entriesComp(p)
+    MidiMappingsComponent(NamJUCEAudioProcessor& p, MidiHandler::EntryTypes type)
+        : audioProcessor(p),type(type), entriesComp(p, type)
     {
         addAndMakeVisible(&viewport);
         viewport.setViewedComponent(&entriesComp, false);
@@ -63,7 +63,7 @@ public:
 
         juce::Font fTemp = g.getCurrentFont();
         g.setFont(topBarArea.getHeight() / 3);
-        g.drawFittedText("Control Change Mappings", topBarArea.withY(topBarArea.getY() - 3), juce::Justification::centred, 1);
+        g.drawFittedText("Midi Mappings", topBarArea.withY(topBarArea.getY() - 3), juce::Justification::centred, 1);
         g.setFont(fTemp);
 
         int entryHeight = 30;
@@ -73,7 +73,7 @@ public:
 
         juce::Rectangle<int> r (x, titlesArea.getY(), titlesArea.proportionOfWidth(0.3f) - spacing, entryHeight);
 
-        g.drawFittedText("Parameter", r, juce::Justification::centredBottom, 1);
+        g.drawFittedText(this->type == MidiHandler::EntryTypes::Parameter ? "Parameter" : "Preset", r, juce::Justification::centredBottom, 1);
         g.drawFittedText("CC", r.getX() + r.getWidth() + spacing, r.getY(), titlesArea.proportionOfWidth(0.15f) - spacing, r.getHeight(), juce::Justification::centredBottom, 1);
         g.drawFittedText("Channel", r.getX() + r.getWidth() + titlesArea.proportionOfWidth(0.15f) + spacing, r.getY(), titlesArea.proportionOfWidth(0.15f), r.getHeight(), juce::Justification::centredBottom, 1);
 
@@ -149,6 +149,7 @@ private:
     MidiEntriesListComponent entriesComp;
     juce::Viewport viewport;
     std::unique_ptr<MidiDialogBoxWrapper> saveDialog;
+    MidiHandler::EntryTypes type;
 
 
     std::unique_ptr<juce::TextButton> buttons[5];

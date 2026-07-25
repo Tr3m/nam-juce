@@ -94,6 +94,7 @@ bool MidiHandler::saveConfig(const juce::File& file)
     {
         auto* entry = routings->createNewChildElement("Entry");
 
+        entry->setAttribute("type", mapping.type);
         entry->setAttribute("parameter_id", mapping.parameterID);
         entry->setAttribute("cc_no", mapping.ccNumber);
         entry->setAttribute("channel", mapping.channel);
@@ -151,26 +152,42 @@ void MidiHandler::populateLookupTable(juce::XmlElement* routings, juce::AudioPro
     {
         if (!entry->hasTagName("Entry"))
             continue;
-
+        
+        auto entryType = entry->getIntAttribute("type");
         auto parameterID = entry->getStringAttribute("parameter_id");
         auto cc = entry->getIntAttribute("cc_no");
         auto channel = entry->getIntAttribute("channel", 0);
+        juce::RangedAudioParameter* parameter;
 
         if (cc < 0 || cc > 127)
         {
             DBG("Invalid CC: " << cc);
             continue;
         }
-
-        auto* parameter = apvts.getParameter(parameterID);
-
-        if (parameter == nullptr)
+        
+        switch(entryType)
         {
-            DBG("Unknown parameter: " << parameterID);
-            continue;
+        case EntryTypes::Parameter:
+
+            // auto* parameter = apvts.getParameter(parameterID);
+            parameter = apvts.getParameter(parameterID);
+
+            if (parameter == nullptr)
+            {
+                DBG("Unknown parameter: " << parameterID);
+                continue;
+            }
+
+            mappings.push_back({ nextID++, parameterID, parameter, cc, channel, entryType });
+            break;
+
+        case EntryTypes::Preset:
+            mappings.push_back({ nextID++, parameterID, nullptr, cc, channel, entryType });
+            break;
         }
 
-        mappings.push_back({ nextID++, parameterID, parameter, cc, channel });
+
+        // mappings.push_back({ nextID++, parameterID, parameter, cc, channel });
         entries += 1;
     }
 
@@ -201,8 +218,19 @@ void MidiHandler::handleCC(const juce::MidiMessage& msg)
     {
         if (mapping->channel != 0 && mapping->channel != msg.getChannel())
             continue;
-
-        mapping->parameter->setValueNotifyingHost(value);
+        
+        switch (mapping->type)
+        {
+        case EntryTypes::Parameter:
+            mapping->parameter->setValueNotifyingHost(value);
+            break;
+        case EntryTypes::Preset:
+            DBG("(MIDI) Loading preset " + mapping->parameterID);
+            presetManager.loadPreset(mapping->parameterID);
+            presetChanged();
+            presetValue.setValue(juce::var(!presetValue.getValue())); // flip to trigger a gui reload.
+            break;
+        }
     }
 }
 
@@ -235,20 +263,28 @@ std::vector<MidiMappingDisplay> MidiHandler::getMappingsForDisplay() const
 
     for (const auto& mapping : mappings)
     {
-        result.push_back({ mapping.uid, mapping.parameter->getName(32), mapping.parameterID, mapping.ccNumber, mapping.channel });
+        result.push_back({ mapping.uid, 
+                mapping.type == EntryTypes::Parameter ? mapping.parameter->getName(32) : mapping.parameterID, 
+                mapping.parameterID, mapping.ccNumber, mapping.channel, mapping.type });
     }
 
     return result;
 }
 
-void MidiHandler::addMapping(const juce::String& parameterID, int cc, int channel, juce::AudioProcessorValueTreeState& apvts)
+void MidiHandler::addMapping(const juce::String& parameterID, int cc, int channel, juce::AudioProcessorValueTreeState& apvts, EntryTypes type)
 {
-    auto* parameter = apvts.getParameter(parameterID);
+    juce::RangedAudioParameter* parameter;
 
-    if (parameter == nullptr)
-        return;
+    if (type == EntryTypes::Parameter)
+    {
+        // auto* parameter = apvts.getParameter(parameterID);
+        parameter = apvts.getParameter(parameterID);
 
-    mappings.push_back({ nextID++, parameterID, parameter, cc, channel });
+        if (parameter == nullptr)
+            return;
+    }
+
+    mappings.push_back({ nextID++, parameterID, parameter, cc, channel, type });
 
     rebuildLookUpTable();
 
@@ -294,17 +330,23 @@ void MidiHandler::setMappingChannel(uint32_t id, int channel)
     this->rebuildLookUpTable();
 }
 
-void MidiHandler::setMappingParameter(uint32_t id, const juce::String& parameterID, juce::AudioProcessorValueTreeState& apvts)
+void MidiHandler::setMappingParameter(uint32_t id, const juce::String& parameterID, juce::AudioProcessorValueTreeState& apvts, EntryTypes type)
 {
     auto* mapping = findMapping(id);
 
     if (mapping == nullptr)
         return;
+    
+    juce::RangedAudioParameter* parameter;
+    
+    if (type == EntryTypes::Parameter)
+    {
+        // auto* parameter = apvts.getParameter(parameterID);
+        parameter = apvts.getParameter(parameterID);
 
-    auto* parameter = apvts.getParameter(parameterID);
-
-    if (parameter == nullptr)
-        return;
+        if (parameter == nullptr)
+            return;
+    }
 
     mapping->parameter = parameter;
     mapping->parameterID = parameterID;

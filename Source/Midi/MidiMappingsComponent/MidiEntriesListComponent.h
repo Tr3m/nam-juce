@@ -8,8 +8,8 @@
 class MidiEntriesListComponent : public juce::Component
 {
 public:
-    MidiEntriesListComponent(NamJUCEAudioProcessor& p)
-        : audioProcessor(p)
+    MidiEntriesListComponent(NamJUCEAudioProcessor& p, MidiHandler::EntryTypes type)
+        : audioProcessor(p), type(type)
     {
         reconstructUI(false);
     };
@@ -63,7 +63,10 @@ public:
     void addDefaultEntry()
     {
         DBG("Adding default mapping");
-        audioProcessor.getMidiHandler().addMapping(audioProcessor.getParameterIDs()[0], 1, 0, audioProcessor.apvts);
+        audioProcessor.getMidiHandler().addMapping(type == MidiHandler::EntryTypes::Parameter ? 
+                audioProcessor.getParameterIDs()[0] : audioProcessor.getAllPresets()[0], // Might be a good idea to refactor how we're getting the presets here.
+                1, 0, audioProcessor.apvts, this->type);
+
         reconstructUI();
     }
 
@@ -85,7 +88,7 @@ public:
 
     void setEntryParameter(uint32_t id, const juce::String& parameterID)
     {
-        audioProcessor.getMidiHandler().setMappingParameter(id, parameterID, audioProcessor.apvts);
+        audioProcessor.getMidiHandler().setMappingParameter(id, parameterID, audioProcessor.apvts, this->type);
     }
 
     void reconstructUI(bool deleteEntries = true)
@@ -101,21 +104,28 @@ public:
         }
 
         auto mappings = audioProcessor.getMidiHandler().getMappingsForDisplay();
+        auto presets = audioProcessor.getAllPresets();
 
         addAndMakeVisible(&addButton);
         addButton.setButtonText("+");
         addButton.onClick = [this] { addDefaultEntry(); };
 
         for (auto& mapping : mappings)
-        {
+        { 
+            if (mapping.type == this->type)
+            {
 
-            MidiEntryComponent* m = new MidiEntryComponent(mapping, audioProcessor.getParameterIDs(), audioProcessor.getParameterNames(), 
-                    [&](uint32_t id){ deleteEntry(id); }, [&](uint32_t id, int cc){ setEntryCC(id, cc);}, 
-                    [&](uint32_t id, int channel){ setEntryChannel(id, channel);},
-                    [&](uint32_t id, const juce::String& parameterID){ setEntryParameter(id, parameterID); });
+                MidiEntryComponent* m = new MidiEntryComponent(mapping,
+                        this->type == MidiHandler::EntryTypes::Parameter ? audioProcessor.getParameterIDs() : presets,
+                        this->type == MidiHandler::EntryTypes::Parameter ? audioProcessor.getParameterNames() : presets, 
+                        [&](uint32_t id){ deleteEntry(id); },
+                        [&](uint32_t id, int cc){ setEntryCC(id, cc);}, 
+                        [&](uint32_t id, int channel){ setEntryChannel(id, channel);},
+                        [&](uint32_t id, const juce::String& parameterID){ setEntryParameter(id, parameterID); });
 
-            addAndMakeVisible(*m);
-            entries.push_back(std::move(m));
+                addAndMakeVisible(*m);
+                entries.push_back(std::move(m));
+            }
         }
 
         this->resized();
@@ -125,6 +135,7 @@ public:
 private:
     std::vector<MidiEntryComponent*> entries;
     juce::TextButton addButton;
+    MidiHandler::EntryTypes type;
     NamJUCEAudioProcessor& audioProcessor;
 };
 

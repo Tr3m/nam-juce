@@ -25,18 +25,24 @@ public:
 
     std::vector<MidiMappingDisplay> getMappingsForDisplay() const;
 
-    void addMapping(const juce::String& parameterID, int cc, int channel, juce::AudioProcessorValueTreeState& apvts);
-    void removeMapping(uint32_t id);
-    void setMappingCC(uint32_t id, int newCC);
-    void setMappingChannel(uint32_t id, int channel);
-    void setMappingParameter(uint32_t id, const juce::String& parameterID, juce::AudioProcessorValueTreeState& apvts);
-    void clearMappings();
-
     enum MessageType 
     {
         ControlChange = 0,
         ProgramChange
     };
+
+    enum EntryTypes
+    {
+        Parameter = 1,
+        Preset
+    };
+
+    void addMapping(const juce::String& parameterID, int cc, int channel, juce::AudioProcessorValueTreeState& apvts, EntryTypes type);
+    void removeMapping(uint32_t id);
+    void setMappingCC(uint32_t id, int newCC);
+    void setMappingChannel(uint32_t id, int channel);
+    void setMappingParameter(uint32_t id, const juce::String& parameterID, juce::AudioProcessorValueTreeState& apvts, EntryTypes type);
+    void clearMappings();
 
 private:
     std::vector<ControlChangeMapping> mappings;

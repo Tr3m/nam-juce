@@ -17,7 +17,7 @@ public:
         lnf.setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
         lnf.setColour(juce::TextEditor::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
 
-        mappingsComp.reset(new MidiMappingsComponent(p));
+        mappingsComp.reset(new MidiMappingsComponent(p, MidiHandler::EntryTypes::Parameter));
         mappingsComp->setLookAndFeel(&lnf);
         addAndMakeVisible(mappingsComp.get());
         
@@ -27,13 +27,13 @@ public:
         closeButton->onClick = [this] { this->destroy(); };
         closeButton->setAlwaysOnTop(true);
 
-        ccButton.reset(new juce::TextButton("CC Mappings"));
+        ccButton.reset(new juce::TextButton("Parameters"));
         addAndMakeVisible(ccButton.get());
         ccButton->setLookAndFeel(&lnf);
         ccButton->onClick = [this] { ccMappingsClicked(); };
         ccButton->setAlwaysOnTop(true);
 
-        pcButton.reset(new juce::TextButton("PC Mappings"));
+        pcButton.reset(new juce::TextButton("Presets"));
         addAndMakeVisible(pcButton.get());
         pcButton->setLookAndFeel(&lnf);
         pcButton->onClick = [this] { pcMappingsClicked(); };
@@ -108,8 +108,7 @@ public:
 
 private:
     juce::Rectangle<int>topBarArea, windowArea, bottomBarArea, sideBarArea;
-    std::unique_ptr<MidiMappingsComponent> mappingsComp;
-    std::unique_ptr<ProgramChangeMappingsComponent> pcMappingsComp;
+    std::unique_ptr<MidiMappingsComponent> mappingsComp, pcMappingsComp;
     std::unique_ptr<MidiMappingsComponentWrapper>& self;
     std::unique_ptr<juce::TextButton> closeButton, ccButton, pcButton;
     SimpleTextButtonLNF lnf;
@@ -134,7 +133,7 @@ private:
 
         if (mappingsComp == nullptr)
         {
-            mappingsComp.reset(new MidiMappingsComponent(audioProcessor));
+            mappingsComp.reset(new MidiMappingsComponent(audioProcessor, MidiHandler::EntryTypes::Parameter));
             addAndMakeVisible(mappingsComp.get());
             mappingsComp->setLookAndFeel(&lnf);
             mappingsComp->setBounds(windowArea);
@@ -153,7 +152,7 @@ private:
 
         if (pcMappingsComp == nullptr)
         {
-            pcMappingsComp.reset(new ProgramChangeMappingsComponent(audioProcessor));
+            pcMappingsComp.reset(new MidiMappingsComponent(audioProcessor, MidiHandler::EntryTypes::Preset));
             addAndMakeVisible(pcMappingsComp.get());
             pcMappingsComp->setLookAndFeel(&lnf);
             pcMappingsComp->setBounds(windowArea);
