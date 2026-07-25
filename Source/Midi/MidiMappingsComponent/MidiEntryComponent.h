@@ -28,10 +28,10 @@ public:
 
         valueComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(valueComboBox.get());
-        for (int i = 1; i < 128; ++ i)
-            valueComboBox->addItem("#" + juce::String(i), i);
+        for (int i = 0; i < 128; ++ i)
+            valueComboBox->addItem("#" + juce::String(i), i+1);
 
-        valueComboBox->setSelectedId(mapping.ccNumber, juce::NotificationType::dontSendNotification);
+        valueComboBox->setSelectedId(mapping.ccNumber + 1, juce::NotificationType::dontSendNotification);
         valueComboBox->addListener(this);
 
         channelComboBox.reset(new juce::ComboBox());
@@ -93,9 +93,9 @@ public:
         else if (cb == valueComboBox.get())
         {
             DBG("Changing CC of " + mapping.parameterID + " (" + juce::String(mapping.uid) + ") to "
-                    + juce::String(valueComboBox->getSelectedId()));
+                    + juce::String(valueComboBox->getSelectedId() - 1));
 
-            ccChanged(mapping.uid, valueComboBox->getSelectedId());
+            ccChanged(mapping.uid, valueComboBox->getSelectedId() - 1);
         }
         else if (cb == channelComboBox.get())
         {
