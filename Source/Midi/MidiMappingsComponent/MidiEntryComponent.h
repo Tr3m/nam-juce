@@ -72,8 +72,8 @@ public:
     void resized() override
     {
         juce::Rectangle<int> r (getWidth(), getHeight());
-        int spacing = 20;
-        int width = r.proportionOfWidth(0.6) + (2 * spacing);
+        int spacing = 10;
+        int width = r.proportionOfWidth(0.6) + (2 * spacing) + getHeight();
 
         paramComboBox->setBounds(getWidth() / 2 - width / 2, 0, r.proportionOfWidth(0.3f) - spacing, getHeight());
         valueComboBox->setBounds(paramComboBox->getX() + paramComboBox->getWidth() + spacing, 0, r.proportionOfWidth(0.15f) - spacing, getHeight());

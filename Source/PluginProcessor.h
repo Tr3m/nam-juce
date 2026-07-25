@@ -118,6 +118,8 @@ public:
     const juce::StringArray getParameterIDs() { return this->parameterIDs; };
     const juce::StringArray getParameterNames() { return this->parameterNames; };
 
+    const juce::StringArray getAllPresets() { return this->presetManager.getAllPresets(); };
+
 private:
     //==============================================================================
 

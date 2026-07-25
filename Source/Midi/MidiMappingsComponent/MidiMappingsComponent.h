@@ -13,7 +13,6 @@ public:
     MidiMappingsComponent(NamJUCEAudioProcessor& p)
         : audioProcessor(p), entriesComp(p)
     {
-
         addAndMakeVisible(&viewport);
         viewport.setViewedComponent(&entriesComp, false);
         viewport.setScrollBarsShown(true, false, false, false);
@@ -57,35 +56,26 @@ public:
     
     void paint(juce::Graphics& g) override
     {
-        // g.fillAll(juce::Colours::red);
-        g.setColour(juce::Colour::fromString("ff1e1e1e"));
-        g.fillRoundedRectangle(topBarArea.toFloat(), 8.0f);
-
         g.setColour(juce::Colour::fromString("ff252525"));
         g.fillRect(titlesArea);
 
         g.setColour(juce::Colours::snow);
 
         juce::Font fTemp = g.getCurrentFont();
-        // g.setFont(juce::Font(topBarArea.getHeight() / 2, juce::Font::FontStyleFlags::bold));
         g.setFont(topBarArea.getHeight() / 3);
-        g.drawFittedText("MIDI Mappings", topBarArea/*.withX(topBarArea.getX() + 20)*/, juce::Justification::centred, 1);
+        g.drawFittedText("Control Change Mappings", topBarArea.withY(topBarArea.getY() - 3), juce::Justification::centred, 1);
         g.setFont(fTemp);
 
         int entryHeight = 30;
-        int spacing = 20;
-        int width = titlesArea.proportionOfWidth(0.6) + (2*spacing);
-        int x = getWidth() / 2 - width / 2;
+        int spacing = 10;
+        int width = titlesArea.proportionOfWidth(0.6) + (2*spacing) + entryHeight;
+        int x = titlesArea.getX() + titlesArea.getWidth() / 2 - width / 2;
 
-        juce::Rectangle<int> r (x, titlesArea.getY(), proportionOfWidth(0.3f) - spacing, entryHeight);
+        juce::Rectangle<int> r (x, titlesArea.getY(), titlesArea.proportionOfWidth(0.3f) - spacing, entryHeight);
 
         g.drawFittedText("Parameter", r, juce::Justification::centredBottom, 1);
-        g.drawFittedText("CC", r.getX() + r.getWidth() + spacing, r.getY(), proportionOfWidth(0.15f) - spacing, r.getHeight(), juce::Justification::centredBottom, 1);
-        g.drawFittedText("Channel", r.getX() + r.getWidth() + proportionOfWidth(0.15f) + spacing, r.getY(), proportionOfWidth(0.15f), r.getHeight(), juce::Justification::centredBottom, 1);
-
-        g.setColour(juce::Colour::fromString("ff1e1e1e"));
-        g.fillRoundedRectangle(bottomBarArea.toFloat(), 8.0f);
-        g.fillRect(bottomBarArea.withY(bottomBarArea.getY()).withHeight(5));
+        g.drawFittedText("CC", r.getX() + r.getWidth() + spacing, r.getY(), titlesArea.proportionOfWidth(0.15f) - spacing, r.getHeight(), juce::Justification::centredBottom, 1);
+        g.drawFittedText("Channel", r.getX() + r.getWidth() + titlesArea.proportionOfWidth(0.15f) + spacing, r.getY(), titlesArea.proportionOfWidth(0.15f), r.getHeight(), juce::Justification::centredBottom, 1);
 
         g.setColour(juce::Colours::snow.withAlpha(0.2f));
 
@@ -97,6 +87,8 @@ public:
                 bottomBarArea.getY() + 2, buttons[Buttons::OpenDefault]->getX() + buttons[Buttons::OpenDefault]->getWidth() + 4,
                 bottomBarArea.getY() + bottomBarArea.getHeight() - 2, 1.0f);
 
+        // g.fillAll(juce::Colours::red);
+
     };
     
     void resized() override
@@ -106,12 +98,12 @@ public:
         int bottomBarHeight = 30;
 
         topBarArea.setBounds(0, 0, getWidth(), barHeight);
-        titlesArea.setBounds(0, topBarArea.getY() + topBarArea.getHeight() - 5, getWidth(), textAreaSize);
+        titlesArea.setBounds(proportionOfWidth(0.2), topBarArea.getY() + topBarArea.getHeight() - 5, getWidth() - proportionOfWidth(0.2), textAreaSize);
         bottomBarArea.setBounds(0, getHeight() - bottomBarHeight, getWidth(), bottomBarHeight);
 
-        entriesComp.updateSize(this->getWidth()); // This doesn't make sense
-        entriesComp.updateSize(this->getWidth());
-        viewport.setBounds(0, titlesArea.getY() + titlesArea.getHeight() + 5, getWidth(), getHeight() - topBarArea.getHeight() - titlesArea.getHeight() - bottomBarHeight);
+        entriesComp.updateSize(titlesArea.getWidth()); // This doesn't make sense
+        entriesComp.updateSize(titlesArea.getWidth());
+        viewport.setBounds(titlesArea.getX(), titlesArea.getY() + titlesArea.getHeight() + 5, titlesArea.getWidth(), getHeight() - topBarArea.getHeight() - titlesArea.getHeight() - bottomBarHeight);
         
         int buttonWidth = 50;
         int buttonHeight = bottomBarArea.getHeight() - bottomBarArea.getHeight() / 3;
