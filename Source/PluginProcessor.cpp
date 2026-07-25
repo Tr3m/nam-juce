@@ -15,16 +15,20 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                          ),
       apvts(*this, nullptr, "Params", createParameters()), lowCut(juce::dsp::IIR::Coefficients<float>::makeHighPass(44100, 20.0f, 1.0f)),
       highCut(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f)), presetManager(apvts),
-      midiHandler(presetManager, presetStateValue, [&](){loadLastModelAndIr();})
+      midiHandler(presetManager, presetMidiChanged)
 #endif
 {
     filterCuttofs[OutputFilters::LowCutF] = apvts.getRawParameterValue("LOWCUT_ID");
     filterCuttofs[OutputFilters::HighCutF] = apvts.getRawParameterValue("HIGHCUT_ID");
 
     this->exportParameters(parameterIDs, parameterNames);
+    presetMidiChanged.addListener(this);
 }
 
-NamJUCEAudioProcessor::~NamJUCEAudioProcessor() {}
+NamJUCEAudioProcessor::~NamJUCEAudioProcessor()
+{
+    presetMidiChanged.removeListener(this);
+}
 
 //==============================================================================
 const juce::String NamJUCEAudioProcessor::getName() const
@@ -719,6 +723,16 @@ void NamJUCEAudioProcessor::setStateInformation(const void* data, int sizeInByte
 
     if (this->prepareCalled)
         this->prepareToPlay(getSampleRate(), getBlockSize());
+}
+
+// This is probably a bad idea...
+void NamJUCEAudioProcessor::valueChanged(juce::Value & value)
+{
+    if (value.refersToSameSourceAs(presetMidiChanged))
+    {
+        this->loadLastModelAndIr();
+        this->presetStateValue.setValue(juce::var(!presetStateValue.getValue()));
+    }
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::createParameters()

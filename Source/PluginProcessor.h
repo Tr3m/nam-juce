@@ -11,7 +11,7 @@
 //==============================================================================
 /**
  */
-class NamJUCEAudioProcessor : public juce::AudioProcessor
+class NamJUCEAudioProcessor : public juce::AudioProcessor, public juce::Value::Listener
 #if JucePlugin_Enable_ARA
     ,
                               public juce::AudioProcessorARAExtension
@@ -54,6 +54,7 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    void valueChanged(juce::Value &) override;
     
     bool loadNamModel (juce::File modelToirLoad);
     bool loadNamModel (int modelIndex);
@@ -180,6 +181,7 @@ private:
     juce::StringArray parameterIDs, parameterNames;
 
     void loadLastModelAndIr();
+    juce::Value presetMidiChanged{juce::var{""}};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)
 };

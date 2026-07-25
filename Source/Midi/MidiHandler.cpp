@@ -1,7 +1,7 @@
 #include "MidiHandler.h"
 
-MidiHandler::MidiHandler(PresetManager& presetMgr, juce::Value& presetValue, std::function<void()>&& loadModelAndIrFuntion)
-    : presetManager(presetMgr), presetValue(presetValue), presetChanged(std::move(loadModelAndIrFuntion))
+MidiHandler::MidiHandler(PresetManager& presetMgr, juce::Value& presetValue)
+    : presetManager(presetMgr), presetValue(presetValue) 
 {
     MidiUtils::checkDefaultConfig(midiDirectory);
     MidiUtils::checkDefaultPcMappings();
@@ -226,9 +226,8 @@ void MidiHandler::handleCC(const juce::MidiMessage& msg)
             break;
         case EntryTypes::Preset:
             DBG("(MIDI) Loading preset " + mapping->parameterID);
-            presetManager.loadPreset(mapping->parameterID);
-            presetChanged();
-            presetValue.setValue(juce::var(!presetValue.getValue())); // flip to trigger a gui reload.
+            presetManager.loadPreset(mapping->parameterID); // Might be a good idea to move this outside the audio thread...
+            presetValue.setValue(juce::var(!presetValue.getValue()));
             break;
         }
     }
@@ -236,15 +235,7 @@ void MidiHandler::handleCC(const juce::MidiMessage& msg)
 
 void MidiHandler::handlePC(const juce::MidiMessage& msg)
 {
-    int index = msg.getProgramChangeNumber();
 
-    if(!presetMappings[index].isEmpty())
-    {
-        DBG("(MIDI) Loading preset " + presetMappings[index]);
-        presetManager.loadPreset(presetMappings[index]);
-        presetChanged();
-        presetValue.setValue(juce::var(!presetValue.getValue())); // flip to trigger a gui reload.
-    }
 }
 
 int MidiHandler::getMessageType(const juce::MidiMessage& msg)
