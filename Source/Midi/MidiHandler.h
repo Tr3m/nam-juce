@@ -12,16 +12,11 @@ public:
     ~MidiHandler();
 
     void loadConfig(const juce::File& configFile, juce::AudioProcessorValueTreeState& apvts);
-    void loadPcConfig(juce::StringArray&);
     bool saveConfig(const juce::File& file);
-    bool savePcConfig(const juce::StringArray&);
     void processMidiBuffer(juce::MidiBuffer& midiBuffer);
 
     const juce::File midiDirectory {juce::File::getSpecialLocation(juce::File::SpecialLocationType::userHomeDirectory).getChildFile("Neural Amp Modeler").getChildFile("Midi")};
     const juce::File defaultMidiConfig {midiDirectory.getChildFile("DefaultMidi.xml")};
-
-    const juce::File defaultConfigDirectory{juce::File::getSpecialLocation(juce::File::SpecialLocationType::userApplicationDataDirectory).getChildFile("NamJuce")};
-    const juce::File pcMappingsFile {defaultConfigDirectory.getChildFile("PcMappings.xml")};
 
     std::vector<MidiMappingDisplay> getMappingsForDisplay() const;
 
@@ -48,7 +43,6 @@ private:
     std::vector<ControlChangeMapping> mappings;
     std::array<std::vector<ControlChangeMapping*>, 128> ccLookup;
     uint32_t nextID = 1;
-    juce::StringArray presetMappings;
 
     void populateLookupTable(juce::XmlElement* routings, juce::AudioProcessorValueTreeState& apvts);
     void rebuildLookUpTable();

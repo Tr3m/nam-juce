@@ -6,8 +6,5 @@ PRIVATE
     MidiDialogBox.h
     MidiDialogBoxWrapper.h
     MidiMappingsComponentWrapper.h
-    ProgramChangeEntryComponent.h
-    ProgramChangeListComponent.h
-    ProgramChangeMappingsComponent.h
 )
 

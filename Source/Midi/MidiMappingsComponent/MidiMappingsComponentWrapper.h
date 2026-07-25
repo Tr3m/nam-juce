@@ -2,7 +2,6 @@
 #define __MIDI_MAPPINGS_COMPONENT_WRAPPER_H__
 
 #include "MidiMappingsComponent.h"
-#include "ProgramChangeMappingsComponent.h"
 
 class MidiMappingsComponentWrapper : public juce::Component,
                                      public juce::MouseListener
