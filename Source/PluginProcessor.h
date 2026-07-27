@@ -3,6 +3,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
 #include "NeuralAmpModeler.h"
+#include "IrProcessor.h"
 #include <ff_meters/ff_meters.h>
 #include "EQ/EqProcessor.h"
 #include "DoublerProcessor.h"
@@ -56,8 +57,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     void valueChanged(juce::Value &) override;
     
-    bool loadNamModel (juce::File modelToirLoad);
-    bool loadNamModel (int modelIndex);
+    bool loadNamModel (juce::File modelToirLoad, bool suspendProcessing = true);
+    bool loadNamModel (int modelIndex, bool suspendProcessing = true);
     
     // Somewhat inaccurate name since the modelLoaded
     // boolean is updated during staging rather than loading.
@@ -69,8 +70,8 @@ public:
     double getSlimmableSize() { return myNAM.getSlimSize(); };
     void setSlimmableSize(double size);
 
-    bool loadImpulseResponse (juce::File irToLoad);
-    bool loadImpulseResponse (int index);
+    bool loadImpulseResponse (juce::File irToLoad, bool suspendProcessing = true);
+    bool loadImpulseResponse (int index, bool suspendProcessing = true);
     bool getIrStatus ();
     void clearIR ();
 
@@ -136,7 +137,7 @@ private:
 
     bool isA2 {false};
 
-    juce::dsp::Convolution cab;
+    IrProcessor cab;
     bool irFound{false};
     bool irLoaded{false};
 
@@ -170,8 +171,6 @@ private:
     PresetManager presetManager;
 
     bool prepareCalled {false};
-
-    bool isIrValidFormat(juce::File f);
 
     juce::Value eqStateValue, cabStateValue, toneStackStateValue, normStateValue, presetStateValue{juce::var(false)};
 

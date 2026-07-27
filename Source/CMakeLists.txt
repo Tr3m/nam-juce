@@ -20,6 +20,8 @@ PRIVATE
     DoublerProcessor.h
     architecture.hpp
     FileComparator.h
+    IrProcessor.cpp
+    IrProcessor.h
 )
 
 add_subdirectory(EQ)

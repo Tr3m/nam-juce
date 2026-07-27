@@ -103,8 +103,8 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
     DBG("Setting slim size to: " + std::to_string(this->slimSize));
     myNAM.setSlimSize(this->slimSize);
 
-    cab.reset();
     cab.prepare(spec);
+    cab.hookParameters(apvts);
 
     tenBandEq.prepare(spec);
     tenBandEq.hookParameters(apvts);
@@ -153,7 +153,7 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
         }
         else
         {
-            this->loadNamModel(juce::File(modelPath.toStdString()));
+            this->loadNamModel(juce::File(modelPath.toStdString()), false);
             // lastModelPath = modelPath.toStdString();
             // lastModelName = fileCheck.getFileNameWithoutExtension().toStdString();
         }
@@ -180,7 +180,7 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
         else
         {
             irFound = true;
-            this->loadImpulseResponse(juce::File(irPath));
+            this->loadImpulseResponse(juce::File(irPath), false);
             irLoaded = true;
             // lastIrPath = irPath.toStdString();
             // lastIrName = fileCheck.getFileNameWithoutExtension().toStdString();
@@ -198,15 +198,19 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
     this->suspendProcessing(false);
 }
 
-bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
+bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendProcessing)
 {
     std::string model_path = modelToLoad.getFullPathName().toStdString();
 
     DBG("About to load Model: " + modelToLoad.getFullPathName());
 
-    this->suspendProcessing(true);
+    if (suspendProcessing)
+        this->suspendProcessing(true);
+
     bool loaded = myNAM.loadModel(model_path);
-    this->suspendProcessing(false);
+
+    if (suspendProcessing)
+        this->suspendProcessing(false);
 
     auto search_paths = apvts.state.getOrCreateChildWithName("search_paths", nullptr);
     lastModelSerachDir = modelToLoad.getParentDirectory().getFullPathName().toStdString();
@@ -248,7 +252,7 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad)
     return loaded;
 }
 
-bool NamJUCEAudioProcessor::loadNamModel(int modelIndex)
+bool NamJUCEAudioProcessor::loadNamModel(int modelIndex, bool suspendProcessing)
 {
     if (modelIndex < 0 || modelIndex >= directoryModelPaths.size())
     {
@@ -261,9 +265,14 @@ bool NamJUCEAudioProcessor::loadNamModel(int modelIndex)
 
     std::string model_path = modelToLoad.getFullPathName().toStdString();
     DBG("About to load: " + modelToLoad.getFullPathName());
-    this->suspendProcessing(true);
+
+    if (suspendProcessing)
+        this->suspendProcessing(true);
+
     bool loaded = myNAM.loadModel(model_path);
-    this->suspendProcessing(false);
+
+    if (suspendProcessing)
+        this->suspendProcessing(false);
 
     if (loaded)
     {
@@ -338,9 +347,19 @@ void NamJUCEAudioProcessor::setSlimmableSize(double size)
     this->slimSize = myNAM.getSlimSize();
 }
 
-bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
+bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad, bool suspendProcessing)
 {
     std::string ir_path = irToLoad.getFullPathName().toStdString();
+
+    DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
+    
+    if (suspendProcessing)
+        this->suspendProcessing(true);
+
+    bool loaded = cab.loadImpulseResponse(irToLoad);
+    
+    if (suspendProcessing)
+        this->suspendProcessing(false);
 
     auto search_paths = apvts.state.getOrCreateChildWithName("search_paths", nullptr);
     lastIrSerachDir = irToLoad.getParentDirectory().getFullPathName().toStdString();
@@ -361,42 +380,29 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad)
         this->directoryIrPaths.add(f.getFullPathName());
     }
 
-    DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
-
-    if (isIrValidFormat(irToLoad))
+    if (loaded)
     {
-
-        this->suspendProcessing(true);
-        this->clearIR();
-
-        cab.loadImpulseResponse(irToLoad, juce::dsp::Convolution::Stereo::no,
-                juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
-        
-        this->suspendProcessing(false);
-
-
-        irLoaded = true;
-        irFound = true;
+        this->irLoaded = true;
+        this->irFound = true;
 
         auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
         lastIrPath = ir_path;
         lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
         addons.setProperty("ir_path", juce::String(lastIrPath), nullptr);
-        
+
         this->irIndex = directoryIrNames.indexOf(lastIrName);
 
         DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
-
-        return true;
     }
     else
     {
-        lastIrName = "";
-        return false;
+        this->lastIrName = "";
     }
+
+    return loaded;
 }
 
-bool NamJUCEAudioProcessor::loadImpulseResponse(int irIndex)
+bool NamJUCEAudioProcessor::loadImpulseResponse(int irIndex, bool suspendProcessing)
 {
     if (irIndex < 0 || irIndex >= directoryIrPaths.size())
     {
@@ -407,23 +413,20 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(int irIndex)
     juce::File irToLoad(directoryIrPaths[irIndex]);
 
     std::string ir_path = irToLoad.getFullPathName().toStdString();
-
     DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
-
-
-    if (isIrValidFormat(irToLoad))
-    {
-
+    
+    if (suspendProcessing)
         this->suspendProcessing(true);
-        this->clearIR();
 
-        cab.loadImpulseResponse(irToLoad, juce::dsp::Convolution::Stereo::no,
-                juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
-        
+    bool loaded = cab.loadImpulseResponse(irToLoad);
+
+    if (suspendProcessing)
         this->suspendProcessing(false);
-
-        irLoaded = true;
-        irFound = true;
+    
+    if (loaded)
+    {
+        this->irLoaded = true;
+        this->irFound = true;
 
         auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
         lastIrPath = ir_path;
@@ -432,26 +435,14 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(int irIndex)
         this->irIndex = irIndex;
 
         DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
-
-        return true;
     }
     else
     {
         lastIrName = "";
-        return false;
     }
+
+    return loaded;
 }
-
-bool NamJUCEAudioProcessor::isIrValidFormat(juce::File f)
-{
-    juce::AudioFormatManager formatManager;
-    formatManager.registerBasicFormats();
-
-    std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(f));
-
-    return reader ? true : false;
-}
-
 
 void NamJUCEAudioProcessor::loadNextIR()
 {
@@ -482,7 +473,7 @@ void NamJUCEAudioProcessor::loadPreviousIR()
 
 void NamJUCEAudioProcessor::clearIR()
 {
-    cab.reset();
+    cab.clearIR();
     irLoaded = false;
     lastIrPath = "null";
     lastIrName = "null";
@@ -552,13 +543,7 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
     toneStackStateValue.setValue(juce::var(*apvts.getRawParameterValue("TONE_STACK_ON_ID")));
 
     myNAM.processBlock(buffer);
-
-    if (bool(*apvts.getRawParameterValue("CAB_ON_ID")) && irLoaded)
-    {
-        cab.process(juce::dsp::ProcessContextReplacing<float>(block));
-        if (irFound)
-            buffer.applyGain(juce::Decibels::decibelsToGain(6.0f));
-    }
+    cab.processBlock(buffer);
 
     // Ten-Band EQ Module
     if (*apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))
@@ -740,8 +725,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
     myNAM.createParameters(parameters);
+    cab.createParameters(parameters);
 
-    parameters.push_back(std::make_unique<juce::AudioParameterBool>("CAB_ON_ID", "CAB_ON", true, "CAB_ON"));
     parameters.push_back(std::make_unique<juce::AudioParameterInt>("LOWCUT_ID", "LOWCUT", 19, 2000, 19));
     parameters.push_back(std::make_unique<juce::AudioParameterInt>("HIGHCUT_ID", "HIGHCUT", 200, 20001, 20001));
 
