@@ -18,6 +18,10 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
       midiHandler(presetManager, presetMidiChanged)
 #endif
 {
+    stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(false));
+    stateValues[StateValues::IR_PARENT_CHANGED].setValue(juce::var("null"));
+    stateValues[StateValues::MODEL_PARENT_CHANGED].setValue(juce::var("null"));
+
     filterCuttofs[OutputFilters::LowCutF] = apvts.getRawParameterValue("LOWCUT_ID");
     filterCuttofs[OutputFilters::HighCutF] = apvts.getRawParameterValue("HIGHCUT_ID");
 
@@ -220,8 +224,6 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendPro
     lastModelSerachDir = modelToLoad.getParentDirectory().getFullPathName().toStdString();
     search_paths.setProperty("LastModelSearchDir", juce::String(lastModelSerachDir), nullptr);
 
-    // this->updateDirectoryModels(model_path);
-
     if (loaded)
     {
         auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
@@ -234,7 +236,7 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendPro
 
         DBG("Loaded Model: " + lastModelName + (isA2 ? " (Slimmable)" : ""));
 
-        modelPathStateValue.setValue(juce::var(model_path));
+        stateValues[StateValues::MODEL_PARENT_CHANGED].setValue(juce::var(model_path));
     }
     else 
     {
@@ -344,7 +346,7 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad, bool suspen
         // this->irIndex = directoryIrNames.indexOf(lastIrName);
 
         DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
-        cabPathStateValue.setValue(juce::var(ir_path));
+        stateValues[StateValues::IR_PARENT_CHANGED].setValue(juce::var(ir_path));
     }
     else
     {
@@ -391,6 +393,13 @@ void NamJUCEAudioProcessor::loadPreviousIR()
         else
             loadPreviousIR();
     }
+}
+
+juce::Value* NamJUCEAudioProcessor::getStateValue(int index)
+{
+    if (index > stateValues.size() - 1 || index < 0) 
+        return nullptr;
+    return &(stateValues[index]);
 }
 
 void NamJUCEAudioProcessor::updateDirectoryModels(const std::string& currentPath)
@@ -514,10 +523,10 @@ void NamJUCEAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
     auto* channelDataLeft = buffer.getWritePointer(0);
     auto* channelDataRight = buffer.getWritePointer(1);
 
-    eqStateValue.setValue(juce::var(*apvts.getRawParameterValue("EQ_BYPASS_STATE_ID")));
-    cabStateValue.setValue(juce::var(*apvts.getRawParameterValue("CAB_ON_ID")));
-    normStateValue.setValue(juce::var(*apvts.getRawParameterValue("NORMALIZE_ID")));
-    toneStackStateValue.setValue(juce::var(*apvts.getRawParameterValue("TONE_STACK_ON_ID")));
+    stateValues[StateValues::EQ_BYPASS].setValue(juce::var(*apvts.getRawParameterValue("EQ_BYPASS_STATE_ID")));
+    stateValues[StateValues::CAB_BYPASS].setValue(juce::var(*apvts.getRawParameterValue("CAB_ON_ID")));
+    stateValues[StateValues::NORMALIZE].setValue(juce::var(*apvts.getRawParameterValue("NORMALIZE_ID")));
+    stateValues[StateValues::TONESTACK_BYPASS].setValue(juce::var(*apvts.getRawParameterValue("TONE_STACK_ON_ID")));
 
     myNAM.processBlock(buffer);
     cab.processBlock(buffer);
@@ -693,7 +702,7 @@ void NamJUCEAudioProcessor::valueChanged(juce::Value & value)
     if (value.refersToSameSourceAs(presetMidiChanged))
     {
         this->loadLastModelAndIr();
-        this->presetStateValue.setValue(juce::var(!presetStateValue.getValue()));
+        stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));
     }
 }
 

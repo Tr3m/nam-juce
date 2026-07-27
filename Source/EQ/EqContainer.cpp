@@ -33,18 +33,18 @@ EqContainer::EqContainer(NamJUCEAudioProcessor& p, std::unique_ptr<EqContainer>&
     closeButton.onClick = [this] 
     {
         DBG("Goodbye EQ Container!");
-        audioProcessor.getEqStateValue().removeListener(this);
+        audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::EQ_BYPASS)->removeListener(this);
         audioProcessor.eqModuleVisible = false;
         self.reset();
     };
     
-    audioProcessor.getEqStateValue().addListener(this);
+    audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::EQ_BYPASS)->addListener(this);
 }
 
 EqContainer::~EqContainer()
 {
     DBG("Goodbye EQ Container! (Destructor)");
-    audioProcessor.getEqStateValue().removeListener(this);
+    audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::EQ_BYPASS)->removeListener(this);
     self.reset();
 }
 
@@ -76,6 +76,6 @@ void EqContainer::updateGraphics()
 
 void EqContainer::valueChanged (Value& value )
 {
-    if (value == audioProcessor.getEqStateValue())
+    if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::EQ_BYPASS)))
         updateGraphics();
 }

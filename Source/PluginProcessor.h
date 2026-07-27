@@ -104,12 +104,6 @@ public:
     juce::StringArray getDirectoryModelNames() { return directoryModelNames; };
     juce::StringArray getDirectoryIrNames() { return directoryIrNames; };
 
-    juce::Value& getEqStateValue() { return eqStateValue; };
-    juce::Value& getCabStateValue() { return cabStateValue; };
-    juce::Value& getTonestackStateValue() { return toneStackStateValue; };
-    juce::Value& getNormStateValue() { return normStateValue; };
-    juce::Value& getPresetStateValue() { return presetStateValue; };
-
     void loadNextModel();
     void loadPreviousModel();
 
@@ -126,7 +120,19 @@ public:
     void updateDirectoryModels(const std::string& currentPath);
     void updateDirectoryIRs(const std::string& currentPath);
 
-    juce::Value modelPathStateValue {juce::var("null")}, cabPathStateValue {juce::var("null")};
+    juce::Value* getStateValue(int index);
+    std::array<juce::Value, 7>& getStateValuesArray() { return this->stateValues; };
+
+    enum StateValues
+    {
+        EQ_BYPASS = 0,
+        CAB_BYPASS,
+        TONESTACK_BYPASS,
+        NORMALIZE,
+        PRESET_CHANGED,
+        MODEL_PARENT_CHANGED,
+        IR_PARENT_CHANGED
+    };
 
     //==============================================================================
 private:
@@ -178,8 +184,8 @@ private:
     PresetManager presetManager;
 
     bool prepareCalled {false};
-
-    juce::Value eqStateValue, cabStateValue, toneStackStateValue, normStateValue, presetStateValue{juce::var(false)};
+    
+    std::array<juce::Value, 7> stateValues;
 
     MidiHandler midiHandler;
 

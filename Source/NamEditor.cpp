@@ -329,13 +329,9 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     }
 
     audioProcessor.getTrigger()->addValueListener(this);
-    audioProcessor.getEqStateValue().addListener(this);
-    audioProcessor.getCabStateValue().addListener(this);
-    audioProcessor.getNormStateValue().addListener(this);
-    audioProcessor.getTonestackStateValue().addListener(this);
-    audioProcessor.getPresetStateValue().addListener(this);
-    audioProcessor.modelPathStateValue.addListener(this);
-    audioProcessor.cabPathStateValue.addListener(this);
+
+    for (auto& val : audioProcessor.getStateValuesArray())
+        val.addListener(this);
 
     if (audioProcessor.eqModuleVisible)
         showEqModule();
@@ -347,13 +343,9 @@ NamEditor::~NamEditor()
     eqEditor = nullptr;
     presetDialog = nullptr;
     audioProcessor.getTrigger()->removeValueListener(this);
-    audioProcessor.getEqStateValue().removeListener(this);
-    audioProcessor.getCabStateValue().removeListener(this);
-    audioProcessor.getNormStateValue().removeListener(this);
-    audioProcessor.getTonestackStateValue().removeListener(this);
-    audioProcessor.getPresetStateValue().removeListener(this);
-    audioProcessor.modelPathStateValue.removeListener(this);
-    audioProcessor.cabPathStateValue.removeListener(this);
+
+    for (auto& val : audioProcessor.getStateValuesArray())
+        val.removeListener(this);
 
     for (int sliderAtt = 0; sliderAtt < NUM_SLIDERS; ++sliderAtt)
         sliderAttachments[sliderAtt] = nullptr;
@@ -439,30 +431,30 @@ void NamEditor::valueChanged (Value& value)
        repaint();
     }
 
-    else if (value.refersToSameSourceAs(audioProcessor.getEqStateValue()))
+    else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::EQ_BYPASS)))
         eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
 
-    else if(value.refersToSameSourceAs(audioProcessor.getNormStateValue()))
+    else if(value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::NORMALIZE)))
         normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
 
-    else if(value.refersToSameSourceAs(audioProcessor.getCabStateValue()))
+    else if(value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::CAB_BYPASS)))
         irButton->setLedState(*audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
 
-    else if(value.refersToSameSourceAs(audioProcessor.getTonestackStateValue()))
+    else if(value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::TONESTACK_BYPASS)))
         toneStackButton->setLedState(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
 
-    else if (value.refersToSameSourceAs(audioProcessor.getPresetStateValue()))
+    else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::PRESET_CHANGED)))
     {
         this->updateAfterPresetLoad(true);
         topBar.getPresetManagerComponent()->updateAfterMidiLoad();
     }
-    else if (value.refersToSameSourceAs(audioProcessor.modelPathStateValue))
+    else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::MODEL_PARENT_CHANGED)))
     {
         DBG("Model Changed");
         audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
         this->populateModelComboBox();
     }
-    else if (value.refersToSameSourceAs(audioProcessor.cabPathStateValue))
+    else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::IR_PARENT_CHANGED)))
     {
         DBG("IR Changed");
         audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
