@@ -132,6 +132,9 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
         irLoaded = true;
     }
     
+    this->previousModelDir = "null";
+    this->previousIrDir = "null";
+
     midiHandler.clearMappings();
     midiHandler.loadConfig(midiHandler.defaultMidiConfig, apvts);
 
@@ -201,6 +204,7 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
 bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendProcessing)
 {
     std::string model_path = modelToLoad.getFullPathName().toStdString();
+    this->previousModelDir = lastModelPath == "null" ? "null" : juce::File(lastModelPath).getParentDirectory().getFullPathName().toStdString();
 
     DBG("About to load Model: " + modelToLoad.getFullPathName());
 
@@ -216,20 +220,7 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendPro
     lastModelSerachDir = modelToLoad.getParentDirectory().getFullPathName().toStdString();
     search_paths.setProperty("LastModelSearchDir", juce::String(lastModelSerachDir), nullptr);
 
-    auto modelDir = modelToLoad.getParentDirectory();
-    auto fileArray = modelDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.nam");
-
-    FileComparator comparator;
-    fileArray.sort(comparator);
-
-    this->directoryModelNames.clear();
-    this->directoryModelPaths.clear();
-
-    for (juce::File f : fileArray)
-    {
-        this->directoryModelNames.add(f.getFileNameWithoutExtension());
-        this->directoryModelPaths.add(f.getFullPathName());
-    }
+    // this->updateDirectoryModels(model_path);
 
     if (loaded)
     {
@@ -239,9 +230,11 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendPro
         addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
 
         this->isA2 = myNAM.isModelSlimmable();
-        this->modelIndex = directoryModelNames.indexOf(lastModelName);
+        // this->modelIndex = directoryModelNames.indexOf(lastModelName);
 
         DBG("Loaded Model: " + lastModelName + (isA2 ? " (Slimmable)" : ""));
+
+        modelPathStateValue.setValue(juce::var(model_path));
     }
     else 
     {
@@ -263,35 +256,7 @@ bool NamJUCEAudioProcessor::loadNamModel(int modelIndex, bool suspendProcessing)
 
     juce::File modelToLoad(directoryModelPaths[modelIndex]);
 
-    std::string model_path = modelToLoad.getFullPathName().toStdString();
-    DBG("About to load: " + modelToLoad.getFullPathName());
-
-    if (suspendProcessing)
-        this->suspendProcessing(true);
-
-    bool loaded = myNAM.loadModel(model_path);
-
-    if (suspendProcessing)
-        this->suspendProcessing(false);
-
-    if (loaded)
-    {
-        lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
-        lastModelPath = model_path;
-        this->isA2 = myNAM.isModelSlimmable();
-        auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
-        addons.setProperty("model_path", juce::String(lastModelPath), nullptr);
-        this->modelIndex = modelIndex;
-
-        DBG("Loaded Model: " + lastModelName + (isA2 ? " (Slimmable)" : ""));
-    }
-    else
-    {
-        lastModelName = "";
-        this->isA2 = false;
-    }
-
-    return loaded;
+    return this->loadNamModel(modelToLoad, suspendProcessing);
 }
 
 void NamJUCEAudioProcessor::loadNextModel()
@@ -350,6 +315,7 @@ void NamJUCEAudioProcessor::setSlimmableSize(double size)
 bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad, bool suspendProcessing)
 {
     std::string ir_path = irToLoad.getFullPathName().toStdString();
+    this->previousIrDir = lastIrPath == "null" ? "null" : juce::File(lastIrPath).getParentDirectory().getFullPathName().toStdString();
 
     DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
     
@@ -364,22 +330,7 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad, bool suspen
     auto search_paths = apvts.state.getOrCreateChildWithName("search_paths", nullptr);
     lastIrSerachDir = irToLoad.getParentDirectory().getFullPathName().toStdString();
     search_paths.setProperty("LastIrSearchDir", juce::String(lastIrSerachDir), nullptr);
-
-    auto irDir = irToLoad.getParentDirectory();
-    auto fileArray = irDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.wav");
-
-    FileComparator comparator;
-    fileArray.sort(comparator);
-
-    this->directoryIrNames.clear();
-    this->directoryIrPaths.clear();
-
-    for (juce::File f : fileArray)
-    {
-        this->directoryIrNames.add(f.getFileNameWithoutExtension());
-        this->directoryIrPaths.add(f.getFullPathName());
-    }
-
+    
     if (loaded)
     {
         this->irLoaded = true;
@@ -390,9 +341,10 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad, bool suspen
         lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
         addons.setProperty("ir_path", juce::String(lastIrPath), nullptr);
 
-        this->irIndex = directoryIrNames.indexOf(lastIrName);
+        // this->irIndex = directoryIrNames.indexOf(lastIrName);
 
         DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
+        cabPathStateValue.setValue(juce::var(ir_path));
     }
     else
     {
@@ -412,36 +364,7 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(int irIndex, bool suspendProcess
 
     juce::File irToLoad(directoryIrPaths[irIndex]);
 
-    std::string ir_path = irToLoad.getFullPathName().toStdString();
-    DBG("About to load IR: " + irToLoad.getFullPathName().toStdString());
-    
-    if (suspendProcessing)
-        this->suspendProcessing(true);
-
-    bool loaded = cab.loadImpulseResponse(irToLoad);
-
-    if (suspendProcessing)
-        this->suspendProcessing(false);
-    
-    if (loaded)
-    {
-        this->irLoaded = true;
-        this->irFound = true;
-
-        auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
-        lastIrPath = ir_path;
-        lastIrName = irToLoad.getFileNameWithoutExtension().toStdString();
-        addons.setProperty("ir_path", juce::String(lastIrPath), nullptr);
-        this->irIndex = irIndex;
-
-        DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
-    }
-    else
-    {
-        lastIrName = "";
-    }
-
-    return loaded;
+    return this->loadImpulseResponse(irToLoad, suspendProcessing);
 }
 
 void NamJUCEAudioProcessor::loadNextIR()
@@ -470,6 +393,60 @@ void NamJUCEAudioProcessor::loadPreviousIR()
     }
 }
 
+void NamJUCEAudioProcessor::updateDirectoryModels(const std::string& currentPath)
+{
+    juce::File modelToLoad(currentPath);
+
+    auto modelDir = modelToLoad.getParentDirectory();
+
+    if (modelDir.getFullPathName().toStdString() != this->previousModelDir)
+    {
+        DBG("Model directory changed");
+
+        auto fileArray = modelDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.nam");
+        
+        FileComparator comparator;
+        fileArray.sort(comparator);
+
+        this->directoryModelNames.clear();
+        this->directoryModelPaths.clear();
+
+        for (juce::File f : fileArray)
+        {
+            this->directoryModelNames.add(f.getFileNameWithoutExtension());
+            this->directoryModelPaths.add(f.getFullPathName());
+        }
+    }
+
+    this->modelIndex = directoryModelNames.indexOf(lastModelName);
+}
+
+void NamJUCEAudioProcessor::updateDirectoryIRs(const std::string& currentPath)
+{
+    juce::File irToLoad(currentPath);
+
+    auto irDir = irToLoad.getParentDirectory();
+
+    if (irDir.getFullPathName().toStdString() != this->previousIrDir)
+    {
+        DBG("IR Directory changed");
+        auto fileArray = irDir.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false, "*.wav");
+
+        FileComparator comparator;
+        fileArray.sort(comparator);
+
+        this->directoryIrNames.clear();
+        this->directoryIrPaths.clear();
+
+        for (juce::File f : fileArray)
+        {
+            this->directoryIrNames.add(f.getFileNameWithoutExtension());
+            this->directoryIrPaths.add(f.getFullPathName());
+        }
+    }
+
+    this->irIndex = directoryIrNames.indexOf(lastIrName);
+}
 
 void NamJUCEAudioProcessor::clearIR()
 {

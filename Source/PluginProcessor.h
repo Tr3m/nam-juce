@@ -123,8 +123,13 @@ public:
 
     const juce::StringArray getAllPresets() { return this->presetManager.getAllPresets(); };
 
-private:
+    void updateDirectoryModels(const std::string& currentPath);
+    void updateDirectoryIRs(const std::string& currentPath);
+
+    juce::Value modelPathStateValue {juce::var("null")}, cabPathStateValue {juce::var("null")};
+
     //==============================================================================
+private:
 
     enum OutputFilters
     {
@@ -153,6 +158,8 @@ private:
 
     std::string lastModelSerachDir = "null";
     std::string lastIrSerachDir = "null";
+
+    std::string previousModelDir {"null"}, previousIrDir {"null"};
 
     EqProcessor tenBandEq;
     Doubler doubler;

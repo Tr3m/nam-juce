@@ -317,10 +317,16 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     topBar.toFront(true);
 
     if (audioProcessor.isModelLoaded())
+    {
+        audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
         populateModelComboBox();
+    }
 
     if (audioProcessor.getIrStatus())
+    {
+        audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
         populateIrComboBox();
+    }
 
     audioProcessor.getTrigger()->addValueListener(this);
     audioProcessor.getEqStateValue().addListener(this);
@@ -328,6 +334,8 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     audioProcessor.getNormStateValue().addListener(this);
     audioProcessor.getTonestackStateValue().addListener(this);
     audioProcessor.getPresetStateValue().addListener(this);
+    audioProcessor.modelPathStateValue.addListener(this);
+    audioProcessor.cabPathStateValue.addListener(this);
 
     if (audioProcessor.eqModuleVisible)
         showEqModule();
@@ -344,6 +352,8 @@ NamEditor::~NamEditor()
     audioProcessor.getNormStateValue().removeListener(this);
     audioProcessor.getTonestackStateValue().removeListener(this);
     audioProcessor.getPresetStateValue().removeListener(this);
+    audioProcessor.modelPathStateValue.removeListener(this);
+    audioProcessor.cabPathStateValue.removeListener(this);
 
     for (int sliderAtt = 0; sliderAtt < NUM_SLIDERS; ++sliderAtt)
         sliderAttachments[sliderAtt] = nullptr;
@@ -446,6 +456,18 @@ void NamEditor::valueChanged (Value& value)
         this->updateAfterPresetLoad(true);
         topBar.getPresetManagerComponent()->updateAfterMidiLoad();
     }
+    else if (value.refersToSameSourceAs(audioProcessor.modelPathStateValue))
+    {
+        DBG("Model Changed");
+        audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
+        this->populateModelComboBox();
+    }
+    else if (value.refersToSameSourceAs(audioProcessor.cabPathStateValue))
+    {
+        DBG("IR Changed");
+        audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
+        this->populateIrComboBox();
+    }
 
 }
 
@@ -474,7 +496,7 @@ void NamEditor::loadModelButtonClicked()
             updateModelBox();
         }
 
-        populateModelComboBox();
+        // populateModelComboBox();
     }
 
 }
@@ -495,7 +517,7 @@ void NamEditor::loadIrButtonClicked()
             updateIrBox();
         }
 
-        populateIrComboBox();
+        // populateIrComboBox();
     }
 }
 
@@ -574,8 +596,8 @@ void NamEditor::updateAfterPresetLoad(bool isFromMidi)
 
     slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
 
-    populateModelComboBox();
-    populateIrComboBox();
+    // populateModelComboBox();
+    // populateIrComboBox();
 }
 
 void NamEditor::populateModelComboBox()
