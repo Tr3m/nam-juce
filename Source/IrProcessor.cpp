@@ -36,7 +36,7 @@ bool IrProcessor::loadImpulseResponse(const juce::File& irFile)
     if (!this->isIrValidFormat(irFile))
         return false;
      
-    cab->reset();
+    // cab->reset();
     cab->loadImpulseResponse(irFile, juce::dsp::Convolution::Stereo::no,
         juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
     this->impulseLoaded = true;

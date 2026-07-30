@@ -24,6 +24,9 @@ void NeuralAmpModeler::prepare(juce::dsp::ProcessSpec& spec)
     mToneStack->Reset(this->sampleRate, this->samplesPerBlock);
 
     mNoiseGateTrigger.SetSampleRate(this->sampleRate);
+
+    inputSmoother.reset(this->sampleRate, 0.0035);
+    outputSmoother.reset(this->sampleRate, 0.0035);
 }
 
 void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer)
@@ -46,7 +49,9 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer)
     if (mModel != nullptr)
     {
         // Input Gain
-        buffer.applyGain(dB_to_linear(params[Parameters::kInputLevel]->load()));
+        // buffer.applyGain(dB_to_linear(params[Parameters::kInputLevel]->load()));
+        buffer.applyGain(dB_to_linear(inputSmoother.getNextValue()));
+        DBG(inputSmoother.getCurrentValue());
 
         mModel->process(inputPointer, outputPointer, buffer.getNumSamples());
         //mModel->finalize_(buffer.getNumSamples());
@@ -72,7 +77,8 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer)
     doDualMono(buffer, toneStackOutPointers);
 
     // Output Gain
-    buffer.applyGain(dB_to_linear(params[Parameters::kOutputLevel]->load()));
+    buffer.applyGain(dB_to_linear(outputSmoother.getNextValue()));
+    DBG(outputSmoother.getCurrentValue());
 }
 
 bool NeuralAmpModeler::loadModel(const std::string modelPath)
@@ -204,6 +210,9 @@ void NeuralAmpModeler::applySlim(ResamplingNAM* nam, double size)
 
 void NeuralAmpModeler::updateParameters()
 {
+    inputSmoother.setTargetValue(params[Parameters::kInputLevel]->load());
+    outputSmoother.setTargetValue(params[Parameters::kOutputLevel]->load());
+
     outputNormalized = bool(params[Parameters::kOutNorm]->load());
 
     // Tone Stack

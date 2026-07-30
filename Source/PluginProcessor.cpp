@@ -147,7 +147,7 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
 
 void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String irPath)
 {
-    this->suspendProcessing(true);
+    // this->suspendProcessing(true);
 
     if (modelPath != "null")
     {
@@ -202,7 +202,7 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
 
     DBG("Loaded: \nModel: " + lastModelName + "\nIR: " + lastIrName);
 
-    this->suspendProcessing(false);
+    // this->suspendProcessing(false);
 }
 
 bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendProcessing)

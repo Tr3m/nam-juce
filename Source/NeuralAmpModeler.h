@@ -83,6 +83,8 @@ private:
     const double ns_holdTime = 0.01;
     const double ns_closeTime = 0.05;
 
+    juce::SmoothedValue<float> inputSmoother, outputSmoother; 
+
 private:
     // Moves DSP modules from staging area to the main area.
     // Also deletes DSP modules that are flagged for removal.

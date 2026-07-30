@@ -57,8 +57,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     void valueChanged(juce::Value &) override;
     
-    bool loadNamModel (juce::File modelToirLoad, bool suspendProcessing = true);
-    bool loadNamModel (int modelIndex, bool suspendProcessing = true);
+    bool loadNamModel (juce::File modelToirLoad, bool suspendProcessing = false);
+    bool loadNamModel (int modelIndex, bool suspendProcessing = false);
     
     // Somewhat inaccurate name since the modelLoaded
     // boolean is updated during staging rather than loading.
