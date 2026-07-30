@@ -62,7 +62,7 @@ bool IrProcessor::isIrValidFormat(const juce::File& fileToLoad)
 
 void IrProcessor::createParameters (std::vector<std::unique_ptr<juce::RangedAudioParameter>>& parameters)
 {
-    parameters.push_back(std::make_unique<juce::AudioParameterBool>("CAB_ON_ID", "CAB_ON", true, "CAB_ON"));
+    parameters.push_back(std::make_unique<juce::AudioParameterBool>("CAB_ON_ID", "Cab Active", true, "Cab Active"));
 
     DBG("IrProcessor Parameters created!");
 }

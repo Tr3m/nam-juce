@@ -239,14 +239,14 @@ void NeuralAmpModeler::updateParameters()
 
 void NeuralAmpModeler::createParameters(std::vector<std::unique_ptr<juce::RangedAudioParameter>>& parameters)
 {
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("INPUT_ID", "INPUT", -20.0f, 20.0f, 0.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("NGATE_ID", "NGATE", -101.0f, 0.0f, -80.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("BASS_ID", "BASS", 0.0f, 10.0f, 5.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIDDLE_ID", "MIDDLE", 0.0f, 10.0f, 5.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("TREBLE_ID", "TREBLE", 0.0f, 10.0f, 5.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_ID", "OUTPUT", -40.0f, 40.0f, 0.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterBool>("TONE_STACK_ON_ID", "TONE_STACK_ON", true, "TONE_STACK_ON"));
-    parameters.push_back(std::make_unique<juce::AudioParameterBool>("NORMALIZE_ID", "NORMALIZE", false, "NORMALIZE"));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("INPUT_ID", "Input Gain", -20.0f, 20.0f, 0.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("NGATE_ID", "Noise Gate Threshold", -101.0f, 0.0f, -80.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("BASS_ID", "Bass", 0.0f, 10.0f, 5.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIDDLE_ID", "Middle", 0.0f, 10.0f, 5.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("TREBLE_ID", "Treble", 0.0f, 10.0f, 5.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_ID", "Output Gain", -40.0f, 40.0f, 0.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterBool>("TONE_STACK_ON_ID", "Tonestack Active", true, "Tonestack Active"));
+    parameters.push_back(std::make_unique<juce::AudioParameterBool>("NORMALIZE_ID", "Normalize Active", false, "Normalize Active"));
 
     DBG("NAM Parameters Created!");
 }

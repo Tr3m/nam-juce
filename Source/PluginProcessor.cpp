@@ -713,11 +713,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout NamJUCEAudioProcessor::creat
     myNAM.createParameters(parameters);
     cab.createParameters(parameters);
 
-    parameters.push_back(std::make_unique<juce::AudioParameterInt>("LOWCUT_ID", "LOWCUT", 19, 2000, 19));
-    parameters.push_back(std::make_unique<juce::AudioParameterInt>("HIGHCUT_ID", "HIGHCUT", 200, 20001, 20001));
+    parameters.push_back(std::make_unique<juce::AudioParameterInt>("LOWCUT_ID", "Low Cut", 19, 2000, 19));
+    parameters.push_back(std::make_unique<juce::AudioParameterInt>("HIGHCUT_ID", "High Cut", 200, 20001, 20001));
 
     auto normRange = NormalisableRange<float>(0.0, 20.0, 0.1f);
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("DOUBLER_SPREAD_ID", "DOUBLER_SPREAD", normRange, 0.0)); 
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("DOUBLER_SPREAD_ID", "Doubler Spread", normRange, 0.0)); 
 
     tenBandEq.pushParametersToTree(parameters);
 
