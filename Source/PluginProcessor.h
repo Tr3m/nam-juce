@@ -9,6 +9,8 @@
 #include "DoublerProcessor.h"
 #include "PresetManager/PresetManager.h"
 #include "Midi/MidiHandler.h"
+
+#define NUM_INTERNAL_VALUES 7
 //==============================================================================
 /**
  */
@@ -143,6 +145,17 @@ private:
         HighCutF
     };
 
+    enum ValuesInternal
+    {
+        PRESET_CHANGED_VIA_MIDI = 0,
+        PRESET_NEXT_CALLED,
+        PRESET_PREV_CALLED,
+        MODEL_NEXT_CALLED,
+        MODEL_PREV_CALLED,
+        IR_NEXT_CALLED,
+        IR_PREV_CALLED
+    };
+
     NeuralAmpModeler myNAM;
     double slimSize {1.0};
 
@@ -193,7 +206,20 @@ private:
     juce::StringArray parameterIDs, parameterNames;
 
     void loadLastModelAndIr();
-    juce::Value presetMidiChanged{juce::var{""}};
+    // juce::Value presetMidiChanged{juce::var{""}};
+
+    juce::Value valuesInternal [NUM_INTERNAL_VALUES] {
+        juce::Value(juce::var("")),     // Preset Midi State
+        juce::Value(juce::var(0.0f)),   // Next Preset
+        juce::Value(juce::var(0.0f)),   // Prev Prest
+        juce::Value(juce::var(0.0f)),   // Next Model
+        juce::Value(juce::var(0.0f)),   // Prev Model
+        juce::Value(juce::var(0.0f)),   // Next IR 
+        juce::Value(juce::var(0.0f))    // Prev IR 
+    };
+
+    void updateStateValues();
+    juce::StringArray ignoredParams {"PRESET_NEXT_ID", "PRESET_PREVIOUS_ID", "MODEL_NEXT_ID", "MODEL_PREVIOUS_ID", "IR_NEXT_ID", "IR_PREVIOUS_ID"};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)
 };

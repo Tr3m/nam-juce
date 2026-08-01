@@ -31,7 +31,17 @@ void PresetManager::savePreset(const juce::String& presetName)
         return;
 
     currentPreset.setValue(presetName);
-    const auto stateXML = apvts.copyState().createXml();
+
+    auto state = apvts.copyState();
+
+    for (int i = state.getNumChildren(); --i >= 0;)
+    {
+        auto child = state.getChild(i);
+        if (ignoredParams.contains(juce::String(child["id"])))
+            state.removeChild(i, nullptr);
+    }
+
+    const auto stateXML = state.createXml();
 
     // Stuff to exclude from preset file
     auto search_paths = stateXML->getChildByName("search_paths");
@@ -81,9 +91,21 @@ void PresetManager::loadPreset(const juce::String& presetName)
     }
 
     juce::XmlDocument xmlDocument{presetFile};
-    const auto valueTreeToLoad = juce::ValueTree::fromXml(*xmlDocument.getDocumentElement());
+    // const auto valueTreeToLoad = juce::ValueTree::fromXml(*xmlDocument.getDocumentElement());
 
-    apvts.replaceState(valueTreeToLoad);
+    auto state = juce::ValueTree::fromXml(*xmlDocument.getDocumentElement());
+    
+    for (auto param : ignoredParams)
+    {
+        juce::ValueTree child ("PARAM");
+        child.setProperty("id", param, nullptr);
+        child.setProperty("value", juce::String(*apvts.getRawParameterValue(param)), nullptr);
+        state.appendChild(child, nullptr);
+    }
+
+    // std::cout << state.toXmlString().toStdString() << std::endl;
+
+    apvts.replaceState(state);
     currentPreset.setValue(presetName);
 }
 
@@ -134,6 +156,33 @@ int PresetManager::loadPreviousPreset()
     // loadPreset(allPresets.getReference(previousIndex)); //This will work on JUCE 6.1.5
 
     return previousIndex;
+}
+
+
+bool PresetManager::ldNextPreset()
+{
+    const auto allPresets = getAllPresets();
+    if (allPresets.isEmpty())
+        return false;
+
+    const auto currentIndex = allPresets.indexOf(currentPreset.toString());
+    const auto nextIndex = currentIndex + 1 > (allPresets.size() - 1) ? 0 : currentIndex + 1;
+
+    loadPreset(allPresets.getReference(nextIndex));
+    return true;
+}
+
+bool PresetManager::ldPreviousPreset()
+{
+    const auto allPresets = getAllPresets();
+    if (allPresets.isEmpty())
+        return false;
+
+    const auto currentIndex = allPresets.indexOf(currentPreset.toString());
+    const auto previousIndex = currentIndex - 1 < 0 ? allPresets.size() - 1 : currentIndex - 1;
+
+    loadPreset(allPresets.getReference(previousIndex));
+    return true;
 }
 
 void PresetManager::valueTreeRedirected(juce::ValueTree& treeChanged)

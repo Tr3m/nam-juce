@@ -51,7 +51,6 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer)
         // Input Gain
         // buffer.applyGain(dB_to_linear(params[Parameters::kInputLevel]->load()));
         buffer.applyGain(dB_to_linear(inputSmoother.getNextValue()));
-        DBG(inputSmoother.getCurrentValue());
 
         mModel->process(inputPointer, outputPointer, buffer.getNumSamples());
         //mModel->finalize_(buffer.getNumSamples());
@@ -78,7 +77,6 @@ void NeuralAmpModeler::processBlock(juce::AudioBuffer<float>& buffer)
 
     // Output Gain
     buffer.applyGain(dB_to_linear(outputSmoother.getNextValue()));
-    DBG(outputSmoother.getCurrentValue());
 }
 
 bool NeuralAmpModeler::loadModel(const std::string modelPath)

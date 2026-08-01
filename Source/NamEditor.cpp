@@ -151,22 +151,6 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     normalizeToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "NORMALIZE_ID", *normalizeToggle));
     irToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "CAB_ON_ID", *irToggle));
 
-    // Check the processor for Model and IR status upon reopening the UI
-    if (audioProcessor.getLastModelPath() != "null")
-    {
-        audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
-                                                                   : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
-        modelNameBox->setCaretPosition(0);
-    }
-
-    if (audioProcessor.getLastIrPath() != "null")
-    {
-        audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
-                                                             : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        irNameBox->setText(audioProcessor.getLastIrName());
-        irNameBox->setCaretPosition(0);
-    }
 
     assetManager->initializeButton(toneStackButton, AssetManager::Buttons::TONESTACK_BUTTON);
     addAndMakeVisible(toneStackButton.get());
@@ -316,15 +300,34 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     topBar.setAlwaysOnTop(true);
     topBar.toFront(true);
 
+    // Check the processor for Model and IR status upon reopening the UI
+    if (audioProcessor.getLastModelPath() != "null")
+    {
+        // audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
+        //                                                            : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+        // modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
+        // modelNameBox->setCaretPosition(0);
+        this->updateModelBox();
+    }
+
+    if (audioProcessor.getLastIrPath() != "null")
+    {
+        // audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
+        //                                                      : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+        // irNameBox->setText(audioProcessor.getLastIrName());
+        // irNameBox->setCaretPosition(0);
+        this->updateIrBox();
+    }
+
     if (audioProcessor.isModelLoaded())
     {
-        audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
+        // audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
         populateModelComboBox();
     }
 
     if (audioProcessor.getIrStatus())
     {
-        audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
+        // audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
         populateIrComboBox();
     }
 
@@ -450,15 +453,15 @@ void NamEditor::valueChanged (Value& value)
     }
     else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::MODEL_PARENT_CHANGED)))
     {
-        DBG("Model Changed");
-        audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
-        this->populateModelComboBox();
+        // DBG("Model Changed");
+        // audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
+        // this->populateModelComboBox();
     }
     else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::IR_PARENT_CHANGED)))
     {
-        DBG("IR Changed");
-        audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
-        this->populateIrComboBox();
+        // DBG("IR Changed");
+        // audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
+        // this->populateIrComboBox();
     }
 
 }
@@ -488,7 +491,7 @@ void NamEditor::loadModelButtonClicked()
             updateModelBox();
         }
 
-        // populateModelComboBox();
+        populateModelComboBox();
     }
 
 }
@@ -509,7 +512,7 @@ void NamEditor::loadIrButtonClicked()
             updateIrBox();
         }
 
-        // populateIrComboBox();
+        populateIrComboBox();
     }
 }
 
@@ -560,10 +563,11 @@ void NamEditor::updateAfterPresetLoad(bool isFromMidi)
     // Check the processor for Model and IR status after loading preset.
     if (audioProcessor.getLastModelPath() != "null")
     {
-        audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
-                                                                   : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
-        modelNameBox->setCaretPosition(0);
+        // audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
+        //                                                            : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+        // modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
+        // modelNameBox->setCaretPosition(0);
+        this->updateModelBox();
     }
     else
     {
@@ -572,10 +576,11 @@ void NamEditor::updateAfterPresetLoad(bool isFromMidi)
 
     if (audioProcessor.getLastIrPath() != "null")
     {
-        audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
-                                                             : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        irNameBox->setText(audioProcessor.getLastIrName());
-        irNameBox->setCaretPosition(0);
+        // audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
+        //                                                      : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+        // irNameBox->setText(audioProcessor.getLastIrName());
+        // irNameBox->setCaretPosition(0);
+        this->updateIrBox();
     }
     else
     {
@@ -586,10 +591,10 @@ void NamEditor::updateAfterPresetLoad(bool isFromMidi)
     clearIrButton->setVisible(audioProcessor.getIrStatus());
 
 
-    slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
+    // slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
 
-    // populateModelComboBox();
-    // populateIrComboBox();
+    populateModelComboBox();
+    populateIrComboBox();
 }
 
 void NamEditor::populateModelComboBox()
@@ -611,6 +616,7 @@ void NamEditor::updateModelBox()
     modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
     modelNameBox->setCaretPosition(0);
     clearModelButton->setVisible(audioProcessor.isModelLoaded());
+    modelComboBox->setTooltip(juce::String(audioProcessor.getLastModelName()));
     slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
 }
 
@@ -620,6 +626,7 @@ void NamEditor::updateIrBox()
     irNameBox->setText(audioProcessor.getLastIrName());
     irNameBox->setCaretPosition(0);
     clearIrButton->setVisible(audioProcessor.getIrStatus());
+    irComboBox->setTooltip(juce::String(audioProcessor.getLastIrName()));
 }
 
 void NamEditor::showSaveDialog(const juce::String& presetName)
