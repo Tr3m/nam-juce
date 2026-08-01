@@ -130,7 +130,7 @@ juce::String PresetManager::getCurrentPreset() const
     return currentPreset.toString();
 }
 
-int PresetManager::loadNextPreset()
+int PresetManager::getNextPresetIndex()
 {
     const auto allPresets = getAllPresets();
     if (allPresets.isEmpty())
@@ -139,12 +139,10 @@ int PresetManager::loadNextPreset()
     const auto currentIndex = allPresets.indexOf(currentPreset.toString());
     const auto nextIndex = currentIndex + 1 > (allPresets.size() - 1) ? 0 : currentIndex + 1;
 
-    // loadPreset(allPresets.getReference(nextIndex)); //This will work on JUCE 6.1.5
-
     return nextIndex;
 }
 
-int PresetManager::loadPreviousPreset()
+int PresetManager::getPreviousPresetIndex()
 {
     const auto allPresets = getAllPresets();
     if (allPresets.isEmpty())
@@ -153,13 +151,11 @@ int PresetManager::loadPreviousPreset()
     const auto currentIndex = allPresets.indexOf(currentPreset.toString());
     const auto previousIndex = currentIndex - 1 < 0 ? allPresets.size() - 1 : currentIndex - 1;
 
-    // loadPreset(allPresets.getReference(previousIndex)); //This will work on JUCE 6.1.5
-
     return previousIndex;
 }
 
 
-bool PresetManager::ldNextPreset()
+bool PresetManager::loadNextPreset()
 {
     const auto allPresets = getAllPresets();
     if (allPresets.isEmpty())
@@ -172,7 +168,7 @@ bool PresetManager::ldNextPreset()
     return true;
 }
 
-bool PresetManager::ldPreviousPreset()
+bool PresetManager::loadPreviousPreset()
 {
     const auto allPresets = getAllPresets();
     if (allPresets.isEmpty())

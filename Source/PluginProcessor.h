@@ -123,7 +123,7 @@ public:
     void updateDirectoryIRs(const std::string& currentPath);
 
     juce::Value* getStateValue(int index);
-    std::array<juce::Value, 7>& getStateValuesArray() { return this->stateValues; };
+    std::array<juce::Value, 5>& getStateValuesArray() { return this->stateValues; };
 
     enum StateValues
     {
@@ -131,9 +131,7 @@ public:
         CAB_BYPASS,
         TONESTACK_BYPASS,
         NORMALIZE,
-        PRESET_CHANGED,
-        MODEL_PARENT_CHANGED,
-        IR_PARENT_CHANGED
+        PRESET_CHANGED
     };
 
     //==============================================================================
@@ -198,7 +196,7 @@ private:
 
     bool prepareCalled {false};
     
-    std::array<juce::Value, 7> stateValues;
+    std::array<juce::Value, 5> stateValues;
 
     MidiHandler midiHandler;
 
@@ -206,7 +204,6 @@ private:
     juce::StringArray parameterIDs, parameterNames;
 
     void loadLastModelAndIr();
-    // juce::Value presetMidiChanged{juce::var{""}};
 
     juce::Value valuesInternal [NUM_INTERNAL_VALUES] {
         juce::Value(juce::var("")),     // Preset Midi State

@@ -13,13 +13,11 @@ public:
     void loadPreset (const juce::String& presetName);
     void deletePreset (const juce::String& presetName);
 
-    // TODO: Rename these to getNext/Prev preset index
-    int loadNextPreset ();
-    int loadPreviousPreset ();
+    int getNextPresetIndex ();
+    int getPreviousPresetIndex ();
     
-    // Temporary names until the above are changed
-    bool ldNextPreset();
-    bool ldPreviousPreset();
+    bool loadNextPreset();
+    bool loadPreviousPreset();
 
     juce::StringArray getAllPresets () const;
     juce::String getCurrentPreset () const;

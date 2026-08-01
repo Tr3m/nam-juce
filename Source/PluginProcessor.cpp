@@ -15,28 +15,22 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                          ),
       apvts(*this, nullptr, "Params", createParameters()), lowCut(juce::dsp::IIR::Coefficients<float>::makeHighPass(44100, 20.0f, 1.0f)),
       highCut(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f)), presetManager(apvts),
-      midiHandler(presetManager, /*presetMidiChanged*/ valuesInternal[ValuesInternal::PRESET_CHANGED_VIA_MIDI])
+      midiHandler(presetManager, valuesInternal[ValuesInternal::PRESET_CHANGED_VIA_MIDI])
 #endif
 {
     stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(false));
-    stateValues[StateValues::IR_PARENT_CHANGED].setValue(juce::var("null"));
-    stateValues[StateValues::MODEL_PARENT_CHANGED].setValue(juce::var("null"));
 
     filterCuttofs[OutputFilters::LowCutF] = apvts.getRawParameterValue("LOWCUT_ID");
     filterCuttofs[OutputFilters::HighCutF] = apvts.getRawParameterValue("HIGHCUT_ID");
 
     this->exportParameters(parameterIDs, parameterNames);
 
-    // presetMidiChanged.addListener(this);
-    
     for (int i = 0; i < NUM_INTERNAL_VALUES; ++i)
         valuesInternal[i].addListener(this);
 }
 
 NamJUCEAudioProcessor::~NamJUCEAudioProcessor()
 {
-    // presetMidiChanged.removeListener(this);
-
     for (int i = 0; i < NUM_INTERNAL_VALUES; ++i)
         valuesInternal[i].removeListener(this);
 }
@@ -249,8 +243,6 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendPro
         DBG("Loaded Model: " + lastModelName + (isA2 ? " (Slimmable)" : ""));
 
         this->updateDirectoryModels(lastModelPath);
-
-        stateValues[StateValues::MODEL_PARENT_CHANGED].setValue(juce::var(model_path));
     }
     else 
     {
@@ -362,8 +354,6 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad, bool suspen
         DBG("Loaded IR: " + irToLoad.getFileNameWithoutExtension());
         
         this->updateDirectoryIRs(lastIrPath);
-
-        stateValues[StateValues::IR_PARENT_CHANGED].setValue(juce::var(ir_path));
     }
     else
     {
@@ -758,7 +748,7 @@ void NamJUCEAudioProcessor::valueChanged(juce::Value & value)
         // if (value.getValue() == juce::var(true))
         // {
             DBG("Next Preset");
-            if(presetManager.ldNextPreset())
+            if(presetManager.loadNextPreset())
             {
                 this->loadLastModelAndIr();
                 stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));
@@ -770,7 +760,7 @@ void NamJUCEAudioProcessor::valueChanged(juce::Value & value)
         // if (value.getValue() == juce::var(true))
         // {
             DBG("Prev Preset");
-            if(presetManager.ldPreviousPreset())
+            if(presetManager.loadPreviousPreset())
             {
                 this->loadLastModelAndIr();
                 stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));

@@ -302,34 +302,16 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     // Check the processor for Model and IR status upon reopening the UI
     if (audioProcessor.getLastModelPath() != "null")
-    {
-        // audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
-        //                                                            : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        // modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
-        // modelNameBox->setCaretPosition(0);
         this->updateModelBox();
-    }
 
     if (audioProcessor.getLastIrPath() != "null")
-    {
-        // audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
-        //                                                      : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        // irNameBox->setText(audioProcessor.getLastIrName());
-        // irNameBox->setCaretPosition(0);
         this->updateIrBox();
-    }
 
     if (audioProcessor.isModelLoaded())
-    {
-        // audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
         populateModelComboBox();
-    }
 
     if (audioProcessor.getIrStatus())
-    {
-        // audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
         populateIrComboBox();
-    }
 
     audioProcessor.getTrigger()->addValueListener(this);
 
@@ -451,19 +433,6 @@ void NamEditor::valueChanged (Value& value)
         this->updateAfterPresetLoad(true);
         topBar.getPresetManagerComponent()->updateAfterMidiLoad();
     }
-    else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::MODEL_PARENT_CHANGED)))
-    {
-        // DBG("Model Changed");
-        // audioProcessor.updateDirectoryModels(audioProcessor.getLastModelPath());
-        // this->populateModelComboBox();
-    }
-    else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::IR_PARENT_CHANGED)))
-    {
-        // DBG("IR Changed");
-        // audioProcessor.updateDirectoryIRs(audioProcessor.getLastIrPath());
-        // this->populateIrComboBox();
-    }
-
 }
 
 void NamEditor::setToneStackEnabled(bool toneStackEnabled)
@@ -563,10 +532,6 @@ void NamEditor::updateAfterPresetLoad(bool isFromMidi)
     // Check the processor for Model and IR status after loading preset.
     if (audioProcessor.getLastModelPath() != "null")
     {
-        // audioProcessor.getLastModelName() == "Model File Missing!" ? modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
-        //                                                            : modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        // modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
-        // modelNameBox->setCaretPosition(0);
         this->updateModelBox();
     }
     else
@@ -576,10 +541,6 @@ void NamEditor::updateAfterPresetLoad(bool isFromMidi)
 
     if (audioProcessor.getLastIrPath() != "null")
     {
-        // audioProcessor.getLastIrName() == "IR File Missing!" ? irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::red)
-        //                                                      : irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        // irNameBox->setText(audioProcessor.getLastIrName());
-        // irNameBox->setCaretPosition(0);
         this->updateIrBox();
     }
     else
@@ -589,9 +550,6 @@ void NamEditor::updateAfterPresetLoad(bool isFromMidi)
 
     clearModelButton->setVisible(audioProcessor.isModelLoaded());
     clearIrButton->setVisible(audioProcessor.getIrStatus());
-
-
-    // slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
 
     populateModelComboBox();
     populateIrComboBox();

@@ -40,14 +40,14 @@ void PresetManagerComponent::constructUI()
 
     nextButton.onClick = [this]
     {
-        const auto index = presetManager.loadNextPreset();
+        const auto index = presetManager.getNextPresetIndex();
         presetComboBox.setSelectedItemIndex(index, juce::sendNotification);
         updateCurrentSelection();
     };
 
     previousButton.onClick = [this]
     {
-        const auto index = presetManager.loadPreviousPreset();
+        const auto index = presetManager.getPreviousPresetIndex();
         presetComboBox.setSelectedItemIndex(index, juce::sendNotification);
         updateCurrentSelection();
     };
