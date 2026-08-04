@@ -130,5 +130,5 @@ void EqEditor::updateGraphics()
         for (int i = 0; i <= 9; ++i)
             sliders[i].setLookAndFeel(&lnfOff);
 
-    repaint();
+    this->repaint();
 }

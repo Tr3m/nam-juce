@@ -138,7 +138,7 @@ private:
             mappingsComp->setBounds(windowArea);
         }
 
-        repaint();
+        this->repaint();
     };
 
     void pcMappingsClicked()
@@ -157,7 +157,7 @@ private:
             pcMappingsComp->setBounds(windowArea);
         }
 
-        repaint();
+        this->repaint();
     };
 };
 

@@ -60,7 +60,7 @@ public:
     {
         ledState = isLedOn;
         stateLabel = isLedOn ? stateOnLabel : stateOffLabel;
-        repaint();
+        this->repaint();
     };
 
     bool getLedState() { return ledState; };
@@ -94,20 +94,20 @@ public:
 
         alphaThreshold = (uint8)jlimit(0, 0xff, roundToInt(255.0f * hitTestAlphaThreshold));
 
-        repaint();
+        this->repaint();
     };
 
     void setLabelVisible(bool label_visible)
     {
         labelVisible = label_visible;
-        repaint();
+        this->repaint();
     };
 
     void reloadImages()
     {
         this->setImages(false, true, false, stateUp, 1.0, juce::Colours::transparentWhite, stateUp, 1.0, juce::Colours::transparentWhite, stateDown,
                         1.0, juce::Colours::transparentWhite, 0);
-        repaint();
+        this->repaint();
     };
 
 private:

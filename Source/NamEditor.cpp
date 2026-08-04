@@ -315,6 +315,11 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     audioProcessor.getTrigger()->addValueListener(this);
 
+    ledComponent.reset(new LedComponent());
+    addAndMakeVisible(ledComponent.get());
+    // ledComponent->setBounds(sliders[PluginKnobs::NoiseGate]->getBounds().translated(sliders[PluginKnobs::NoiseGate]->getWidth(), -28));
+    ledComponent->setBounds(296, 168, 25, 25);
+
     for (auto& val : audioProcessor.getStateValuesArray())
         val.addListener(this);
 
@@ -343,15 +348,13 @@ NamEditor::~NamEditor()
 
 void NamEditor::paint(juce::Graphics& g)
 {
+    // DBG("Repaint at: " + g.getClipBounds().toString());
     g.fillAll(juce::Colour::fromString("FF121212"));
 
     g.setColour(juce::Colours::white);
     g.setFont(15.0f);
 
     g.drawImageAt(assetManager->getBackground(), 0, 0);
-    // g.drawImageAt(assetManager->getScreens(), 0, 0);
-
-    g.drawImageAt(led_to_draw, 296, 168);
 }
 
 void NamEditor::resized()
@@ -374,10 +377,7 @@ void NamEditor::sliderValueChanged(juce::Slider* slider)
     else if (slider == sliders[PluginKnobs::NoiseGate].get())
     {
         if (slider->getValue() < -100.0)
-        {
-            this->led_to_draw = led_off;
-            repaint();
-        }
+            ledComponent->setLedOn(false);
     }
 }
 
@@ -407,14 +407,7 @@ void NamEditor::comboBoxChanged (juce::ComboBox* comboBox)
 void NamEditor::valueChanged (Value& value)
 {
     if (value.refersToSameSourceAs(*(audioProcessor.getTrigger()->getGatingValue())) && static_cast<float>(*audioProcessor.apvts.getRawParameterValue("NGATE_ID")) > -101.0)
-    {
-       if(value.getValue()) //Is Gating
-           led_to_draw = led_on;
-       else
-           led_to_draw = led_off;
-
-       repaint();
-    }
+       ledComponent->setLedOn(value.getValue());
 
     else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::EQ_BYPASS)))
         eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));

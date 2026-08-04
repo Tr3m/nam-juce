@@ -22,6 +22,7 @@ PRIVATE
     FileComparator.h
     IrProcessor.cpp
     IrProcessor.h
+    LedComponent.h
 )
 
 add_subdirectory(EQ)

@@ -83,7 +83,7 @@ void PresetManagerComponent::setColour(juce::Colour colourToUse, float alpha)
 {
     barColour = colourToUse;
     barAlpha = alpha;
-    repaint();
+    this->repaint();
 }
 
 void PresetManagerComponent::setColour(juce::Colour colourToUse)

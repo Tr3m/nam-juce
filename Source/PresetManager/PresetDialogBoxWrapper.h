@@ -37,7 +37,7 @@ public:
         int boxHeight = getHeight() / 4;
         componentBounds.setBounds(getWidth() / 2 - boxWidth / 2, getHeight() / 2 - boxHeight / 2, boxWidth, boxHeight);
         dBox->setBounds(componentBounds);
-        repaint();
+        this->repaint();
     };
 
     void destroy()

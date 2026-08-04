@@ -7,7 +7,7 @@
 //==============================================================================
 /**
  */
-class NamJUCEAudioProcessorEditor : public juce::AudioProcessorEditor, public juce::Timer, public juce::Slider::Listener
+class NamJUCEAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     NamJUCEAudioProcessorEditor(NamJUCEAudioProcessor&);
@@ -16,8 +16,6 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized () override;
-    void timerCallback ();
-    void sliderValueChanged (juce::Slider* slider);
 
     float calculateEditorScale(int currentWidth);
 

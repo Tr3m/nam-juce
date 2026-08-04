@@ -34,7 +34,3 @@ float NamJUCEAudioProcessorEditor::calculateEditorScale(int currentWidth)
 {
     return 0.8 + ((1.0 - 0.8) / (950.0 - 760.0)) * (currentWidth - 760.0);
 }
-
-void NamJUCEAudioProcessorEditor::sliderValueChanged(juce::Slider* slider) {}
-
-void NamJUCEAudioProcessorEditor::timerCallback() {}

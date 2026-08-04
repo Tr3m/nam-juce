@@ -8,6 +8,7 @@
 #include "LedButtonComponent.h"
 #include "PresetManager/PresetDialogBoxWrapper.h"
 #include "Midi/MidiMappingsComponent/MidiMappingsComponentWrapper.h"
+#include "LedComponent.h"
 
 #define NUM_SLIDERS 9
 
@@ -68,9 +69,7 @@ private:
     std::unique_ptr<juce::ImageButton> loadModelButton, loadIRButton, clearIrButton, clearModelButton, prevModelButton, nextModelButton, prevIrButton, nextIrButton;
     std::unique_ptr<LedButtonComponent> toneStackButton, normalizeButton, irButton, eqButton;
 
-    juce::Image led_off = juce::ImageFileFormat::loadFrom(BinaryData::led_off_png, BinaryData::led_off_pngSize);
-    juce::Image led_on = juce::ImageFileFormat::loadFrom(BinaryData::led_on_png, BinaryData::led_on_pngSize);
-    juce::Image led_to_draw {led_on};
+    std::unique_ptr<LedComponent> ledComponent;
 
     std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
 

@@ -51,7 +51,7 @@ void TopBarComponent::resized()
 void TopBarComponent::setBackgroundColour(juce::Colour colour)
 {
     backgroundColour = colour;
-    repaint();
+    this->repaint();
 }
 
 void TopBarComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
