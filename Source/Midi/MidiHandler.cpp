@@ -1,7 +1,7 @@
 #include "MidiHandler.h"
 
-MidiHandler::MidiHandler(PresetManager& presetMgr, juce::Value& presetValue)
-    : presetManager(presetMgr), presetValue(presetValue) 
+MidiHandler::MidiHandler(PresetManager& presetMgr,juce::Value& presetValue, std::function<void(const std::string&)>&& updateValues)
+    : presetManager(presetMgr), presetValue(presetValue), updateProcessorInteralValue(std::move(updateValues))
 {
     MidiUtils::checkDefaultConfig(midiDirectory);
 }
@@ -163,6 +163,7 @@ void MidiHandler::handleCC(const juce::MidiMessage& msg)
         {
         case EntryTypes::Parameter:
             mapping->parameter->setValueNotifyingHost(value);
+            this->updateProcessorInteralValue(mapping->parameterID.toStdString());
             break;
         case EntryTypes::Preset:
             DBG("(MIDI) Loading preset " + mapping->parameterID);

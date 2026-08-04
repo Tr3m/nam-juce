@@ -15,7 +15,7 @@ NamJUCEAudioProcessor::NamJUCEAudioProcessor()
                          ),
       apvts(*this, nullptr, "Params", createParameters()), lowCut(juce::dsp::IIR::Coefficients<float>::makeHighPass(44100, 20.0f, 1.0f)),
       highCut(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f)), presetManager(apvts),
-      midiHandler(presetManager, valuesInternal[ValuesInternal::PRESET_CHANGED_VIA_MIDI])
+      midiHandler(presetManager, valuesInternal[ValuesInternal::PRESET_CHANGED_VIA_MIDI], [&](const std::string& paramID){this->updateInternalStateValue(paramID);})
 #endif
 {
     stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(false));
@@ -574,12 +574,28 @@ void NamJUCEAudioProcessor::updateStateValues()
     stateValues[StateValues::NORMALIZE].setValue(juce::var(*apvts.getRawParameterValue("NORMALIZE_ID")));
     stateValues[StateValues::TONESTACK_BYPASS].setValue(juce::var(*apvts.getRawParameterValue("TONE_STACK_ON_ID")));
     
+    /*
+     * In case of a midi toggle these will get the last value the MidiHandler set
+     * using the updateInternalStateValue() callback, so there shouldn't be a second
+     * listener trigger....
+    */
     valuesInternal[ValuesInternal::PRESET_NEXT_CALLED].setValue(juce::var(*apvts.getRawParameterValue("PRESET_NEXT_ID")));
     valuesInternal[ValuesInternal::PRESET_PREV_CALLED].setValue(juce::var(*apvts.getRawParameterValue("PRESET_PREVIOUS_ID")));
     valuesInternal[ValuesInternal::MODEL_NEXT_CALLED].setValue(juce::var(*apvts.getRawParameterValue("MODEL_NEXT_ID")));
     valuesInternal[ValuesInternal::MODEL_PREV_CALLED].setValue(juce::var(*apvts.getRawParameterValue("MODEL_PREVIOUS_ID")));
     valuesInternal[ValuesInternal::IR_NEXT_CALLED].setValue(juce::var(*apvts.getRawParameterValue("IR_NEXT_ID")));
     valuesInternal[ValuesInternal::IR_PREV_CALLED].setValue(juce::var(*apvts.getRawParameterValue("IR_PREVIOUS_ID")));
+}
+
+void NamJUCEAudioProcessor::updateInternalStateValue(const std::string& paramID)
+{
+    auto* value = valuesDict[paramID];
+    
+    if (value != nullptr)
+    {
+        DBG("MIDI: Update value: " + juce::String(paramID) + " " + juce::String(*apvts.getRawParameterValue(paramID)));
+        value->setValue((juce::var(*apvts.getRawParameterValue(paramID))));
+    }        
 }
 
 
@@ -745,63 +761,63 @@ void NamJUCEAudioProcessor::valueChanged(juce::Value & value)
     }
     else if (value.refersToSameSourceAs(valuesInternal[ValuesInternal::PRESET_NEXT_CALLED]))
     {
-        // if (value.getValue() == juce::var(true))
-        // {
+        if (value.getValue() == juce::var(true))
+        {
             DBG("Next Preset");
             if(presetManager.loadNextPreset())
             {
                 this->loadLastModelAndIr();
                 stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));
             }
-        // }
+        }
     }
     else if (value.refersToSameSourceAs(valuesInternal[ValuesInternal::PRESET_PREV_CALLED]))
     {
-        // if (value.getValue() == juce::var(true))
-        // {
+        if (value.getValue() == juce::var(true))
+        {
             DBG("Prev Preset");
             if(presetManager.loadPreviousPreset())
             {
                 this->loadLastModelAndIr();
                 stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));
             }
-        // }
+        }
     }
     else if (value.refersToSameSourceAs(valuesInternal[ValuesInternal::MODEL_NEXT_CALLED]))
     {
-        // if (value.getValue() == juce::var(true))
-        // {
+        if (value.getValue() == juce::var(true))
+        {
             DBG("Next Model");
             this->loadNextModel();
             stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));
-        // }
+        }
     }
     else if (value.refersToSameSourceAs(valuesInternal[ValuesInternal::MODEL_PREV_CALLED]))
     {
-        // if (value.getValue() == juce::var(true))
-        // {
+        if (value.getValue() == juce::var(true))
+        {
             DBG("Prev Model");
             this->loadPreviousModel();
             stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));
-        // }
+        }
     }
     else if (value.refersToSameSourceAs(valuesInternal[ValuesInternal::IR_NEXT_CALLED]))
     {
-        // if (value.getValue() == juce::var(true))
-        // {
+        if (value.getValue() == juce::var(true))
+        {
             DBG("Next IR");
             this->loadNextIR();
             stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));
-        // }
+        }
     }
     else if (value.refersToSameSourceAs(valuesInternal[ValuesInternal::IR_PREV_CALLED]))
     {
-        // if (value.getValue() == juce::var(true))
-        // {
+        if (value.getValue() == juce::var(true))
+        {
             DBG("Prev IR");
             this->loadPreviousIR();
             stateValues[StateValues::PRESET_CHANGED].setValue(juce::var(!stateValues[StateValues::PRESET_CHANGED].getValue()));
-        // }
+        }
     }
             
 }

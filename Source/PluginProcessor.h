@@ -215,7 +215,19 @@ private:
         juce::Value(juce::var(0.0f))    // Prev IR 
     };
 
+    std::unordered_map<std::string, juce::Value*> valuesDict
+    {
+        {"PRESET_CHANGED_INTERNAL_ID", &valuesInternal[ValuesInternal::PRESET_CHANGED_VIA_MIDI]},
+        {"PRESET_NEXT_ID", &valuesInternal[ValuesInternal::PRESET_NEXT_CALLED]},
+        {"PRESET_PREVIOUS_ID", &valuesInternal[ValuesInternal::PRESET_PREV_CALLED]},
+        {"MODEL_NEXT_ID", &valuesInternal[ValuesInternal::MODEL_NEXT_CALLED]},
+        {"MODEL_PREVIOUS_ID", &valuesInternal[ValuesInternal::MODEL_PREV_CALLED]},
+        {"IR_NEXT_ID", &valuesInternal[ValuesInternal::IR_NEXT_CALLED]},
+        {"IR_PREVIOUS_ID", &valuesInternal[ValuesInternal::IR_PREV_CALLED]}
+    };
+
     void updateStateValues();
+    void updateInternalStateValue(const std::string&);
     juce::StringArray ignoredParams {"PRESET_NEXT_ID", "PRESET_PREVIOUS_ID", "MODEL_NEXT_ID", "MODEL_PREVIOUS_ID", "IR_NEXT_ID", "IR_PREVIOUS_ID"};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)

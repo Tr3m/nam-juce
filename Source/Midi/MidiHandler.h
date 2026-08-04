@@ -8,7 +8,7 @@
 class MidiHandler 
 {
 public:
-    MidiHandler(PresetManager& presetMgr, juce::Value& presetValue);
+    MidiHandler(PresetManager& presetMgr,juce::Value&, std::function<void(const std::string&)>&&);
     ~MidiHandler();
 
     void loadConfig(const juce::File& configFile, juce::AudioProcessorValueTreeState& apvts);
@@ -57,6 +57,7 @@ private:
     PresetManager& presetManager;
     juce::Value& presetValue;
 
+    std::function<void(const std::string&)> updateProcessorInteralValue;
 };
 
 #endif // __MIDI_HANDLER_H__
