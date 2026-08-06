@@ -610,3 +610,31 @@ void NamEditor::showMappingsComponent()
         mappingsComp->setBounds(0, 0, 950, 650);
     }
 }
+
+
+void NamEditor::mouseDown(const juce::MouseEvent& e)
+{
+}
+
+void NamEditor::mouseUp(const juce::MouseEvent& e)
+{
+    if (e.mods.isRightButtonDown())
+    {
+        auto* menu = topBar.getSettingsRootMenu();
+
+        if (menu != nullptr)
+        {
+            menu->setLookAndFeel(topBar.getMenuLookAndFeel());
+
+            auto mousePos = juce::Desktop::getInstance()
+                                .getMainMouseSource()
+                                .getScreenPosition()
+                                .roundToInt();
+
+            Rectangle<int> target(mousePos.x, mousePos.y, 1, 1);
+
+            menu->showMenuAsync(juce::PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(target),
+                    [&](int selection) {topBar.setMenuSelectedId(selection);});
+        }
+    }
+}

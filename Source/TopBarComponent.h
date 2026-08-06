@@ -32,6 +32,10 @@ public:
 
     PresetManagerComponent* getPresetManagerComponent() { return &this->pmc; };
 
+    juce::PopupMenu* getSettingsRootMenu() { return settingsDropdown != nullptr ? settingsDropdown->getRootMenu() : nullptr; };
+    juce::LookAndFeel* getMenuLookAndFeel() { return settingsDropdown != nullptr ? &settingsDropdown->getLookAndFeel() : nullptr; };
+    void setMenuSelectedId (int);
+
 private:
     PresetManagerComponent pmc;
 

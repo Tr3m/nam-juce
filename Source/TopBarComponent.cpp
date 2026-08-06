@@ -84,6 +84,12 @@ void TopBarComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     }
 }
 
+void TopBarComponent::setMenuSelectedId(int id)
+{
+    if (this->settingsDropdown != nullptr && id > 0)
+        settingsDropdown->setSelectedId(id, juce::NotificationType::sendNotification);
+}
+
 void TopBarComponent::openInfoWindow(juce::String m)
 {
     juce::DialogWindow::LaunchOptions options;

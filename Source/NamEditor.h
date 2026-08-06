@@ -33,6 +33,10 @@ public:
     void loadModelButtonClicked ();
     void loadIrButtonClicked ();
 
+
+    void mouseUp(const juce::MouseEvent& e);
+    void mouseDown(const juce::MouseEvent& e);
+
     enum PluginKnobs
     {
         Input = 0,
