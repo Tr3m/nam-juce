@@ -631,7 +631,7 @@ void NamEditor::mouseUp(const juce::MouseEvent& e)
                                 .getScreenPosition()
                                 .roundToInt();
 
-            Rectangle<int> target(mousePos.x, mousePos.y, 1, 1);
+            juce::Rectangle<int> target(mousePos.x, mousePos.y, 1, 1);
 
             menu->showMenuAsync(juce::PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(target),
                     [&](int selection) {topBar.setMenuSelectedId(selection);});

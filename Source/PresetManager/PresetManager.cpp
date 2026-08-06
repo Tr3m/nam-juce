@@ -37,7 +37,7 @@ void PresetManager::savePreset(const juce::String& presetName)
     for (int i = state.getNumChildren(); --i >= 0;)
     {
         auto child = state.getChild(i);
-        if (ignoredParams.contains(juce::String(child["id"])))
+        if (ignoredParams.contains(juce::String(child["id"].toString())))
             state.removeChild(i, nullptr);
     }
 

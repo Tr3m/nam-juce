@@ -618,7 +618,7 @@ void NamJUCEAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     for (int i = state.getNumChildren(); --i >= 0;)
     {
         auto child = state.getChild(i);
-        if (ignoredParams.contains(juce::String(child["id"])))
+        if (ignoredParams.contains(juce::String(child["id"].toString())))
             state.removeChild(i, nullptr);
     }
 
@@ -660,7 +660,7 @@ void NamJUCEAudioProcessor::setStateInformation(const void* data, int sizeInByte
             for (int i = state.getNumChildren(); --i >= 0;)
             {
                 auto child = state.getChild(i);
-                if (ignoredParams.contains(juce::String(child["id"])))
+                if (ignoredParams.contains(juce::String(child["id"].toString())))
                     state.removeChild(i, nullptr);
             }
             
