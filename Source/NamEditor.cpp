@@ -419,7 +419,10 @@ void NamEditor::valueChanged (Value& value)
         irButton->setLedState(*audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
 
     else if(value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::TONESTACK_BYPASS)))
+    {
         toneStackButton->setLedState(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
+        setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
+    }
 
     else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::PRESET_CHANGED)))
     {
