@@ -197,19 +197,8 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     eqToggle->setBounds(eqButton->getX(), eqButton->getY() + eqButton->getHeight() + 10, 30, 30);
     eqToggle->setVisible(false);
     eqToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "EQ_BYPASS_STATE_ID", *eqToggle));
-
-    eqButton->onClick = [this]
-    {
-        auto modifiers = juce::ModifierKeys::getCurrentModifiers();
-        if (modifiers.isShiftDown() && !audioProcessor.eqModuleVisible)
-        {
-            eqToggle->setToggleState(!eqToggle->getToggleState(), juce::NotificationType::sendNotification);
-        }
-        else
-        {
-            this->showEqModule();
-        }
-    };
+    
+    eqButton->addMouseListener(this, false);
     
     // Slimmable Model Slider    
     slimSlider.reset(new CustomSlider(CustomSlider::SliderTypes::Slim_Slider));
@@ -621,23 +610,33 @@ void NamEditor::mouseDown(const juce::MouseEvent& e)
 
 void NamEditor::mouseUp(const juce::MouseEvent& e)
 {
-    if (e.mods.isRightButtonDown())
+    if (e.eventComponent == eqButton.get())
     {
-        auto* menu = topBar.getSettingsRootMenu();
-
-        if (menu != nullptr)
+        if ((e.mods.isRightButtonDown() || e.mods.isShiftDown()) && !audioProcessor.eqModuleVisible)
+            eqToggle->setToggleState(!eqToggle->getToggleState(), juce::NotificationType::sendNotification);
+        else
+            this->showEqModule();
+    }
+    else
+    {
+        if (e.mods.isRightButtonDown())
         {
-            menu->setLookAndFeel(topBar.getMenuLookAndFeel());
+            auto* menu = topBar.getSettingsRootMenu();
 
-            auto mousePos = juce::Desktop::getInstance()
-                                .getMainMouseSource()
-                                .getScreenPosition()
-                                .roundToInt();
+            if (menu != nullptr)
+            {
+                menu->setLookAndFeel(topBar.getMenuLookAndFeel());
 
-            juce::Rectangle<int> target(mousePos.x, mousePos.y, 1, 1);
+                auto mousePos = juce::Desktop::getInstance()
+                                    .getMainMouseSource()
+                                    .getScreenPosition()
+                                    .roundToInt();
 
-            menu->showMenuAsync(juce::PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(target),
-                    [&](int selection) {topBar.setMenuSelectedId(selection);});
+                juce::Rectangle<int> target(mousePos.x, mousePos.y, 1, 1);
+
+                menu->showMenuAsync(juce::PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(target),
+                        [&](int selection) {topBar.setMenuSelectedId(selection);});
+            }
         }
     }
 }
