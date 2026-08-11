@@ -59,6 +59,7 @@ private:
     std::unique_ptr<juce::ComboBox> modelComboBox, irComboBox;
 
     juce::String sliderIDs[NUM_SLIDERS]{"INPUT_ID", "NGATE_ID", "BASS_ID", "MIDDLE_ID", "TREBLE_ID", "OUTPUT_ID", "LOWCUT_ID", "HIGHCUT_ID", "DOUBLER_ID"};
+    juce::String sliderLabels[NUM_SLIDERS] {"INPUT", "NOISE GATE", "BASS", "MIDDLE", "TREBLE", "OUTPUT", "LOW CUT", "HIGH CUT", "DOUBLER"};
 
     std::unique_ptr<AssetManager> assetManager;
 
@@ -90,6 +91,9 @@ private:
 
     std::unique_ptr<MidiMappingsComponentWrapper> mappingsComp;
     void showMappingsComponent();
+
+    juce::Font fontRegular{Font{juce::Typeface::createSystemTypefaceFor(BinaryData::MohaveRegular_ttf, BinaryData::MohaveRegular_ttfSize)}};
+    juce::Font fontBold{Font{juce::Typeface::createSystemTypefaceFor(BinaryData::MohaveBold_ttf, BinaryData::MohaveBold_ttfSize)}};
 
     juce::TooltipWindow tooltipWindow{this, 300};
 

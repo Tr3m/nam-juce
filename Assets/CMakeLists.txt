@@ -16,7 +16,8 @@ juce_add_binary_data(BinaryData SOURCES
     led_on.png
     slim_thumb_off.png
     slim_thumb_on.png
-    Mohave-VariableFont_wght.ttf
+    Mohave-Bold.ttf
+    Mohave-Regular.ttf
     ${SRC_FILES}
 )
 

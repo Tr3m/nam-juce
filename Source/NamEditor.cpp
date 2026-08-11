@@ -307,7 +307,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     ledComponent.reset(new LedComponent());
     addAndMakeVisible(ledComponent.get());
     // ledComponent->setBounds(sliders[PluginKnobs::NoiseGate]->getBounds().translated(sliders[PluginKnobs::NoiseGate]->getWidth(), -28));
-    ledComponent->setBounds(296, 168, 25, 25);
+    ledComponent->setBounds(298, 169, 25, 25);
 
     for (auto& val : audioProcessor.getStateValuesArray())
         val.addListener(this);
@@ -341,9 +341,33 @@ void NamEditor::paint(juce::Graphics& g)
     g.fillAll(juce::Colour::fromString("FF121212"));
 
     g.setColour(juce::Colours::white);
-    g.setFont(15.0f);
+
+    // Title Background Colour
+    int titleWidth = getWidth() / 2 - 60;
+    int titleHeight = 62;
+    juce::Rectangle<int> titleArea (getWidth() / 2 - titleWidth / 2, 50, titleWidth, titleHeight);
+    g.setColour(juce::Colour::fromString("#FFad7e55"));
+    g.fillRect(titleArea);
 
     g.drawImageAt(assetManager->getBackground(), 0, 0);
+    
+    // Knob Labels
+    fontRegular.setSizeAndStyle(22.0f, juce::Font::FontStyleFlags::plain, 1.0f, 0.0f);
+    g.setFont(fontRegular);
+
+    for (int i = 0; i < NUM_SLIDERS; ++i)
+    {
+        g.drawFittedText(sliderLabels[i], sliders[i]->getBounds().withHeight(fontRegular.getHeight())
+                .translated(1, -34), juce::Justification::centred, 1);
+
+    }
+
+    g.drawFittedText("MODEL", modelNameBox->getBounds().withHeight(fontRegular.getHeight())
+            .translated(6, -28), juce::Justification::centredLeft, 1);
+
+    g.drawFittedText("IMPULSE RESPONSE", irNameBox->getBounds().withHeight(fontRegular.getHeight())
+            .translated(6, -28), juce::Justification::centredLeft, 1);
+
 }
 
 void NamEditor::resized()
