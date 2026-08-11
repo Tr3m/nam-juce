@@ -64,8 +64,9 @@ private:
     std::unique_ptr<AssetManager> assetManager;
 
     KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Main};
-    SliderLookAndFeel slimLnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Horizontal};
-    SliderLookAndFeel slimLnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Horizontal};
+    CoolSliderLookAndFeel slimLnfOn {CoolSliderLookAndFeel::ThumbStyles::withLed, true};
+    CoolSliderLookAndFeel slimLnfOff {CoolSliderLookAndFeel::ThumbStyles::withLed, false};
+
     CoolButtonLookAndFeel buttonLnf, buttonLnfGlow{true};
 
     int screensOffset = 46;

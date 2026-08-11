@@ -16,6 +16,8 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     buttonLnfGlow.setColour(CoolButtons::TextButton::ColourIds::textGlowColourId,
             juce::Colour::fromString("#FFffb400"));
 
+    slimLnfOn.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId, juce::Colour::fromString("#FFffb400"));
+
     meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
     meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
     meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentWhite);

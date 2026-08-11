@@ -8,5 +8,7 @@ PRIVATE
     TextButtonLookAndFeel.h
     CoolButtonLookAndFeel.cpp
     CoolButtonLookAndFeel.h
+    CoolSliderLookAndFeel.cpp
+    CoolSliderLookAndFeel.h
     ColourIds.h
 )

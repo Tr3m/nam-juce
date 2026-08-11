@@ -2,8 +2,7 @@
 
 EqEditor::EqEditor(NamJUCEAudioProcessor& p, bool drawFade) : AudioProcessorEditor(&p), audioProcessor(p)
 {
-    lnfOff.setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
-    lnfOn.setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
+    sliderLnf.setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
         
     addAndMakeVisible(&inGainSlider);
     inGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -33,20 +32,9 @@ EqEditor::EqEditor(NamJUCEAudioProcessor& p, bool drawFade) : AudioProcessorEdit
     addAndMakeVisible(&bypass);
     bypass.setAlpha(0.0);
     bypass.setBounds(145, 315, 35, 35);
-    bypass.onClick = [this] { updateGraphics(); };
+    // bypass.onClick = [this] { updateGraphics(); }; // Parent value listener takes care of this.
 
     bypassButtonAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "EQ_BYPASS_STATE_ID", bypass));
-
-    if (*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))
-    {
-        for (int i = 0; i <= 9; ++i)
-            sliders[i].setLookAndFeel(&lnfOn);
-    }
-    else
-    {
-        for (int i = 0; i <= 9; ++i)
-            sliders[i].setLookAndFeel(&lnfOff);
-    }
 
     // Slider apvts attachments
     for (int band = 0; band <= 9; ++band)
@@ -108,37 +96,33 @@ void EqEditor::resized()
 
 void EqEditor::placeSliders()
 {
-    int xSlider = 190;
+    sliderLnf.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId, juce::Colour::fromString("#FFffb400"));
+
+    int xSlider = 185;
     for (int i = 0; i <= 9; ++i)
     {
         addAndMakeVisible(&sliders[i]);
         sliders[i].setSliderStyle(Slider::SliderStyle::LinearVertical);
+        sliders[i].setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
         sliders[i].setPopupDisplayEnabled(true, true, getTopLevelComponent());
         sliders[i].setTextValueSuffix(" dB");
         sliders[i].setCustomSlider(CustomSlider::SliderTypes::EQ_Slider);
 
-        if (*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))
-            sliders[i].setLookAndFeel(&lnfOff);
-        else
-            sliders[i].setLookAndFeel(&lnfOn);
+        sliders[i].setLookAndFeel(&sliderLnf);
 
-        sliders[i].setBounds(xSlider, 235 + globalOffset, 30, 158);
+        sliders[i].setBounds(xSlider, 235 + globalOffset, 40, 171);
 
 
         xSlider = xSlider + 60;
     }
+
+    sliderLnf.setGlowEnabled(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
 }
 
 void EqEditor::updateGraphics()
 {
-    if (*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))
-        for (int i = 0; i <= 9; ++i)
-            sliders[i].setLookAndFeel(&lnfOn);
-    else
-        for (int i = 0; i <= 9; ++i)
-            sliders[i].setLookAndFeel(&lnfOff);
-
+    sliderLnf.setGlowEnabled(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
     ledComp.setLedOn(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
 
-    this->repaint();
+    // this->repaint();
 }

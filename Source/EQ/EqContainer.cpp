@@ -71,6 +71,7 @@ void EqContainer::updateGraphics()
 {
     eqEditor.updateGraphics();
     dummyEditor.updateGraphics();
+    this->repaint();
 }
 
 

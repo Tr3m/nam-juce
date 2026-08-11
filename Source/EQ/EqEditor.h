@@ -64,12 +64,10 @@ private:
     juce::ToggleButton bypass;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassButtonAttachment;
 
-    SliderLookAndFeel lnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Vertical};
-    SliderLookAndFeel lnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Vertical};
-
+    CoolSliderLookAndFeel sliderLnf {CoolSliderLookAndFeel::ThumbStyles::withLed, false};
     KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Minimal};
 
-    int globalOffset{16};
+    int globalOffset{10};
 
     LedComponent ledComp;
 
