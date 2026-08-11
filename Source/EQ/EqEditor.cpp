@@ -57,12 +57,20 @@ EqEditor::EqEditor(NamJUCEAudioProcessor& p, bool drawFade) : AudioProcessorEdit
         std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "EQ_INPUT_GAIN_ID", inGainSlider);
     outputGainAttachment =
         std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "EQ_OUTPUT_GAIN_ID", outGainSlider);
+    
 
     if (drawFade)
     {
         fadeComponent.reset(new EqFadeComponent());
         addAndMakeVisible(fadeComponent.get());
     }
+
+    addAndMakeVisible(&ledComp);
+    ledComp.setLedOn(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
+    ledComp.setBounds(bypass.getX() + 2, bypass.getY() - 42, 36, 36);
+
+    if (drawFade)
+        ledComp.setAlpha(0.2f);
 }
 
 EqEditor::~EqEditor()
@@ -81,10 +89,10 @@ EqEditor::~EqEditor()
 
 void EqEditor::paint(juce::Graphics& g)
 {
-    if (*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"))
-        g.drawImageAt(backgroundOn, 0, 0);
-    else
-        g.drawImageAt(backgroundOff, 0, 0);
+    g.drawImageAt(background, 0, 0);
+
+    g.drawImageAt(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID") ? toggleOnImage 
+            : toggleOffImage, bypass.getX() - 5, bypass.getY());
 }
 
 void EqEditor::resized()
@@ -93,7 +101,7 @@ void EqEditor::resized()
     int knobSize = 70;
     inGainSlider.setBounds(70, 50, knobSize, knobSize);
     outGainSlider.setBounds(getWidth() - 140, 50, knobSize, knobSize);
-
+    
     if(fadeComponent != nullptr)
         fadeComponent->setBounds(getLocalBounds());
 }
@@ -129,6 +137,8 @@ void EqEditor::updateGraphics()
     else
         for (int i = 0; i <= 9; ++i)
             sliders[i].setLookAndFeel(&lnfOff);
+
+    ledComp.setLedOn(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
 
     this->repaint();
 }

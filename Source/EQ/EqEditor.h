@@ -2,6 +2,7 @@
 
 #include "PluginProcessor.h"
 #include "../LookAndFeel/LookAndFeel.h"
+#include "../LedComponent.h"
 
 class EqFadeComponent : public juce::Component
 {
@@ -51,8 +52,7 @@ public:
     void updateGraphics ();
 
 private:
-    juce::Image backgroundOn = juce::ImageFileFormat::loadFrom(BinaryData::eq_background_on_png, BinaryData::eq_background_on_pngSize);
-    juce::Image backgroundOff = juce::ImageFileFormat::loadFrom(BinaryData::eq_background_off_png, BinaryData::eq_background_off_pngSize);
+    juce::Image background = juce::ImageFileFormat::loadFrom(BinaryData::eqBackground_png, BinaryData::eqBackground_pngSize);
 
     juce::Slider inGainSlider, outGainSlider;
     CustomSlider sliders[10];
@@ -70,6 +70,11 @@ private:
     KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Minimal};
 
     int globalOffset{16};
+
+    LedComponent ledComp;
+
+    juce::Image toggleOffImage = juce::ImageFileFormat::loadFrom(BinaryData::toggle_off_png, BinaryData::toggle_off_pngSize);
+    juce::Image toggleOnImage = juce::ImageFileFormat::loadFrom(BinaryData::toggle_on_png, BinaryData::toggle_on_pngSize);
 
     std::unique_ptr<EqFadeComponent> fadeComponent;
 

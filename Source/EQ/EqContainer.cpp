@@ -24,7 +24,7 @@ EqContainer::EqContainer(NamJUCEAudioProcessor& p, std::unique_ptr<EqContainer>&
     addAndMakeVisible(&eqEditor);
 
     dummyEditor.setEnabled(false);
-    dummyEditor.setAlpha(0.78f);
+    dummyEditor.setAlpha(0.6f);
 
     addAndMakeVisible(&closeButton);
     closeButton.setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f,
