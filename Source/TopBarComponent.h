@@ -1,6 +1,6 @@
 #pragma once
 #include "PluginProcessor.h"
-#include "MyLookAndFeel.h"
+#include "LookAndFeel/LookAndFeel.h"
 #include "AssetManager.h"
 #include "PresetManager/PresetManagerComponent.h"
 #include <CustomStandaloneWindow/CustomStandaloneFilterWindow.h>

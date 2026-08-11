@@ -13,7 +13,6 @@ PRIVATE
     PluginEditor.h
     PluginProcessor.cpp
     PluginProcessor.h
-    MyLookAndFeel.h
     AssetManager.h
     TopBarComponent.cpp
     TopBarComponent.h
@@ -36,4 +35,7 @@ include_directories(PresetManager)
 
 add_subdirectory(Midi)
 include_directories(Midi)
+
+add_subdirectory(LookAndFeel)
+include_directories(LookAndFeel)
 

@@ -1,0 +1,9 @@
+target_sources(${PROJECT_NAME}
+PRIVATE
+    CustomSlider.h
+    KnobLookAndFeel.h
+    LookAndFeel.h
+    MeterLookAndFeel.h
+    SliderLookAndFeel.h
+    TextButtonLookAndFeel.h
+)

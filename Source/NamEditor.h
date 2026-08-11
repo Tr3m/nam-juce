@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
-#include "MyLookAndFeel.h"
+#include "LookAndFeel/LookAndFeel.h"
 #include "AssetManager.h"
 #include "EQ/EqContainer.h"
 #include "TopBarComponent.h"
@@ -9,6 +9,7 @@
 #include "PresetManager/PresetDialogBoxWrapper.h"
 #include "Midi/MidiMappingsComponent/MidiMappingsComponentWrapper.h"
 #include "LedComponent.h"
+
 
 #define NUM_SLIDERS 9
 
@@ -61,7 +62,7 @@ private:
 
     std::unique_ptr<AssetManager> assetManager;
 
-    knobLookAndFeel lnf{knobLookAndFeel::KnobTypes::Main};
+    KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Main};
     SliderLookAndFeel slimLnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Horizontal};
     SliderLookAndFeel slimLnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Horizontal};
 

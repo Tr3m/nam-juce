@@ -4,7 +4,7 @@
 #include <JuceHeader.h>
 #include "../../PluginProcessor.h"
 #include "MidiEntriesListComponent.h"
-#include "../../MyLookAndFeel.h"
+#include "../../LookAndFeel/LookAndFeel.h"
 #include "MidiDialogBoxWrapper.h"
 
 class MidiMappingsComponent : public juce::Component

@@ -1,7 +1,7 @@
 #pragma once
 #include "PluginProcessor.h"
 #include "EqEditor.h"
-#include "../MyLookAndFeel.h"
+#include "../LookAndFeel/LookAndFeel.h"
 
 class EqContainer : public juce::AudioProcessorEditor,
                     private juce::Value::Listener

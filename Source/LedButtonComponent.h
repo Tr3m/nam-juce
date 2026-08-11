@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-#include "MyLookAndFeel.h"
+#include "LookAndFeel/LookAndFeel.h"
 
 using namespace juce;
 

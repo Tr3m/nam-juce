@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
-#include "../MyLookAndFeel.h"
+#include "../LookAndFeel/LookAndFeel.h"
 
 class EqFadeComponent : public juce::Component
 {
@@ -67,7 +67,7 @@ private:
     SliderLookAndFeel lnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Vertical};
     SliderLookAndFeel lnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Vertical};
 
-    knobLookAndFeel lnf{knobLookAndFeel::KnobTypes::Minimal};
+    KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Minimal};
 
     int globalOffset{16};
 
