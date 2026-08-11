@@ -7,26 +7,7 @@
 class AssetManager
 {
 public:
-    AssetManager()
-    {
-        toggleButtonAssets[Buttons::EQ_BUTTON][ToggleButtonStates::OFF] =
-            juce::ImageFileFormat::loadFrom(BinaryData::eqoff_png, BinaryData::eqoff_pngSize);
-        toggleButtonAssets[Buttons::EQ_BUTTON][ToggleButtonStates::ON] =
-            juce::ImageFileFormat::loadFrom(BinaryData::eqon_png, BinaryData::eqon_pngSize);
-        toggleButtonAssets[Buttons::NORMALIZE_BUTTON][ToggleButtonStates::OFF] =
-            juce::ImageFileFormat::loadFrom(BinaryData::normalizeoff_png, BinaryData::normalizeoff_pngSize);
-        toggleButtonAssets[Buttons::NORMALIZE_BUTTON][ToggleButtonStates::ON] =
-            juce::ImageFileFormat::loadFrom(BinaryData::normalizeon_png, BinaryData::normalizeon_pngSize);
-        toggleButtonAssets[Buttons::TONESTACK_BUTTON][ToggleButtonStates::OFF] =
-            juce::ImageFileFormat::loadFrom(BinaryData::tonestackoff_png, BinaryData::tonestackoff_pngSize);
-        toggleButtonAssets[Buttons::TONESTACK_BUTTON][ToggleButtonStates::ON] =
-            juce::ImageFileFormat::loadFrom(BinaryData::tonestackon_png, BinaryData::tonestackon_pngSize);
-        toggleButtonAssets[Buttons::IR_BUTTON][ToggleButtonStates::OFF] =
-            juce::ImageFileFormat::loadFrom(BinaryData::caboff_png, BinaryData::caboff_pngSize);
-        toggleButtonAssets[Buttons::IR_BUTTON][ToggleButtonStates::ON] =
-            juce::ImageFileFormat::loadFrom(BinaryData::cabon_png, BinaryData::cabon_pngSize);
-    }
-
+    AssetManager(){}
     ~AssetManager() {}
 
     juce::Image getBackground() { return background; }
@@ -45,13 +26,6 @@ public:
                           juce::Colours::transparentWhite, clearButtonPressed, 1.0, juce::Colours::transparentWhite, 0);
     }
 
-    void setToggleButton(std::unique_ptr<juce::ImageButton>& button, bool moduleState, int buttonIndex)
-    {
-        button->setImages(false, true, false, toggleButtonAssets[int(moduleState)][buttonIndex + 1], 1.0, juce::Colours::transparentWhite,
-                          toggleButtonAssets[int(moduleState)][buttonIndex + 1], 1.0, juce::Colours::transparentWhite,
-                          toggleButtonAssets[int(moduleState)][buttonIndex], 1.0, juce::Colours::transparentWhite, 0);
-    }
-
     void setNextAndPrevButtons(std::unique_ptr<juce::ImageButton>& prevButton, std::unique_ptr<juce::ImageButton>& nextButton)
     {
         if (prevButton)
@@ -63,27 +37,6 @@ public:
                     forwardUnpushed, 1.0f, juce::Colours::transparentBlack, forwardPushed, 1.0f, juce::Colours::transparentBlack, 0);
     }
 
-    juce::Image getButtonLabel(int button, int state) { return toggleButtonAssets[button][state]; }
-
-    void initializeButton(std::unique_ptr<LedButtonComponent>& button, int buttonIndex)
-    {
-        button.reset(new LedButtonComponent(toggleButtonAssets[buttonIndex][1], toggleButtonAssets[buttonIndex][0]));
-    }
-
-    enum ToggleButtonStates
-    {
-        OFF = 0,
-        ON
-    };
-
-    enum Buttons
-    {
-        IR_BUTTON = 0,
-        NORMALIZE_BUTTON,
-        TONESTACK_BUTTON,
-        EQ_BUTTON
-    };
-
 private:
     juce::Image background = juce::ImageFileFormat::loadFrom(BinaryData::background_png, BinaryData::background_pngSize);
     juce::Image screens = juce::ImageFileFormat::loadFrom(BinaryData::screens_png, BinaryData::screens_pngSize);
@@ -94,9 +47,6 @@ private:
 
     juce::Image clearButtonPressed = juce::ImageFileFormat::loadFrom(BinaryData::clear_button_pushed_png, BinaryData::clear_button_pushed_pngSize);
     juce::Image clearButtonUnpressed = juce::ImageFileFormat::loadFrom(BinaryData::clear_button_unpushed_png, BinaryData::clear_button_unpushed_pngSize);
-
-    // Toggle Buttons
-    juce::Image toggleButtonAssets[4][2];
 
     // Next/Previous Buttons
     juce::Image forwardPushed = juce::ImageFileFormat::loadFrom(BinaryData::forwardpushed_png, BinaryData::forwardpushed_pngSize);

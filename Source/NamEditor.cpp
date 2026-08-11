@@ -5,7 +5,16 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
             [&](const juce::String& presetName) { showSaveDialog(presetName); }, [&](){ showMappingsComponent(); })
 {
     assetManager.reset(new AssetManager());
-
+        
+    juce::Font lnfFont = fontBold;
+    lnfFont.setSizeAndStyle(20.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
+    
+    buttonLnf.setTextFont(lnfFont);
+    buttonLnf.setTextYOffset(1);
+    buttonLnfGlow.setTextFont(lnfFont);
+    buttonLnfGlow.setTextYOffset(1);
+    buttonLnfGlow.setColour(CoolButtons::TextButton::ColourIds::textGlowColourId,
+            juce::Colour::fromString("#FFffb400"));
 
     meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
     meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
@@ -152,46 +161,45 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     irToggleAttachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvts, "CAB_ON_ID", *irToggle));
 
 
-    assetManager->initializeButton(toneStackButton, AssetManager::Buttons::TONESTACK_BUTTON);
+    toneStackButton.reset(new juce::TextButton("TONESTACK"));
     addAndMakeVisible(toneStackButton.get());
-    toneStackButton->setBounds(sliders[PluginKnobs::Middle]->getX() + (sliders[PluginKnobs::Middle]->getWidth() / 2) - 45,
+    toneStackButton->setBounds(sliders[PluginKnobs::Middle]->getX() + (sliders[PluginKnobs::Middle]->getWidth() / 2) - 45 + togleButtonXOffset,
                                sliders[PluginKnobs::Middle]->getY() + sliders[PluginKnobs::Middle]->getHeight() + 15, 90, 40);
-    toneStackButton->setLedState(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
+
+    setGlowButtonLnf(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
     toneStackButton->onClick = [this]
     {
         toneStackToggle->setToggleState(!toneStackToggle->getToggleState(), true);
-        toneStackButton->setLedState(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
+        setGlowButtonLnf(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
     };
 
-    assetManager->initializeButton(normalizeButton, AssetManager::Buttons::NORMALIZE_BUTTON);
+    normalizeButton.reset(new juce::TextButton("NORMALIZE"));
     addAndMakeVisible(normalizeButton.get());
-    normalizeButton->setBounds(sliders[PluginKnobs::Treble]->getX() + (sliders[PluginKnobs::Treble]->getWidth() / 2) - 45,
+    normalizeButton->setBounds(sliders[PluginKnobs::Treble]->getX() + (sliders[PluginKnobs::Treble]->getWidth() / 2) - 45 + togleButtonXOffset,
                                sliders[PluginKnobs::Treble]->getY() + sliders[PluginKnobs::Treble]->getHeight() + 15, 90, 40);
-    normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
+    setGlowButtonLnf(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
     normalizeButton->onClick = [this]
     {
         normalizeToggle->setToggleState(!normalizeToggle->getToggleState(), true);
-        normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
+        setGlowButtonLnf(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
     };
 
-
-    assetManager->initializeButton(irButton, AssetManager::Buttons::IR_BUTTON);
+    irButton.reset(new juce::TextButton("CAB"));
     addAndMakeVisible(irButton.get());
-    irButton->setBounds(sliders[PluginKnobs::Output]->getX() + (sliders[PluginKnobs::Output]->getWidth() / 2) - 45,
+    irButton->setBounds(sliders[PluginKnobs::Output]->getX() + (sliders[PluginKnobs::Output]->getWidth() / 2) - 45 + togleButtonXOffset,
                         sliders[PluginKnobs::Output]->getY() + sliders[PluginKnobs::Output]->getHeight() + 15, 90, 40);
-    irButton->setLedState(*audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
+    setGlowButtonLnf(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
     irButton->onClick = [this]
     {
         irToggle->setToggleState(!irToggle->getToggleState(), true);
-        irButton->setLedState(*audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
+        setGlowButtonLnf(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
     };
 
-    assetManager->initializeButton(eqButton, AssetManager::Buttons::EQ_BUTTON);
+    eqButton.reset(new juce::TextButton("EQ"));
     addAndMakeVisible(eqButton.get());
-    eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 45,
+    eqButton->setBounds(sliders[PluginKnobs::NoiseGate]->getX() + (sliders[PluginKnobs::NoiseGate]->getWidth() / 2) - 45 + togleButtonXOffset,
                         sliders[PluginKnobs::NoiseGate]->getY() + sliders[PluginKnobs::NoiseGate]->getHeight() + 15, 90, 40);
-    eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
-
+    setGlowButtonLnf(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
     eqToggle.reset(new juce::ToggleButton("ToneStackToggleButton"));
     addAndMakeVisible(eqToggle.get());
     eqToggle->setBounds(eqButton->getX(), eqButton->getY() + eqButton->getHeight() + 10, 30, 30);
@@ -423,17 +431,17 @@ void NamEditor::valueChanged (Value& value)
        ledComponent->setLedOn(value.getValue());
 
     else if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::EQ_BYPASS)))
-        eqButton->setLedState(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
+        setGlowButtonLnf(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
 
     else if(value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::NORMALIZE)))
-        normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
+        setGlowButtonLnf(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
 
     else if(value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::CAB_BYPASS)))
-        irButton->setLedState(*audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
+        setGlowButtonLnf(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
 
     else if(value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::TONESTACK_BYPASS)))
     {
-        toneStackButton->setLedState(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
+        setGlowButtonLnf(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
         setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
     }
 
@@ -527,9 +535,10 @@ void NamEditor::updateAfterPresetLoad(bool isFromMidi)
 {
     setToneStackEnabled(bool(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID")));
 
-    normalizeButton->setLedState(*audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
-    toneStackButton->setLedState(*audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
-    irButton->setLedState(*audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
+    setGlowButtonLnf(toneStackButton, *audioProcessor.apvts.getRawParameterValue("TONE_STACK_ON_ID"));
+    setGlowButtonLnf(normalizeButton, *audioProcessor.apvts.getRawParameterValue("NORMALIZE_ID"));
+    setGlowButtonLnf(irButton, *audioProcessor.apvts.getRawParameterValue("CAB_ON_ID"));
+    setGlowButtonLnf(eqButton, *audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
 
     auto addons = audioProcessor.apvts.state.getOrCreateChildWithName("addons", nullptr);
     // DBG(addons.getProperty ("model_path", juce::String()).toString());
@@ -663,4 +672,10 @@ void NamEditor::mouseUp(const juce::MouseEvent& e)
             }
         }
     }
+}
+
+
+void NamEditor::setGlowButtonLnf(std::unique_ptr<juce::TextButton>& button, bool shouldBeGlowing)
+{
+    button->setLookAndFeel(shouldBeGlowing ? &buttonLnfGlow : &buttonLnf);
 }

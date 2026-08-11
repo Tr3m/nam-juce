@@ -2,7 +2,6 @@ file(GLOB SRC_FILES
     "Buttons/*.png"
     "EQ/*.png"
     "PresetManagerAssets/*.png"
-    "ButtonLabels/*.png"
 )
 
 juce_add_binary_data(BinaryData SOURCES

@@ -13,3 +13,6 @@
 [submodule "Modules/JUCE"]
 	path = Modules/JUCE
 	url = https://github.com/juce-framework/JUCE
+[submodule "Modules/melatonin_blur"]
+	path = Modules/melatonin_blur
+	url = https://github.com/sudara/melatonin_blur

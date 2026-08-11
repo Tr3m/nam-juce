@@ -124,6 +124,8 @@ add_subdirectory(Assets)
 add_subdirectory(Source)
 include_directories(Source)
 
+juce_add_module("Modules/melatonin_blur")
+
 option(NAM_ENABLE_A2_FAST "Build the A2 fast-path WaveNet" ON)
 if(NAM_ENABLE_A2_FAST)
 	add_compile_definitions(NAM_ENABLE_A2_FAST)
@@ -177,6 +179,7 @@ target_link_libraries(${PROJECT_NAME}
         BinaryData
         juce::juce_audio_utils
         juce::juce_dsp
+        melatonin_blur
         #nlohmann_json::nlohmann_json
         #Eigen3::Eigen
     PUBLIC

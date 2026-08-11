@@ -66,14 +66,16 @@ private:
     KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Main};
     SliderLookAndFeel slimLnfOn {SliderLookAndFeel::Status::ON, SliderLookAndFeel::Orientation::Horizontal};
     SliderLookAndFeel slimLnfOff {SliderLookAndFeel::Status::OFF, SliderLookAndFeel::Orientation::Horizontal};
+    CoolButtonLookAndFeel buttonLnf, buttonLnfGlow{true};
 
     int screensOffset = 46;
+    int togleButtonXOffset = 4;
 
     std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle, eqToggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment, eqToggleAttachment;
 
     std::unique_ptr<juce::ImageButton> loadModelButton, loadIRButton, clearIrButton, clearModelButton, prevModelButton, nextModelButton, prevIrButton, nextIrButton;
-    std::unique_ptr<LedButtonComponent> toneStackButton, normalizeButton, irButton, eqButton;
+    std::unique_ptr<juce::TextButton> toneStackButton, normalizeButton, irButton, eqButton;
 
     std::unique_ptr<LedComponent> ledComponent;
 
@@ -115,4 +117,6 @@ private:
     void populateIrComboBox();
 
     void showEqModule();
+
+    void setGlowButtonLnf(std::unique_ptr<juce::TextButton>&, bool);
 };

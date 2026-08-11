@@ -6,4 +6,7 @@ PRIVATE
     MeterLookAndFeel.h
     SliderLookAndFeel.h
     TextButtonLookAndFeel.h
+    CoolButtonLookAndFeel.cpp
+    CoolButtonLookAndFeel.h
+    ColourIds.h
 )

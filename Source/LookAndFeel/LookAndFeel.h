@@ -7,4 +7,5 @@
 #include "SliderLookAndFeel.h"
 #include "CustomSlider.h"
 #include "TextButtonLookAndFeel.h"
+#include "CoolButtonLookAndFeel.h"
 
