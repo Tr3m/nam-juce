@@ -8,9 +8,6 @@ juce_add_binary_data(BinaryData SOURCES
     knob.png
     knob_strip.png
     background.png
-    buttonpushed.png
-    buttonunpushed.png
-    screens.png 
     knob_minimal.png
     led_off.png
     led_on.png

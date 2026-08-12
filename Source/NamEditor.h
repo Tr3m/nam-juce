@@ -5,7 +5,6 @@
 #include "AssetManager.h"
 #include "EQ/EqContainer.h"
 #include "TopBarComponent.h"
-#include "LedButtonComponent.h"
 #include "PresetManager/PresetDialogBoxWrapper.h"
 #include "Midi/MidiMappingsComponent/MidiMappingsComponentWrapper.h"
 #include "LedComponent.h"
