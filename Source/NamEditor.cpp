@@ -39,12 +39,16 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     int knobSize = 98;
     int xStart = 75;
+
     int xOffsetMultiplier = 140;
 
     lnf.setColour(Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     lnf.setColour(Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
     lnf.setColour(Slider::textBoxTextColourId, juce::Colours::ivory);
     lnf.setColour(juce::PopupMenu::backgroundColourId, juce::Colour::fromString("FF121212").withAlpha(0.8f));
+
+    lnf.setRotarySliderImage(knobImage);
+    lnf.setColour(CoolButtons::Slider::ColourIds::thumbLedOffColourId, juce::Colour::fromString("#FFe8b600"));
 
     // Setup sliders
     for (int slider = 0; slider < NUM_SLIDERS; ++slider)
@@ -61,11 +65,13 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
         if (slider >= PluginKnobs::LowCut)
         {
             xStart = sliders[PluginKnobs::Middle]->getX();
-            sliders[slider]->setBounds(xStart + ((slider - 6) * xOffsetMultiplier) - 10, 435, knobSize + size2, knobSize + size2 + 15);
+            sliders[slider]->setBounds(xStart + ((slider - 6) * xOffsetMultiplier)
+                    - 10, 434, knobSize + size2, knobSize + size2 + 15);
+
             sliders[slider]->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 80, 20);
         }
         else
-            sliders[slider]->setBounds(xStart + (slider * xOffsetMultiplier), 204, knobSize, knobSize);
+            sliders[slider]->setBounds(xStart + (slider * xOffsetMultiplier), 203, knobSize, knobSize);
     }
 
     sliders[PluginKnobs::LowCut]->setCustomSlider(CustomSlider::SliderTypes::Filters);
@@ -220,7 +226,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     slimSlider->addListener(this);
     slimSlider->setValue(audioProcessor.getSlimmableSize(), juce::NotificationType::dontSendNotification);
     int sliderWidth = normalizeButton->getWidth() - 20;
-    slimSlider->setBounds(sliders[PluginKnobs::Input]->getX() + (sliders[PluginKnobs::Input]->getWidth() / 2) - 37, normalizeButton->getY() + normalizeButton->getHeight() / 3 - 13, sliderWidth, normalizeButton->getHeight());
+    slimSlider->setBounds(sliders[PluginKnobs::Input]->getX() + (sliders[PluginKnobs::Input]->getWidth() / 2) - 37, normalizeButton->getY() + normalizeButton->getHeight() / 3 - 12, sliderWidth, normalizeButton->getHeight());
     slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
 
     // Model Combo Box
@@ -317,7 +323,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     ledComponent.reset(new LedComponent());
     addAndMakeVisible(ledComponent.get());
     // ledComponent->setBounds(sliders[PluginKnobs::NoiseGate]->getBounds().translated(sliders[PluginKnobs::NoiseGate]->getWidth(), -28));
-    ledComponent->setBounds(298, 169, 25, 25);
+    ledComponent->setBounds(299, 169, 25, 25);
 
     for (auto& val : audioProcessor.getStateValuesArray())
         val.addListener(this);
@@ -368,15 +374,15 @@ void NamEditor::paint(juce::Graphics& g)
     for (int i = 0; i < NUM_SLIDERS; ++i)
     {
         g.drawFittedText(sliderLabels[i], sliders[i]->getBounds().withHeight(fontRegular.getHeight())
-                .translated(1, -34), juce::Justification::centred, 1);
+                .translated(2, -33), juce::Justification::centred, 1);
 
     }
 
     g.drawFittedText("MODEL", modelNameBox->getBounds().withHeight(fontRegular.getHeight())
-            .translated(6, -28), juce::Justification::centredLeft, 1);
+            .translated(6, -27), juce::Justification::centredLeft, 1);
 
     g.drawFittedText("IMPULSE RESPONSE", irNameBox->getBounds().withHeight(fontRegular.getHeight())
-            .translated(6, -28), juce::Justification::centredLeft, 1);
+            .translated(6, -27), juce::Justification::centredLeft, 1);
 
 }
 

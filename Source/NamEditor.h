@@ -63,7 +63,10 @@ private:
 
     std::unique_ptr<AssetManager> assetManager;
 
-    KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Main};
+    // KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Main};
+    CoolSliderLookAndFeel lnf {CoolSliderLookAndFeel::RotarySliderDrawMethods::image};
+    juce::Image knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_png, BinaryData::knob_pngSize);
+
     CoolSliderLookAndFeel slimLnfOn {CoolSliderLookAndFeel::ThumbStyles::withLed, true};
     CoolSliderLookAndFeel slimLnfOff {CoolSliderLookAndFeel::ThumbStyles::withLed, false};
 

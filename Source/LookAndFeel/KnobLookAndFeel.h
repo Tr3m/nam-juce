@@ -16,11 +16,15 @@ public:
     {
         switch (knobType)
         {
-            case KnobTypes::Main: knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_png, BinaryData::knob_pngSize); break;
+            case KnobTypes::Main: 
+                knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_strip_png, BinaryData::knob_strip_pngSize);
+                break;
             case KnobTypes::Minimal:
                 knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_minimal_png, BinaryData::knob_minimal_pngSize);
                 break;
-            default: knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_png, BinaryData::knob_pngSize); break;
+            default: 
+                knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_strip_png, BinaryData::knob_strip_pngSize); 
+                break;
         }
     }
 
@@ -136,6 +140,8 @@ public:
     void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float rotaryStartAngle, float rotaryEndAngle,
                           juce::Slider& slider) override
     {
+        // g.fillAll(juce::Colours::red.withAlpha(0.4f));
+
         if (knobImage.isValid())
         {
             const double rotation = (slider.getValue() - slider.getMinimum()) / (slider.getMaximum() - slider.getMinimum());

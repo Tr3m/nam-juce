@@ -21,6 +21,18 @@ CoolSliderLookAndFeel::CoolSliderLookAndFeel(int thumbStyle, bool glowEnabled)
     this->thumbStyle = thumbStyle;
 }
 
+CoolSliderLookAndFeel::CoolSliderLookAndFeel(int rotaryDrawMethod)
+{
+    this->setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::transparentBlack);
+    this->setColour(juce::Slider::ColourIds::backgroundColourId, juce::Colours::transparentBlack);
+    this->setColour(juce::Slider::ColourIds::thumbColourId, this->thumbColour);
+
+    if (rotaryDrawMethod < 0 || rotaryDrawMethod > 2)
+        rotaryDrawMethod = 0;
+
+    this->rotarySliderDrawMethod = rotaryDrawMethod;
+}
+
 void CoolSliderLookAndFeel::setColour (int colourId, juce::Colour colour)
 {
     switch (colourId)
@@ -288,37 +300,55 @@ void CoolSliderLookAndFeel::paintRotarySlider(Graphics& g, int x, int y, int wid
 void CoolSliderLookAndFeel::paintRotarySliderWithImage(Graphics& g, int x, int y, int width, int height, float sliderPos,
                                        const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
 {
-    auto outline = slider.findColour (Slider::rotarySliderOutlineColourId);
-    auto fill    = slider.findColour (Slider::rotarySliderFillColourId);
+    // g.fillAll(juce::Colours::red.withAlpha(0.4f));
 
-    auto bounds = Rectangle<int> (x, y, width, height).toFloat().reduced (10);
+    auto bounds = juce::Rectangle<float>(x, y, width, height);
+    const float radius = juce::jmin(width / 2.0f, height / 2.0f);
+    const float centerX = x + width * 0.5f;
+    const float centerY = y + height * 0.5f;
+    const float rx = centerX - radius - 1.0f;
+    const float ry = centerY - radius;
 
-    g.drawImage(knobImage, bounds, juce::RectanglePlacement::fillDestination);
+    g.drawImage(knobImage,
+                (int)rx,
+                (int)ry,
+                2 * (int)radius,
+                2 * (int)radius,
+                0,
+                0,
+                knobImage.getWidth(),
+                knobImage.getHeight());
 
-    auto radius = jmin (bounds.getWidth(), bounds.getHeight()) / 2.0f;
-    auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-    auto lineW = jmin (3.0f, radius * 0.5f);
-    auto arcRadius = radius - lineW * 0.5f;
+    const auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
-    auto thumbWidth = lineW * 2.0f;
-    auto thumbRadius = arcRadius - rotarySliderTumbOffset;
-    
-    Point<float> thumbPoint (
-        bounds.getCentreX() + thumbRadius * std::cos (toAngle - MathConstants<float>::halfPi),
-        bounds.getCentreY() + thumbRadius * std::sin (toAngle - MathConstants<float>::halfPi));
+    const auto lineW = juce::jmin(3.0f, radius * 0.5f);
+    const auto arcRadius = radius - lineW * 0.5f;
 
-    g.setColour (thumbLedBackgroundColour);
+    const auto thumbWidth = lineW * 2.0f * rotarySliderThumbScale;
+    const auto thumbRadius = arcRadius - rotarySliderTumbOffset;
+
+    const juce::Point<float> thumbPoint(
+        bounds.getCentreX() + thumbRadius * std::cos(toAngle - juce::MathConstants<float>::halfPi),
+        bounds.getCentreY() + thumbRadius * std::sin(toAngle - juce::MathConstants<float>::halfPi)
+    );
+
+    const auto thumbBounds = juce::Rectangle<float>(thumbWidth, thumbWidth).withCentre(thumbPoint);
+
+    g.setColour(thumbLedBackgroundColour);
 
     if (glowEnabled)
     {
         g.setColour(glowColour);
-        Path ledTrack;
-        ledTrack.addEllipse(Rectangle<float> (thumbWidth, thumbWidth).withCentre (thumbPoint));
+
+        juce::Path ledTrack;
+        ledTrack.addEllipse(thumbBounds);
+
         outerGlow = { glowColour, glowRadius, glowOffset, glowSpread };
+
         outerGlow.render(g, ledTrack);
     }
 
-    g.fillEllipse (Rectangle<float> (thumbWidth, thumbWidth).withCentre (thumbPoint));
+    g.fillEllipse(thumbBounds);
 }
 
 

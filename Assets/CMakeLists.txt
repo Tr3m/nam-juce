@@ -6,6 +6,7 @@ file(GLOB SRC_FILES
 
 juce_add_binary_data(BinaryData SOURCES
     knob.png
+    knob_strip.png
     background.png
     buttonpushed.png
     buttonunpushed.png
