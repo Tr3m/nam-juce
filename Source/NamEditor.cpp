@@ -17,6 +17,10 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
             juce::Colour::fromString("#FFffb400"));
 
     slimLnfOn.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId, juce::Colour::fromString("#FFffb400"));
+    
+    lnfFont.setSizeAndStyle(17.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
+    loadButtonLnf.setTextFont(lnfFont);
+    loadButtonLnf.setTextYOffset(1);
 
     meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
     meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
@@ -112,21 +116,25 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     // Model Name Box and Button
     initializeTextBox("ModelNameBox", modelNameBox, 90, sliders[PluginKnobs::Input]->getY() + 195 + screensOffset, 200, 28);
-    initializeButton(
-        "LoadModelButton", "Load", loadModelButton, modelNameBox->getX() + modelNameBox->getWidth() + 15, modelNameBox->getY() - 3, 48, 39);
-    assetManager->setLoadButton(loadModelButton);
+    loadModelButton.reset(new juce::TextButton("LOAD"));
+    addAndMakeVisible(loadModelButton.get());
+    loadModelButton->setBounds(modelNameBox->getX() + modelNameBox->getWidth() + 15, modelNameBox->getY(), 48, 35);
+    loadModelButton->setLookAndFeel(&loadButtonLnf);
     loadModelButton->onClick = [this] { loadModelButtonClicked(); };
 
     // IR Name Box and Button
     initializeTextBox("IRNameBox", irNameBox, 90, modelNameBox->getY() + 80, 200, 28);
-    initializeButton("LoadIRButton", "Load", loadIRButton, irNameBox->getX() + irNameBox->getWidth() + 15, irNameBox->getY() - 3, 48, 39);
+    loadIRButton.reset(new juce::TextButton("LOAD"));
+    addAndMakeVisible(loadIRButton.get());
+    loadIRButton->setBounds(irNameBox->getX() + irNameBox->getWidth() + 15, irNameBox->getY(), 48, 35);
     loadIRButton->onClick = [this] { loadIrButtonClicked(); };
-    assetManager->setLoadButton(loadIRButton);
+    loadIRButton->setLookAndFeel(&loadButtonLnf);
 
-    initializeButton("ClearModelBtn", "X", clearModelButton, loadModelButton->getX() + loadModelButton->getWidth() + 65, loadModelButton->getY() + 7, 25, 25);
+    initializeButton("ClearModelBtn", "X", clearModelButton, loadModelButton->getX() + loadModelButton->getWidth() + 65, loadModelButton->getY() + 3, 25, 25);
     clearModelButton->setTooltip("Clear Model");
     clearModelButton->setVisible(audioProcessor.isModelLoaded());
     assetManager->setClearButton(clearModelButton);
+    clearModelButton->setLookAndFeel(&buttonLnf);
     clearModelButton->onClick = [this]
     {
         audioProcessor.clearNAM();
@@ -138,7 +146,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
         modelComboBox->clear(juce::NotificationType::dontSendNotification);
     };
 
-    initializeButton("ClearIRbtn", "X", clearIrButton, loadIRButton->getX() + loadIRButton->getWidth() + 65, loadIRButton->getY() + 7, 25, 25);
+    initializeButton("ClearIRbtn", "X", clearIrButton, loadIRButton->getX() + loadIRButton->getWidth() + 65, loadIRButton->getY() + 3, 25, 25);
     clearIrButton->setTooltip("Clear Impulse Response");
     clearIrButton->setVisible(audioProcessor.getIrStatus());
     assetManager->setClearButton(clearIrButton);
@@ -247,7 +255,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
     
     initializeButton("PrevModelButton", "<", prevModelButton,
-            loadModelButton->getX() + loadModelButton->getWidth() + 5, loadModelButton->getY() + 7, 25, 25);
+            loadModelButton->getX() + loadModelButton->getWidth() + 5, loadModelButton->getY() + 3, 25, 25);
     
     prevModelButton->onClick = [this]
     {
@@ -274,7 +282,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
 
 
     initializeButton("PrevIrButton", "<", prevIrButton,
-            loadIRButton->getX() + loadIRButton->getWidth() + 5, loadIRButton->getY() + 7, 25, 25);
+            loadIRButton->getX() + loadIRButton->getWidth() + 5, loadIRButton->getY() + 3, 25, 25);
 
     prevIrButton->onClick = [this]
     {
@@ -471,6 +479,7 @@ void NamEditor::setToneStackEnabled(bool toneStackEnabled)
 
 void NamEditor::loadModelButtonClicked()
 {
+    loadModelButton->setEnabled(false);
     auto searchLocation = audioProcessor.getLastModelSearchDirectory() == "null" ? juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
                                                                                  : juce::File(audioProcessor.getLastModelSearchDirectory());
 
@@ -488,10 +497,13 @@ void NamEditor::loadModelButtonClicked()
         populateModelComboBox();
     }
 
+    loadModelButton->setEnabled(true);
+
 }
 
 void NamEditor::loadIrButtonClicked()
 {
+    loadIRButton->setEnabled(false);
     auto searchLocation = audioProcessor.getLastIrSearchDirectory() == "null" ? juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
                                                                               : juce::File(audioProcessor.getLastIrSearchDirectory());
 
@@ -508,6 +520,7 @@ void NamEditor::loadIrButtonClicked()
 
         populateIrComboBox();
     }
+    loadIRButton->setEnabled(true);
 }
 
 void NamEditor::initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height)

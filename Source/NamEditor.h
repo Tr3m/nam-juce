@@ -63,14 +63,13 @@ private:
 
     std::unique_ptr<AssetManager> assetManager;
 
-    // KnobLookAndFeel lnf{KnobLookAndFeel::KnobTypes::Main};
     CoolSliderLookAndFeel lnf {CoolSliderLookAndFeel::RotarySliderDrawMethods::image};
     juce::Image knobImage = juce::ImageFileFormat::loadFrom(BinaryData::knob_png, BinaryData::knob_pngSize);
 
     CoolSliderLookAndFeel slimLnfOn {CoolSliderLookAndFeel::ThumbStyles::withLed, true};
     CoolSliderLookAndFeel slimLnfOff {CoolSliderLookAndFeel::ThumbStyles::withLed, false};
 
-    CoolButtonLookAndFeel buttonLnf, buttonLnfGlow{true};
+    CoolButtonLookAndFeel buttonLnf, buttonLnfGlow{true}, loadButtonLnf;
 
     int screensOffset = 46;
     int togleButtonXOffset = 4;
@@ -78,8 +77,8 @@ private:
     std::unique_ptr<juce::ToggleButton> toneStackToggle, normalizeToggle, irToggle, eqToggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> toneStackToggleAttachment, normalizeToggleAttachment, irToggleAttachment, eqToggleAttachment;
 
-    std::unique_ptr<juce::ImageButton> loadModelButton, loadIRButton, clearIrButton, clearModelButton, prevModelButton, nextModelButton, prevIrButton, nextIrButton;
-    std::unique_ptr<juce::TextButton> toneStackButton, normalizeButton, irButton, eqButton;
+    std::unique_ptr<juce::ImageButton> clearIrButton, clearModelButton, prevModelButton, nextModelButton, prevIrButton, nextIrButton;
+    std::unique_ptr<juce::TextButton> loadModelButton, loadIRButton, toneStackButton, normalizeButton, irButton, eqButton;
 
     std::unique_ptr<LedComponent> ledComponent;
 
