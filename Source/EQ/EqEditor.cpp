@@ -96,7 +96,8 @@ void EqEditor::resized()
 
 void EqEditor::placeSliders()
 {
-    sliderLnf.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId, juce::Colour::fromString("#FFffb400"));
+    sliderLnf.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId,
+            audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::eqLedColourId));
 
     int xSlider = 185;
     for (int i = 0; i <= 9; ++i)
@@ -122,6 +123,10 @@ void EqEditor::placeSliders()
 void EqEditor::updateGraphics()
 {
     sliderLnf.setGlowEnabled(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
+
+    sliderLnf.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId,
+            audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::eqLedColourId));
+
     ledComp.setLedOn(*audioProcessor.apvts.getRawParameterValue("EQ_BYPASS_STATE_ID"));
 
     // this->repaint();

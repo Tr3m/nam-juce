@@ -121,4 +121,5 @@ private:
     void showEqModule();
 
     void setGlowButtonLnf(std::unique_ptr<juce::TextButton>&, bool);
+    void setLookAndFeels();
 };

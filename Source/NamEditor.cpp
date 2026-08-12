@@ -5,26 +5,8 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
             [&](const juce::String& presetName) { showSaveDialog(presetName); }, [&](){ showMappingsComponent(); })
 {
     assetManager.reset(new AssetManager());
+    this->setLookAndFeels();
         
-    juce::Font lnfFont = fontBold;
-    lnfFont.setSizeAndStyle(20.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
-    
-    buttonLnf.setTextFont(lnfFont);
-    buttonLnf.setTextYOffset(1);
-    buttonLnfGlow.setTextFont(lnfFont);
-    buttonLnfGlow.setTextYOffset(1);
-    buttonLnfGlow.setColour(CoolButtons::TextButton::ColourIds::textGlowColourId,
-            juce::Colour::fromString("#FFffb400"));
-
-    slimLnfOn.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId, juce::Colour::fromString("#FFffb400"));
-    
-    lnfFont.setSizeAndStyle(17.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
-    loadButtonLnf.setTextFont(lnfFont);
-    loadButtonLnf.setTextYOffset(1);
-
-    meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
-    meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
-    meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentWhite);
     meterIn.setLookAndFeel(&meterlnf);
     meterOut.setLookAndFeel(&meterlnf);
 
@@ -45,14 +27,6 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     int xStart = 75;
 
     int xOffsetMultiplier = 140;
-
-    lnf.setColour(Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
-    lnf.setColour(Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
-    lnf.setColour(Slider::textBoxTextColourId, juce::Colours::ivory);
-    lnf.setColour(juce::PopupMenu::backgroundColourId, juce::Colour::fromString("FF121212").withAlpha(0.8f));
-
-    lnf.setRotarySliderImage(knobImage);
-    lnf.setColour(CoolButtons::Slider::ColourIds::thumbLedOffColourId, juce::Colour::fromString("#FFe8b600"));
 
     // Setup sliders
     for (int slider = 0; slider < NUM_SLIDERS; ++slider)
@@ -370,7 +344,8 @@ void NamEditor::paint(juce::Graphics& g)
     int titleWidth = getWidth() / 2 - 60;
     int titleHeight = 62;
     juce::Rectangle<int> titleArea (getWidth() / 2 - titleWidth / 2, 50, titleWidth, titleHeight);
-    g.setColour(juce::Colour::fromString("#FFad7e55"));
+    // g.setColour(juce::Colour::fromString("#FFad7e55"));
+    g.setColour(audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::titleColourId));
     g.fillRect(titleArea);
 
     g.drawImageAt(assetManager->getBackground(), 0, 0);
@@ -378,7 +353,8 @@ void NamEditor::paint(juce::Graphics& g)
     // Knob Labels
     fontRegular.setSizeAndStyle(22.0f, juce::Font::FontStyleFlags::plain, 1.0f, 0.0f);
     g.setFont(fontRegular);
-
+    
+    g.setColour(audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::labelColourId));
     for (int i = 0; i < NUM_SLIDERS; ++i)
     {
         g.drawFittedText(sliderLabels[i], sliders[i]->getBounds().withHeight(fontRegular.getHeight())
@@ -699,4 +675,37 @@ void NamEditor::mouseUp(const juce::MouseEvent& e)
 void NamEditor::setGlowButtonLnf(std::unique_ptr<juce::TextButton>& button, bool shouldBeGlowing)
 {
     button->setLookAndFeel(shouldBeGlowing ? &buttonLnfGlow : &buttonLnf);
+}
+
+void NamEditor::setLookAndFeels()
+{
+    juce::Font lnfFont = fontBold;
+    lnfFont.setSizeAndStyle(20.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
+    
+    buttonLnf.setTextFont(lnfFont);
+    buttonLnf.setTextYOffset(1);
+    buttonLnfGlow.setTextFont(lnfFont);
+    buttonLnfGlow.setTextYOffset(1);
+    buttonLnfGlow.setColour(CoolButtons::TextButton::ColourIds::textGlowColourId,
+            audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::ledColourId));
+
+    slimLnfOn.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId, 
+            audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::ledColourId));
+    
+    lnfFont.setSizeAndStyle(17.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
+    loadButtonLnf.setTextFont(lnfFont);
+    loadButtonLnf.setTextYOffset(1);
+
+    meterlnf.setColour(foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::ivory);
+    meterlnf.setColour(foleys::LevelMeter::lmMeterOutlineColour, juce::Colours::transparentWhite);
+    meterlnf.setColour(foleys::LevelMeter::lmMeterBackgroundColour, juce::Colours::transparentWhite);
+
+    lnf.setColour(Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+    lnf.setColour(Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
+    lnf.setColour(Slider::textBoxTextColourId, juce::Colours::ivory);
+    lnf.setColour(juce::PopupMenu::backgroundColourId, juce::Colour::fromString("FF121212").withAlpha(0.8f));
+
+    lnf.setRotarySliderImage(knobImage);
+    lnf.setColour(CoolButtons::Slider::ColourIds::thumbLedOffColourId,
+            audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::knobThumbColourId));
 }

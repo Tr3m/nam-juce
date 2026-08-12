@@ -39,3 +39,5 @@ include_directories(Midi)
 add_subdirectory(LookAndFeel)
 include_directories(LookAndFeel)
 
+add_subdirectory(Preferences)
+include_directories(Preferences)

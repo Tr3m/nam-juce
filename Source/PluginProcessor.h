@@ -9,6 +9,7 @@
 #include "DoublerProcessor.h"
 #include "PresetManager/PresetManager.h"
 #include "Midi/MidiHandler.h"
+#include "Preferences/Preferences.h"
 
 #define NUM_INTERNAL_VALUES 7
 //==============================================================================
@@ -125,6 +126,8 @@ public:
     juce::Value* getStateValue(int index);
     std::array<juce::Value, 5>& getStateValuesArray() { return this->stateValues; };
 
+    Preferences& getPreferences() { return this->preferences; };
+
     enum StateValues
     {
         EQ_BYPASS = 0,
@@ -229,6 +232,8 @@ private:
     void updateStateValues();
     void updateInternalStateValue(const std::string&);
     juce::StringArray ignoredParams {"PRESET_NEXT_ID", "PRESET_PREVIOUS_ID", "MODEL_NEXT_ID", "MODEL_PREVIOUS_ID", "IR_NEXT_ID", "IR_PREVIOUS_ID"};
+    
+    Preferences preferences;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamJUCEAudioProcessor)
 };
