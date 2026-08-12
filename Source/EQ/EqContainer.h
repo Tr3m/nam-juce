@@ -21,8 +21,8 @@ private:
 
     void valueChanged (Value& value ) override;
     
-    juce::ImageButton closeButton;
-    juce::Image xIcon = juce::ImageFileFormat::loadFrom(BinaryData::xIcon_png, BinaryData::xIcon_pngSize);
+    juce::TextButton closeButton;
+    SimpleQuitButtonLNF buttonLnf;
 
     foleys::LevelMeter meterIn{foleys::LevelMeter::SingleChannel}, meterOut{foleys::LevelMeter::SingleChannel};
     MeterLookAndFeel meterlnf;

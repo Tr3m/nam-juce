@@ -3,6 +3,7 @@
 
 #include <JuceHeader.h>
 #include "../Mappings.h"
+#include "../../LookAndFeel/LookAndFeel.h"
 
 class MidiEntryComponent : public juce::Component,
                            public juce::ComboBox::Listener
@@ -45,7 +46,8 @@ public:
 
         deleteButton.reset(new juce::TextButton());
         addAndMakeVisible(deleteButton.get());
-        deleteButton->setButtonText("X");
+        // deleteButton->setButtonText("X");
+        deleteButton->setLookAndFeel(&lnf);
         deleteButton->onClick = [this]
         { 
             DBG("Deleting mapping for " + mapping.parameterName);
@@ -111,6 +113,7 @@ private:
     std::unique_ptr<juce::ComboBox> paramComboBox, valueComboBox, channelComboBox;
     std::unique_ptr<juce::TextButton> deleteButton;
     juce::StringArray paramIDs, paramNames;
+    SimpleQuitButtonLNF lnf;
     
     // Parent Callbacks
     std::function<void(uint32_t)> deletePressed;

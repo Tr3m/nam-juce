@@ -1,6 +1,7 @@
 #ifndef __MIDI_MAPPINGS_COMPONENT_WRAPPER_H__
 #define __MIDI_MAPPINGS_COMPONENT_WRAPPER_H__
 
+#include "../../LookAndFeel/TextButtonLookAndFeel.h"
 #include "MidiMappingsComponent.h"
 
 class MidiMappingsComponentWrapper : public juce::Component,
@@ -22,7 +23,7 @@ public:
         
         closeButton.reset(new juce::TextButton("X"));
         addAndMakeVisible(closeButton.get());
-        closeButton->setLookAndFeel(&lnf);
+        closeButton->setLookAndFeel(&buttonLnf);
         closeButton->onClick = [this] { this->destroy(); };
         closeButton->setAlwaysOnTop(true);
 
@@ -111,6 +112,7 @@ private:
     std::unique_ptr<MidiMappingsComponentWrapper>& self;
     std::unique_ptr<juce::TextButton> closeButton, ccButton, pcButton;
     SimpleTextButtonLNF lnf;
+    SimpleQuitButtonLNF buttonLnf;
 
     NamJUCEAudioProcessor& audioProcessor;
 

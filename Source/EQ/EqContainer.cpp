@@ -27,8 +27,7 @@ EqContainer::EqContainer(NamJUCEAudioProcessor& p, std::unique_ptr<EqContainer>&
     dummyEditor.setAlpha(0.6f);
 
     addAndMakeVisible(&closeButton);
-    closeButton.setImages(false, true, false, xIcon, 0.7f, juce::Colours::transparentWhite, xIcon, 1.0f,
-            juce::Colours::transparentWhite, xIcon, 0.65f, juce::Colours::transparentWhite, 0.0f);
+    closeButton.setLookAndFeel(&buttonLnf);
 
     closeButton.onClick = [this] 
     {
@@ -59,7 +58,7 @@ void EqContainer::resized ()
     dummyEditor.setBounds(0, eqEditor.getX() - 205, getWidth(), getHeight());
     dummyEditor.setTransform(juce::AffineTransform::verticalFlip(dummyEditor.getHeight()));
 
-    closeButton.setBounds(getWidth() - 43, 25, 20, 20);
+    closeButton.setBounds(getWidth() - 55, 41, 35, 35);
 
     int meterHeight = 255;
     int meterWidth = 20;
