@@ -2,6 +2,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PresetManager.h"
 #include "../Preferences/Preferences.h"
+#include "../LookAndFeel/LookAndFeel.h"
 
 class PresetManagerComponent : public juce::Component, public juce::ComboBox::Listener
 {
@@ -33,6 +34,7 @@ private:
     float barAlpha{0.4f};
 
     juce::LookAndFeel_V4 lnf;
+    ComboBoxLNF cbLnf;
 
     juce::TextButton testButton;
     juce::TextEditor presetName;

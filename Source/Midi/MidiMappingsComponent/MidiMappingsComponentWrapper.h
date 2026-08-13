@@ -12,11 +12,6 @@ public:
     MidiMappingsComponentWrapper(NamJUCEAudioProcessor& p, std::unique_ptr<MidiMappingsComponentWrapper>& selfRef)
         : self(selfRef), audioProcessor(p)
     {
-        lnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
-        lnf.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
-        lnf.setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
-        lnf.setColour(juce::TextEditor::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
-
         mappingsComp.reset(new MidiMappingsComponent(p, MidiHandler::EntryTypes::Parameter));
         mappingsComp->setLookAndFeel(&lnf);
         addAndMakeVisible(mappingsComp.get());

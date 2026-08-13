@@ -9,7 +9,10 @@ PresetManagerComponent::PresetManagerComponent(PresetManager& pm, std::function<
 
 void PresetManagerComponent::constructUI()
 {
-    lnf.setColour(juce::PopupMenu::backgroundColourId, preferences.popupMenuColour);
+    cbLnf.setColour(juce::PopupMenu::backgroundColourId, preferences.popupMenuColour);
+    cbLnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
+    cbLnf.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::transparentBlack);
+
     lnf.setColour(juce::TextEditor::textColourId, juce::Colours::aqua);
     lnf.setColour(juce::TextEditor::backgroundColourId, juce::Colours::darkgrey.withAlpha(0.7f));
 
@@ -23,9 +26,7 @@ void PresetManagerComponent::constructUI()
     presetComboBox.setJustificationType(juce::Justification::centredLeft);
     presetComboBox.addListener(this);
 
-    presetComboBox.setLookAndFeel(&lnf);
-    presetComboBox.setColour(juce::ComboBox::backgroundColourId, juce::Colours::darkgrey.withAlpha(0.0f));
-    presetComboBox.setColour(juce::ComboBox::outlineColourId, juce::Colours::transparentBlack.withAlpha(0.0f));
+    presetComboBox.setLookAndFeel(&cbLnf);
     presetComboBox.setAlpha(0.9f);
 
     loadComboBox();

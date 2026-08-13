@@ -71,6 +71,7 @@ private:
     CoolSliderLookAndFeel slimLnfOff {CoolSliderLookAndFeel::ThumbStyles::withLed, false};
 
     CoolButtonLookAndFeel buttonLnf, buttonLnfGlow{true}, loadButtonLnf;
+    ComboBoxLNF cbLnf;
 
     int screensOffset = 46;
     int togleButtonXOffset = 4;

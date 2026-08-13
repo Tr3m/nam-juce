@@ -11,6 +11,7 @@ TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p,
     colourSchemeChanged(std::move(updateColourScheme))
 {
     lnf.setColour(juce::PopupMenu::backgroundColourId, audioProcessor.getPreferences().popupMenuColour);
+    lnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
 
     addAndMakeVisible(&pmc);
     pmc.setColour(juce::Colours::transparentWhite, 0.0f);

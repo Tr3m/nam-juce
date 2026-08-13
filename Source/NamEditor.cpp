@@ -217,7 +217,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     modelComboBox->addListener(this);
     modelComboBox->setAlpha(0.0f);
     modelComboBox->setBounds(modelNameBox->getBounds());
-    modelComboBox->setLookAndFeel(&lnf);
+    modelComboBox->setLookAndFeel(&cbLnf);
 
     // IR Combo Box
     irComboBox.reset(new juce::ComboBox("IrComboBox"));
@@ -225,7 +225,7 @@ NamEditor::NamEditor(NamJUCEAudioProcessor& p)
     irComboBox->addListener(this);
     irComboBox->setAlpha(0.0f);
     irComboBox->setBounds(irNameBox->getBounds());
-    irComboBox->setLookAndFeel(&lnf);
+    irComboBox->setLookAndFeel(&cbLnf);
 
     
     initializeButton("PrevModelButton", "<", prevModelButton,
@@ -711,7 +711,9 @@ void NamEditor::setLookAndFeels()
     lnf.setColour(Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     lnf.setColour(Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
     lnf.setColour(Slider::textBoxTextColourId, juce::Colours::ivory);
-    lnf.setColour(juce::PopupMenu::backgroundColourId, preferences.popupMenuColour);
+
+    cbLnf.setColour(juce::PopupMenu::backgroundColourId, preferences.popupMenuColour);
+    cbLnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
 
     lnf.setRotarySliderImage(knobImage);
     lnf.setColour(CoolButtons::Slider::ColourIds::thumbLedOffColourId,

@@ -50,7 +50,7 @@ private:
 
     juce::Colour backgroundColour{juce::Colours::transparentBlack};
 
-    juce::LookAndFeel_V4 lnf;
+    ComboBoxLNF lnf;
 
     SafePointer<DialogWindow> dialogWindow;
     juce::URL modelsURL{"https://www.tone3000.com/"};

@@ -19,6 +19,12 @@ public:
             ccChanged(std::move(changeCC)), channelChanged(std::move(changeChannel)),
             paramIdChanged(std::move(changeParameter))
     {
+
+        cbLNF.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
+        cbLNF.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
+        cbLNF.setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
+        cbLNF.setColour(juce::TextEditor::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
+
         paramComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(paramComboBox.get());
         for (int i = 0; i < paramIDs.size(); ++i)
@@ -26,6 +32,7 @@ public:
         
         paramComboBox->setSelectedId(paramNames.indexOf(mapping.parameterName) + 1, juce::NotificationType::dontSendNotification);
         paramComboBox->addListener(this);
+        paramComboBox->setLookAndFeel(&cbLNF);
 
         valueComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(valueComboBox.get());
@@ -34,6 +41,7 @@ public:
 
         valueComboBox->setSelectedId(mapping.ccNumber + 1, juce::NotificationType::dontSendNotification);
         valueComboBox->addListener(this);
+        valueComboBox->setLookAndFeel(&cbLNF);
 
         channelComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(channelComboBox.get());
@@ -43,6 +51,7 @@ public:
 
         channelComboBox->setSelectedId(mapping.channel + 1, juce::NotificationType::dontSendNotification);
         channelComboBox->addListener(this);
+        channelComboBox->setLookAndFeel(&cbLNF);
 
         deleteButton.reset(new juce::TextButton());
         addAndMakeVisible(deleteButton.get());
@@ -114,6 +123,7 @@ private:
     std::unique_ptr<juce::TextButton> deleteButton;
     juce::StringArray paramIDs, paramNames;
     SimpleQuitButtonLNF lnf;
+    ComboBoxLNF cbLNF;
     
     // Parent Callbacks
     std::function<void(uint32_t)> deletePressed;
