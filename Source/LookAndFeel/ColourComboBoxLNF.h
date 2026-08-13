@@ -33,7 +33,7 @@ public:
     {
         //Background and border
         auto cornerSize = box.findParentComponentOfClass<ChoicePropertyComponent>() != nullptr ? 0.0f : 3.0f;
-        Rectangle<int> boxBounds (0, 0, width, height);
+        juce::Rectangle<int> boxBounds (0, 0, width, height);
 
         g.setColour (box.findColour (ComboBox::backgroundColourId));
         g.fillRoundedRectangle (boxBounds.toFloat(), cornerSize);
@@ -58,7 +58,7 @@ public:
 
         // Draw the arrow...
         /*
-        Rectangle<int> arrowZone (width - 30, 0, 20, height);
+        juce::Rectangle<int> arrowZone (width - 30, 0, 20, height);
         Path path;
         path.startNewSubPath ((float) arrowZone.getX() + 3.0f, (float) arrowZone.getCentreY() - 2.0f);
         path.lineTo ((float) arrowZone.getCentreX(), (float) arrowZone.getCentreY() + 3.0f);
