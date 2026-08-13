@@ -3,6 +3,7 @@
 #include "LookAndFeel/LookAndFeel.h"
 #include "AssetManager.h"
 #include "PresetManager/PresetManagerComponent.h"
+#include "Preferences/PreferencesWindow.h"
 #include <CustomStandaloneWindow/CustomStandaloneFilterWindow.h>
 
 class TopBarComponent : public juce::AudioProcessorEditor, public juce::ComboBox::Listener
@@ -10,7 +11,8 @@ class TopBarComponent : public juce::AudioProcessorEditor, public juce::ComboBox
 public:
     TopBarComponent(NamJUCEAudioProcessor&, std::function<void()>&& updateFunction, 
                     std::function<void(juce::String)>&& showSavePresetDialogFunction,
-                    std::function<void()>&& showMidiMappingsFunction);
+                    std::function<void()>&& showMidiMappingsFunction,
+                    std::function<void()>&& updateColourScheme);
 
     ~TopBarComponent() override;
 
@@ -25,6 +27,7 @@ public:
     enum DropdownOptions
     {
         AudioSettings = 0,
+        Preferences,
         MidiMappings,
         GetModels,
         Info
@@ -53,6 +56,9 @@ private:
     juce::URL modelsURL{"https://www.tone3000.com/"};
 
     std::function<void()> showMidiMappings;
+
+    void showPreferencesWindow();
+    std::function<void()> colourSchemeChanged;
 
     NamJUCEAudioProcessor& audioProcessor;
 

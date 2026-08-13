@@ -10,5 +10,6 @@ PRIVATE
     CoolButtonLookAndFeel.h
     CoolSliderLookAndFeel.cpp
     CoolSliderLookAndFeel.h
+    ColourComboBoxLNF.h
     ColourIds.h
 )

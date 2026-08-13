@@ -122,4 +122,5 @@ private:
 
     void setGlowButtonLnf(std::unique_ptr<juce::TextButton>&, bool);
     void setLookAndFeels();
+    void updateColourScheme();
 };

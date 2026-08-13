@@ -1,8 +1,8 @@
 #include "NamEditor.h"
 
 NamEditor::NamEditor(NamJUCEAudioProcessor& p)
-    : AudioProcessorEditor(&p), audioProcessor(p), topBar(p, [&]() { updateAfterPresetLoad(); },
-            [&](const juce::String& presetName) { showSaveDialog(presetName); }, [&](){ showMappingsComponent(); })
+    : AudioProcessorEditor(&p), audioProcessor(p), topBar(p, [&]() { updateAfterPresetLoad(); }, 
+            [&](const juce::String& presetName) { showSaveDialog(presetName); }, [&](){ showMappingsComponent(); }, [&]() { this->updateColourScheme(); })
 {
     assetManager.reset(new AssetManager());
     this->setLookAndFeels();
@@ -708,4 +708,14 @@ void NamEditor::setLookAndFeels()
     lnf.setRotarySliderImage(knobImage);
     lnf.setColour(CoolButtons::Slider::ColourIds::thumbLedOffColourId,
             audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::knobThumbColourId));
+}
+
+void NamEditor::updateColourScheme()
+{
+    this->setLookAndFeels();
+
+    if (eqEditor != nullptr)
+        eqEditor->updateGraphics();
+
+    this->repaint();
 }

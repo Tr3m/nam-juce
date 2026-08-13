@@ -1,7 +1,14 @@
 #include "TopBarComponent.h"
 
-TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p, std::function<void()>&& updateFunction, std::function<void(juce::String)>&& showSavePresetDialogFunction, std::function<void()>&& showMidiMappingsFunction)
-    : AudioProcessorEditor(&p), audioProcessor(p), pmc(p.getPresetManager(), std::move(updateFunction), std::move(showSavePresetDialogFunction)), showMidiMappings(std::move(showMidiMappingsFunction))
+TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p,
+        std::function<void()>&& updateFunction,
+        std::function<void(juce::String)>&& showSavePresetDialogFunction,
+        std::function<void()>&& showMidiMappingsFunction,
+        std::function<void()>&& updateColourScheme)
+    : AudioProcessorEditor(&p), audioProcessor(p),
+    pmc(p.getPresetManager(), std::move(updateFunction), std::move(showSavePresetDialogFunction)),
+    showMidiMappings(std::move(showMidiMappingsFunction)),
+    colourSchemeChanged(std::move(updateColourScheme))
 {
     lnf.setColour(juce::PopupMenu::backgroundColourId, Colours::grey.withAlpha(0.6f));
 
@@ -27,9 +34,10 @@ TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p, std::function<void()>
     settingsDropdown->setVisible(false);
     if (JUCEApplication::isStandaloneApp())
         settingsDropdown->addItem(TRANS("Audio/Midi Settings..."), 1);
-    settingsDropdown->addItem(TRANS("Midi Mappings"), 2);
-    settingsDropdown->addItem(TRANS("Get Models..."), 3);
-    settingsDropdown->addItem(TRANS("Info"), 4);
+    settingsDropdown->addItem(TRANS("Preferences..."), 2);
+    settingsDropdown->addItem(TRANS("Midi Mappings"), 3);
+    settingsDropdown->addItem(TRANS("Get Models..."), 4);
+    settingsDropdown->addItem(TRANS("Info"), 5);
     settingsDropdown->addListener(this);
     settingsDropdown->setLookAndFeel(&lnf);
 }
@@ -65,6 +73,9 @@ void TopBarComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
             case DropdownOptions::AudioSettings:
                 if (JUCEApplication::isStandaloneApp())
                     juce::StandalonePluginHolder::getInstance()->showAudioSettingsDialog();
+                break;
+            case DropdownOptions::Preferences:
+                this->showPreferencesWindow();
                 break;
             case DropdownOptions::MidiMappings:
                 showMidiMappings();
@@ -115,4 +126,30 @@ void TopBarComponent::openInfoWindow(juce::String m)
 
     if (dialogWindow != nullptr)
         dialogWindow->centreWithSize(300, 200);
+}
+
+void TopBarComponent::showPreferencesWindow()
+{
+    SafePointer<DialogWindow> dialogWindow;
+    
+    juce::DialogWindow::LaunchOptions options;
+    auto* preferencesComponent = new PreferencesWindow(audioProcessor, [&]() { this->colourSchemeChanged(); }); 
+    options.content.setOwned(preferencesComponent);
+
+    juce::Rectangle<int> area(0, 0, 500, 500);
+
+    options.content->setSize(area.getWidth(), area.getHeight() + 10);
+
+    options.dialogTitle = "Preferences";
+    options.dialogBackgroundColour = juce::Colours::darkgrey;
+    options.escapeKeyTriggersCloseButton = true;
+    options.useNativeTitleBar = true;
+    options.resizable = true;
+    options.escapeKeyTriggersCloseButton = true;
+
+    dialogWindow = options.launchAsync();
+    dialogWindow->setResizeLimits(500, 400, 600, 800);
+    
+    if (dialogWindow != nullptr)
+        dialogWindow->centreWithSize(500, 500);
 }
