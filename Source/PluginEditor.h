@@ -20,6 +20,7 @@ public:
     float calculateEditorScale(int currentWidth);
 
 private:
+    int width{950}, height{650};
     NamEditor namEditor;
 
     NamJUCEAudioProcessor& audioProcessor;

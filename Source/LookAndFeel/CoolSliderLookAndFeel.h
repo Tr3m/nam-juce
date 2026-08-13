@@ -42,6 +42,8 @@ public:
     
     void setRotarySliderImage(const juce::Image&);
 
+    void setOffsetDeficit(int, int);
+
     enum ThumbStyles
     {
         regular = 0,
@@ -60,6 +62,8 @@ private:
     int rotarySliderDrawMethod {RotarySliderDrawMethods::paint};
     float rotarySliderTumbOffset {17.0f};
     float rotarySliderThumbScale {0.72f};
+    int offsetDeficitX {0};
+    int offsetDeficitY {0};
 
     bool glowEnabled {false};
     bool trackInnerGlowEnabled {false};

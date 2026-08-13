@@ -622,6 +622,9 @@ void NamEditor::showEqModule()
     addAndMakeVisible(eqEditor.get());
     audioProcessor.eqModuleVisible = true;
     eqEditor->setBounds(0, 0, 950, 650);
+
+    if (this->parentWidth < 950)
+        eqEditor->scaleFactorChanged(this->parentWidth, this->parentHeight);
 }
 
 void NamEditor::showMappingsComponent()
@@ -724,4 +727,35 @@ void NamEditor::updateColourScheme()
         eqEditor->updateGraphics();
 
     this->repaint();
+}
+
+// Rescale workaround
+void NamEditor::scaleFactorChanged(int parentWidth, int parentHeight)
+{
+    // DBG(juce::String(parentWidth) + "x" + juce::String(parentHeight));
+    if (eqEditor != nullptr)
+        eqEditor->scaleFactorChanged(parentWidth, parentHeight);
+
+    int x = 0;
+    int y = 0;
+
+    if (parentWidth < 950)
+    {
+        x = 2;
+        y = 2;
+    }
+    else
+    {
+        x = 0;
+        y = 0;
+    }
+
+    buttonLnf.setOffsetDeficit(x, y);
+    buttonLnfGlow.setOffsetDeficit(x, y);
+    loadButtonLnf.setOffsetDeficit(x, y);
+
+    this->repaint();
+
+    this->parentWidth = parentWidth;
+    this->parentHeight = parentHeight;
 }

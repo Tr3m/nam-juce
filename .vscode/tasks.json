@@ -14,6 +14,18 @@
         }
       },
       {
+        "label": "build-debug-macos",
+        "type": "shell",
+        "command": "cmake -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build -- -j $(sysctl -n hw.physicalcpu)",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "options": {
+          "cwd": "${workspaceFolder}"
+        }
+      },
+      {
         "label": "build-release-linux",
         "type": "shell",
         "command": "cmake -B build -DUSE_NATIVE_ARCH=1 && cmake --build build -- -j $(nproc)",
@@ -26,7 +38,7 @@
         }
     },
     {
-      "label": "run-release",
+      "label": "run-release-linux",
       "type": "shell",
       "command": "cmake -B build -DUSE_NATIVE_ARCH=1 && cmake --build build -- -j $(nproc) && ./build/NEURAL_AMP_MODELER_artefacts/Release/Standalone/Neural\\ Amp\\ Modeler ",
       "group": {

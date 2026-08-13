@@ -71,7 +71,7 @@ public:
         
         if (colourSchemeComboBox != nullptr)
         {
-            colourSchemeComboBox->setBounds(r.removeFromTop(optionEntryHeight));
+            colourSchemeComboBox->setBounds(r.removeFromTop(optionEntryHeight).withWidth(r.getWidth() / 3));
             r.removeFromTop(spacing);
         }
 

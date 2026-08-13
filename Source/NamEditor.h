@@ -28,6 +28,8 @@ public:
     void comboBoxChanged (juce::ComboBox* comboBox) override;
     void valueChanged (Value& value ) override;
 
+    void scaleFactorChanged(int, int);
+
     void setToneStackEnabled (bool toneStackEnabled);
 
     void loadModelButtonClicked ();
@@ -100,6 +102,7 @@ private:
     juce::Font fontBold{Font{juce::Typeface::createSystemTypefaceFor(BinaryData::MohaveBold_ttf, BinaryData::MohaveBold_ttfSize)}};
 
     juce::TooltipWindow tooltipWindow{this, 300};
+    int parentWidth {950} , parentHeight {650};
 
     NamJUCEAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamEditor)

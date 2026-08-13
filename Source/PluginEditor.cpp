@@ -27,7 +27,10 @@ void NamJUCEAudioProcessorEditor::paint(juce::Graphics& g) {}
 
 void NamJUCEAudioProcessorEditor::resized()
 {
-    namEditor.setScaleFactor(calculateEditorScale(float(getWidth()))); 
+    this->width = getWidth();
+    this->height = getHeight();
+    namEditor.setScaleFactor(calculateEditorScale(float(getWidth())));
+    namEditor.scaleFactorChanged(width, height);
 }
 
 float NamJUCEAudioProcessorEditor::calculateEditorScale(int currentWidth)

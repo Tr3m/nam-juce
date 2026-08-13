@@ -182,7 +182,9 @@ void CoolSliderLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, in
             // g.setColour(juce::Colours::grey); //Led Off colour
             g.setColour(thumbLedBackgroundColour); //Led Off colour
             
-            // Thumb Inner Glow
+            // Thumb Inner Shadow 
+            innerThumbShadowOffset = { 1 + offsetDeficitX, 1 + offsetDeficitY };
+            innerThumbShadow = { innerThumbShadowColor, innerThumbShadowRadius, innerThumbShadowOffset, innerThumbShadowSpread };
             innerThumbShadow.render(g, thumbTrack);
             
             if (thumbStyle == ThumbStyles::withLed)
@@ -400,4 +402,10 @@ void CoolSliderLookAndFeel::setRotarySliderThumbOffset (float offset)
 void CoolSliderLookAndFeel::setRotarySliderImage(const juce::Image& image)
 {
     this->knobImage = image;
+}
+
+void CoolSliderLookAndFeel::setOffsetDeficit(int newOffsetX, int newOffsetY)
+{
+    this->offsetDeficitX = newOffsetX;
+    this->offsetDeficitY = newOffsetY;
 }

@@ -14,6 +14,8 @@ public:
     void resized () override;
     void updateGraphics();
 
+    void scaleFactorChanged(int, int);
+
 
 private:
     EqEditor eqEditor, dummyEditor;

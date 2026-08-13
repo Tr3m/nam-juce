@@ -30,6 +30,8 @@ public:
     void setButtonStyle(int);
 
     void setButtonCornerRadius(int);
+
+    void setOffsetDeficit(int, int);
     
     enum ButtonStyles
     {
@@ -41,6 +43,8 @@ private:
     int buttonStyle {ButtonStyles::Rectangular};
     int buttonCornderRadius {6};
     bool glowEnabled {false};
+    int offsetDeficitX {0};
+    int offsetDeficitY {0};
 
     juce::Colour textColour {juce::Colour::fromString("FF969696")};
     float textSize {16.0f};

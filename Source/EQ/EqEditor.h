@@ -50,6 +50,7 @@ public:
     };
 
     void updateGraphics ();
+    void scaleFactorChanged(int, int);
 
 private:
     juce::Image background = juce::ImageFileFormat::loadFrom(BinaryData::eqBackground_png, BinaryData::eqBackground_pngSize);

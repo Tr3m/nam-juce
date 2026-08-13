@@ -52,6 +52,31 @@
             ],
             "preLaunchTask": "build-debug-linux",
             "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "Debug MacOS",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/NEURAL_AMP_MODELER_artefacts/Debug/Standalone/Neural Amp Modeler.app/Contents/MacOS/Neural Amp Modeler",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "build-debug-macos"
         }
     ]
 }

@@ -79,3 +79,10 @@ void EqContainer::valueChanged (Value& value )
     if (value.refersToSameSourceAs(*audioProcessor.getStateValue(NamJUCEAudioProcessor::StateValues::EQ_BYPASS)))
         updateGraphics();
 }
+
+void EqContainer::scaleFactorChanged(int parentWidth, int parentHeight)
+{
+    eqEditor.scaleFactorChanged(parentWidth, parentHeight);
+    dummyEditor.scaleFactorChanged(parentWidth, parentHeight);
+    // this->repaint();
+}

@@ -131,3 +131,22 @@ void EqEditor::updateGraphics()
 
     // this->repaint();
 }
+
+void EqEditor::scaleFactorChanged(int parentWidth, int parentHeight)
+{
+    int x = 0;
+    int y = 0;
+
+    if (parentWidth < 950)
+    {
+        x = 1;
+        y = 1;
+    }
+    else
+    {
+        x = 0;
+        y = 0;
+    }
+
+    sliderLnf.setOffsetDeficit(x, y);
+}

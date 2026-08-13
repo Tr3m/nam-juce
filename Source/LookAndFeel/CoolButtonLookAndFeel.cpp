@@ -88,14 +88,14 @@ void CoolButtonLookAndFeel::drawRectangularButton(juce::Graphics& g, juce::Butto
 
     if (isDown)
     {
-        innerShadowOffset = {0, -2};
+        innerShadowOffset = {0, -2 - this->offsetDeficitY};
         innerShadowRadius = 0;
         innerShadowSpread = 0;
         innerShadow = { innerShadowColor, innerShadowRadius, innerShadowOffset, innerShadowSpread };
     }
     else
     {
-        innerShadowOffset = {2, 2};
+        innerShadowOffset = {2 + this->offsetDeficitX, 2 + this->offsetDeficitY};
         innerShadowRadius = 0;
         innerShadowSpread = 0;
         innerShadow = { innerShadowColor, innerShadowRadius, innerShadowOffset, innerShadowSpread };
@@ -283,4 +283,10 @@ void CoolButtonLookAndFeel::setButtonStyle(int buttonStyle)
 void CoolButtonLookAndFeel::setButtonCornerRadius(int newRadius)
 {
     this->buttonCornderRadius = newRadius;
+}
+
+void CoolButtonLookAndFeel::setOffsetDeficit(int newOffsetX, int newOffsetY)
+{
+    this->offsetDeficitX = newOffsetX;
+    this->offsetDeficitY = newOffsetY;
 }
