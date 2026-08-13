@@ -44,11 +44,14 @@ void EqProcessor::pushParametersToTree(std::vector<std::unique_ptr<juce::RangedA
     parameters.push_back(std::make_unique<juce::AudioParameterBool>("EQ_BYPASS_STATE_ID", "EQ Active", false, "Ten Band EQ Active"));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("EQ_INPUT_GAIN_ID", "EQ Input Gain", -12.0, 12.0, 0.0));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("EQ_OUTPUT_GAIN_ID", "EQ Output Gain", -12.0, 12.0, 0.0));
+    
+
+    auto range = juce::NormalisableRange<float>(-12.0f, 12.0f, 0.1f);
 
     // Ten Band Eq
     for (int band = 0; band <= 9; ++band)
         parameters.push_back(std::make_unique<juce::AudioParameterFloat>(
-            "TEN_BAND_" + std::to_string(band + 1) + "_ID", "EQ Band " + std::to_string(band + 1), -12.0, 12.0, 0.0));
+            "TEN_BAND_" + std::to_string(band + 1) + "_ID", "EQ Band " + std::to_string(band + 1), range, 0.0));
 
     DBG("EQ Parameters pushed to apvts...");
 }

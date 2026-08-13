@@ -2,7 +2,8 @@
 
 EqEditor::EqEditor(NamJUCEAudioProcessor& p, bool drawFade) : AudioProcessorEditor(&p), audioProcessor(p)
 {
-    sliderLnf.setColour(juce::BubbleComponent::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
+    sliderLnf.setColour(juce::BubbleComponent::backgroundColourId, audioProcessor.getPreferences().popupMenuColour);
+    sliderLnf.setColour(juce::BubbleComponent::ColourIds::outlineColourId, juce::Colours::snow.withAlpha(0.25f));
         
     addAndMakeVisible(&inGainSlider);
     inGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);

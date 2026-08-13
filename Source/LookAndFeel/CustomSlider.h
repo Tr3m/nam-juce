@@ -32,10 +32,12 @@ public:
                 break;
 
             case SliderTypes::EQ_Slider:
-                if (value > 0)
-                    return "+" + juce::String(value) + this->getTextValueSuffix();
+                if (value == 0)
+                    return juce::String(static_cast<int>(value)) + this->getTextValueSuffix();
+                else if (value > 0)
+                    return "+" + juce::String(std::round(value * 10.0) / 10.0) + this->getTextValueSuffix();
                 else 
-                    return juce::String(value) + this->getTextValueSuffix();
+                    return juce::String(std::round(value * 10.0) / 10.0) + this->getTextValueSuffix();
                 break;
             case SliderTypes::Slim_Slider:
                 return "Slim: " + String(value);

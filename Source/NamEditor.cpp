@@ -344,7 +344,6 @@ void NamEditor::paint(juce::Graphics& g)
     int titleWidth = getWidth() / 2 - 60;
     int titleHeight = 62;
     juce::Rectangle<int> titleArea (getWidth() / 2 - titleWidth / 2, 50, titleWidth, titleHeight);
-    // g.setColour(juce::Colour::fromString("#FFad7e55"));
     g.setColour(audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::titleColourId));
     g.fillRect(titleArea);
 
@@ -718,6 +717,10 @@ void NamEditor::setLookAndFeels()
     lnf.setRotarySliderImage(knobImage);
     lnf.setColour(CoolButtons::Slider::ColourIds::thumbLedOffColourId,
             preferences.getColourSchemeColour(ColourScheme::ColoursIds::knobThumbColourId));
+
+    lnf.setColour(juce::BubbleComponent::backgroundColourId, audioProcessor.getPreferences().popupMenuColour);
+    lnf.setColour(juce::BubbleComponent::ColourIds::outlineColourId, juce::Colours::snow.withAlpha(0.25f));
+
 }
 
 void NamEditor::updateColourScheme()
