@@ -586,7 +586,7 @@ void NamEditor::populateIrComboBox()
 void NamEditor::updateModelBox()
 {
     modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-    modelNameBox->setText((audioProcessor.isA2Model() ? "[A2] " : "") + audioProcessor.getLastModelName());
+    modelNameBox->setText((audioProcessor.isA2Model() && audioProcessor.getPreferences().showA2Indicator ? "[A2] " : "") + audioProcessor.getLastModelName());
     modelNameBox->setCaretPosition(0);
     clearModelButton->setVisible(audioProcessor.isModelLoaded());
     modelComboBox->setTooltip(juce::String(audioProcessor.getLastModelName()));
@@ -679,6 +679,8 @@ void NamEditor::setGlowButtonLnf(std::unique_ptr<juce::TextButton>& button, bool
 
 void NamEditor::setLookAndFeels()
 {
+    auto preferences = audioProcessor.getPreferences();
+
     juce::Font lnfFont = fontBold;
     lnfFont.setSizeAndStyle(20.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
     
@@ -687,10 +689,10 @@ void NamEditor::setLookAndFeels()
     buttonLnfGlow.setTextFont(lnfFont);
     buttonLnfGlow.setTextYOffset(1);
     buttonLnfGlow.setColour(CoolButtons::TextButton::ColourIds::textGlowColourId,
-            audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::ledColourId));
+            preferences.getColourSchemeColour(ColourScheme::ColoursIds::ledColourId));
 
     slimLnfOn.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId, 
-            audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::ledColourId));
+            preferences.getColourSchemeColour(ColourScheme::ColoursIds::ledColourId));
     
     lnfFont.setSizeAndStyle(17.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
     loadButtonLnf.setTextFont(lnfFont);
@@ -703,16 +705,17 @@ void NamEditor::setLookAndFeels()
     lnf.setColour(Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     lnf.setColour(Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
     lnf.setColour(Slider::textBoxTextColourId, juce::Colours::ivory);
-    lnf.setColour(juce::PopupMenu::backgroundColourId, juce::Colour::fromString("FF121212").withAlpha(0.8f));
+    lnf.setColour(juce::PopupMenu::backgroundColourId, preferences.popupMenuColour);
 
     lnf.setRotarySliderImage(knobImage);
     lnf.setColour(CoolButtons::Slider::ColourIds::thumbLedOffColourId,
-            audioProcessor.getPreferences().getColourSchemeColour(ColourScheme::ColoursIds::knobThumbColourId));
+            preferences.getColourSchemeColour(ColourScheme::ColoursIds::knobThumbColourId));
 }
 
 void NamEditor::updateColourScheme()
 {
     this->setLookAndFeels();
+    this->updateModelBox();
 
     if (eqEditor != nullptr)
         eqEditor->updateGraphics();

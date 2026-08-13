@@ -6,11 +6,11 @@ TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p,
         std::function<void()>&& showMidiMappingsFunction,
         std::function<void()>&& updateColourScheme)
     : AudioProcessorEditor(&p), audioProcessor(p),
-    pmc(p.getPresetManager(), std::move(updateFunction), std::move(showSavePresetDialogFunction)),
+    pmc(p.getPresetManager(), std::move(updateFunction), std::move(showSavePresetDialogFunction), p.getPreferences()),
     showMidiMappings(std::move(showMidiMappingsFunction)),
     colourSchemeChanged(std::move(updateColourScheme))
 {
-    lnf.setColour(juce::PopupMenu::backgroundColourId, Colours::grey.withAlpha(0.6f));
+    lnf.setColour(juce::PopupMenu::backgroundColourId, audioProcessor.getPreferences().popupMenuColour);
 
     addAndMakeVisible(&pmc);
     pmc.setColour(juce::Colours::transparentWhite, 0.0f);

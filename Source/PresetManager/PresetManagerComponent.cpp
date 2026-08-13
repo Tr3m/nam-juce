@@ -1,15 +1,15 @@
 #include "PresetManagerComponent.h"
 
 PresetManagerComponent::PresetManagerComponent(PresetManager& pm, std::function<void()>&& updateFunction,
-    std::function<void(const juce::String& currentPreset)>&& presetDialogFunction)
-    : presetManager(pm), parentUpdater(std::move(updateFunction)), showPresetDialog(std::move(presetDialogFunction))
+    std::function<void(const juce::String& currentPreset)>&& presetDialogFunction, Preferences& pref)
+    : presetManager(pm), parentUpdater(std::move(updateFunction)), showPresetDialog(std::move(presetDialogFunction)), preferences(pref)
 {
     constructUI();
 }
 
 void PresetManagerComponent::constructUI()
 {
-    lnf.setColour(juce::PopupMenu::backgroundColourId, juce::Colours::grey.withAlpha(0.6f));
+    lnf.setColour(juce::PopupMenu::backgroundColourId, preferences.popupMenuColour);
     lnf.setColour(juce::TextEditor::textColourId, juce::Colours::aqua);
     lnf.setColour(juce::TextEditor::backgroundColourId, juce::Colours::darkgrey.withAlpha(0.7f));
 

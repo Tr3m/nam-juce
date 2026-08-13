@@ -57,7 +57,9 @@ public:
 
         this->colourScheme = colours[index];
     }
-
+    
+    const juce::Colour popupMenuColour {juce::Colour::fromString("FF121212").withAlpha(0.8f)};
+    bool showA2Indicator {false};
 private:
     ColourScheme colourScheme;
 

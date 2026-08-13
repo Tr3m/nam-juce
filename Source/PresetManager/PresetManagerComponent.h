@@ -1,11 +1,12 @@
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PresetManager.h"
+#include "../Preferences/Preferences.h"
 
 class PresetManagerComponent : public juce::Component, public juce::ComboBox::Listener
 {
 public:
-    PresetManagerComponent(PresetManager&, std::function<void()>&& updateFunction, std::function<void(const juce::String& currentPreset)>&& presetDialogFunction);
+    PresetManagerComponent(PresetManager&, std::function<void()>&& updateFunction, std::function<void(const juce::String& currentPreset)>&& presetDialogFunction, Preferences& pref);
 
     void paint (juce::Graphics& g) override;
     void resized () override;
@@ -53,6 +54,8 @@ private:
 
     void constructUI ();
     void deleteSelectedPreset();
+
+    Preferences& preferences;
 
     std::function<void()> parentUpdater;
     std::function<void(const juce::String& currentPreset)> showPresetDialog;

@@ -13,6 +13,8 @@ public:
     PreferencesComponent(NamJUCEAudioProcessor& p, std::function<void()>&& setParentColour)
         : audioProcessor(p) ,preferences(p.getPreferences()), colourChanged(std::move(setParentColour))
     {
+        auto preferences = audioProcessor.getPreferences();
+
         colourSchemeComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(colourSchemeComboBox.get());
         
@@ -31,11 +33,23 @@ public:
         colourSchemeLabel->setJustificationType(juce::Justification::centredRight);
         colourSchemeLabel->attachToComponent(colourSchemeComboBox.get(), true);
 
-        auto colorScheme = preferences.getColourScheme();
+        a2Indicator.reset(new juce::ToggleButton());
+        addAndMakeVisible(a2Indicator.get());
+        a2Indicator->setToggleState(preferences.showA2Indicator, juce::NotificationType::dontSendNotification);
+        a2Indicator->onClick = [this]
+        {
+            auto& pref = audioProcessor.getPreferences();
+            pref.showA2Indicator = a2Indicator->getToggleState();
+            colourChanged();
+        };
 
-        // lnf.setColour(juce::ComboBox::ColourIds::outlineColourId, colorScheme.main);
-        // lnf.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::transparentBlack);
-        // lnf.setColour(juce::PopupMenu::ColourIds::backgroundColourId, colorScheme.main);
+        a2IndicatorLabel.reset(new juce::Label({}, TRANS("Show A2 Indicator\nin Model Text Box:")));
+        a2IndicatorLabel->setJustificationType(juce::Justification::centredRight);
+        a2IndicatorLabel->attachToComponent(a2Indicator.get(), true);
+
+        lnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::snow.withAlpha(0.5f));
+        lnf.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::transparentBlack);
+        lnf.setColour(juce::PopupMenu::ColourIds::backgroundColourId, preferences.popupMenuColour);
     };
 
     ~PreferencesComponent() 
@@ -57,8 +71,14 @@ public:
         
         if (colourSchemeComboBox != nullptr)
         {
-            colourSchemeComboBox->setBounds(r.removeFromTop(directoryBrowserHeight));
-            r.removeFromTop(5);
+            colourSchemeComboBox->setBounds(r.removeFromTop(optionEntryHeight));
+            r.removeFromTop(spacing);
+        }
+
+        if (a2Indicator != nullptr)
+        {
+            a2Indicator->setBounds(r.removeFromTop(optionEntryHeight + 10));
+            r.removeFromTop(spacing);
         }
 
     };
@@ -108,13 +128,12 @@ private:
     Preferences& preferences;
     int spacing = 5;
     juce::Rectangle<int> componentsArea;
-    juce::String lastPath;
 
-    std::unique_ptr<juce::Label> colourSchemeLabel;
     std::unique_ptr<juce::ComboBox> colourSchemeComboBox;
-    int directoryBrowserHeight = 30;
+    std::unique_ptr<juce::ToggleButton> a2Indicator;
+    int optionEntryHeight = 30;
 
-    std::unique_ptr<juce::Label> comboBoxLabel, directoryBrowserLabel;
+    std::unique_ptr<juce::Label> colourSchemeLabel, a2IndicatorLabel;
 
     juce::TooltipWindow tooltipWindow{this, 300};
 
