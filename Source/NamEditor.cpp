@@ -585,12 +585,15 @@ void NamEditor::populateIrComboBox()
 
 void NamEditor::updateModelBox()
 {
-    modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-    modelNameBox->setText((audioProcessor.isA2Model() && audioProcessor.getPreferences().showA2Indicator ? "[A2] " : "") + audioProcessor.getLastModelName());
-    modelNameBox->setCaretPosition(0);
-    clearModelButton->setVisible(audioProcessor.isModelLoaded());
-    modelComboBox->setTooltip(juce::String(audioProcessor.getLastModelName()));
-    slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
+    if (audioProcessor.isModelLoaded())
+    {
+        modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
+        modelNameBox->setText((audioProcessor.isA2Model() && audioProcessor.getPreferences().showA2Indicator ? "[A2] " : "") + audioProcessor.getLastModelName());
+        modelNameBox->setCaretPosition(0);
+        clearModelButton->setVisible(audioProcessor.isModelLoaded());
+        modelComboBox->setTooltip(juce::String(audioProcessor.getLastModelName()));
+        slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
+    }
 }
 
 void NamEditor::updateIrBox()

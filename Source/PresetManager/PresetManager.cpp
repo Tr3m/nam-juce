@@ -32,20 +32,9 @@ void PresetManager::savePreset(const juce::String& presetName)
 
     currentPreset.setValue(presetName);
 
-    auto state = apvts.copyState();
+    const auto stateXML = this->createXmlFromPluginState(apvts.copyState());
 
-    for (int i = state.getNumChildren(); --i >= 0;)
-    {
-        auto child = state.getChild(i);
-        if (ignoredParams.contains(juce::String(child["id"].toString())))
-            state.removeChild(i, nullptr);
-    }
-
-    const auto stateXML = state.createXml();
-
-    // Stuff to exclude from preset file
-    auto search_paths = stateXML->getChildByName("search_paths");
-    stateXML->removeChildElement(search_paths, true);
+    DBG(stateXML->toString());
 
     const auto presetFile = defaultPresetDirectory.getChildFile(presetName + "." + presetExtension);
     if (!stateXML->writeTo(presetFile))
@@ -53,6 +42,28 @@ void PresetManager::savePreset(const juce::String& presetName)
         DBG("Error creating preset file: " + presetFile.getFullPathName());
         jassertfalse;
     }
+}
+
+std::unique_ptr<juce::XmlElement> PresetManager::createXmlFromPluginState (juce::ValueTree state)
+{
+    // Remove ignored apvts parameters
+    for (int i = state.getNumChildren(); --i >= 0;)
+    {
+        auto child = state.getChild(i);
+        if (ignoredParams.contains(juce::String(child["id"].toString())))
+            state.removeChild(i, nullptr);
+    }
+
+    auto stateXML = state.createXml();
+
+    // Remove plugin state attributes
+    for (const auto& attribute : ignoredAttributes)
+        stateXML->removeAttribute(attribute);
+
+    auto search_paths = stateXML->getChildByName("search_paths");
+    stateXML->removeChildElement(search_paths, true);
+
+    return stateXML;
 }
 
 void PresetManager::deletePreset(const juce::String& presetName)

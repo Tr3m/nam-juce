@@ -35,7 +35,7 @@ class Preferences
 public:
     Preferences()
     {
-        this->colourScheme = colours[0];
+        this->colourScheme = colours[colourSchemeIndex];
     }
 
     const std::vector<ColourScheme>& getColourSchemes() { return this->colours; };
@@ -53,15 +53,20 @@ public:
     void setColourScheme(int index)
     {
         if (index < 0 || index > colours.size() - 1)
-            return;
-
+            index = 0;
+        
+        this->colourSchemeIndex = index;
         this->colourScheme = colours[index];
     }
+
+    int getColourSchemeIndex() { return this->colourSchemeIndex; };
     
     const juce::Colour popupMenuColour {juce::Colour::fromString("FF121212").withAlpha(0.8f)};
     bool showA2Indicator {false};
+
 private:
     ColourScheme colourScheme;
+    int colourSchemeIndex {0};
 
     std::vector<ColourScheme> colours {
         {"#ad7e55", "#ad7e55", "#e8b600", "#ffb400", "#FF8700"},

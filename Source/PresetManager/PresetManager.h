@@ -28,8 +28,11 @@ public:
 
 private:
     void valueTreeRedirected (juce::ValueTree& treeChanged) override;
+    
+    std::unique_ptr<juce::XmlElement> createXmlFromPluginState (juce::ValueTree state);
 
     juce::StringArray ignoredParams {"PRESET_NEXT_ID", "PRESET_PREVIOUS_ID", "MODEL_NEXT_ID", "MODEL_PREVIOUS_ID", "IR_NEXT_ID", "IR_PREVIOUS_ID"};
+    juce::StringArray ignoredAttributes {"SlimSize", "colourScheme", "showA2inTextBox", "ModelPath", "ModelName", "IRPath", "IRName", "LastIrSearchDir", "LastModelSearchDir"};
 
     juce::AudioProcessorValueTreeState& apvts;
     juce::Value currentPreset;

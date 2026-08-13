@@ -637,6 +637,10 @@ void NamJUCEAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     xml->setAttribute("LastIrSearchDir", lastIrSerachDir);
 
     xml->setAttribute("SlimSize", int(this->slimSize * 10));
+    
+    //Preferences
+    xml->setAttribute("colourScheme", preferences.getColourSchemeIndex());
+    xml->setAttribute("showA2inTextBox", preferences.showA2Indicator);
 
     copyXmlToBinary(*xml, destData);
     DBG(xml->toString());
@@ -652,6 +656,12 @@ void NamJUCEAudioProcessor::setStateInformation(const void* data, int sizeInByte
     {
         if(xmlState->hasAttribute("SlimSize"))
             this->slimSize = double(xmlState->getIntAttribute("SlimSize") / 10.0);
+
+        if(xmlState->hasAttribute("colourScheme"))
+            preferences.setColourScheme(xmlState->getIntAttribute("colourScheme"));
+
+        if (xmlState->hasAttribute("showA2inTextBox"))
+            preferences.showA2Indicator = xmlState->getBoolAttribute("showA2inTextBox");
 
         if (xmlState->hasTagName(apvts.state.getType()))
         {
