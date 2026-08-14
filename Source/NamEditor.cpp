@@ -698,7 +698,10 @@ void NamEditor::setLookAndFeels()
 
     slimLnfOn.setColour(CoolButtons::Slider::ColourIds::thumbGlowColourId, 
             preferences.getColourSchemeColour(ColourScheme::ColoursIds::ledColourId));
-    
+
+    slimLnfOn.setColour(juce::BubbleComponent::backgroundColourId, audioProcessor.getPreferences().popupMenuColour);
+    slimLnfOn.setColour(juce::BubbleComponent::ColourIds::outlineColourId, juce::Colours::snow.withAlpha(0.25f));
+
     lnfFont.setSizeAndStyle(17.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
     loadButtonLnf.setTextFont(lnfFont);
     loadButtonLnf.setTextYOffset(1);
