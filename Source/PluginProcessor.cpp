@@ -249,11 +249,11 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendPro
 
         this->updateDirectoryModels(lastModelPath);
     }
-    else 
-    {
-        lastModelName = "";
-        this->isA2 = false;        
-    }
+    // else 
+    // {
+    //     lastModelName = "";
+    //     this->isA2 = false;        
+    // }
 
     return loaded;
 }
@@ -360,10 +360,10 @@ bool NamJUCEAudioProcessor::loadImpulseResponse(juce::File irToLoad, bool suspen
         
         this->updateDirectoryIRs(lastIrPath);
     }
-    else
-    {
-        this->lastIrName = "";
-    }
+    // else
+    // {
+    //     this->lastIrName = "";
+    // }
 
     return loaded;
 }
