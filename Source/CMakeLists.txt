@@ -22,6 +22,7 @@ PRIVATE
     IrProcessor.cpp
     IrProcessor.h
     LedComponent.h
+    InfoComponent.h
 )
 
 add_subdirectory(EQ)

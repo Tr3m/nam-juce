@@ -38,6 +38,7 @@ public:
      * dot/line relative to the center.
     */
     void setRotarySliderThumbOffset (float);
+    void setRotarySliderThumbScale (float);
     int getRotarySliderThumbOffset() { return this->rotarySliderTumbOffset; };
     
     void setRotarySliderImage(const juce::Image&);

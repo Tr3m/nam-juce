@@ -4,6 +4,7 @@
 #include "AssetManager.h"
 #include "PresetManager/PresetManagerComponent.h"
 #include "Preferences/PreferencesWindow.h"
+#include "InfoComponent.h"
 #include <CustomStandaloneWindow/CustomStandaloneFilterWindow.h>
 
 class TopBarComponent : public juce::AudioProcessorEditor, public juce::ComboBox::Listener
@@ -22,7 +23,6 @@ public:
     void setBackgroundColour (juce::Colour colour);
 
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
-    void openInfoWindow (juce::String m);
 
     enum DropdownOptions
     {
@@ -52,8 +52,9 @@ private:
 
     ComboBoxLNF lnf;
 
-    SafePointer<DialogWindow> dialogWindow;
     juce::URL modelsURL{"https://www.tone3000.com/"};
+    
+    void showInfoWindow();
 
     std::function<void()> showMidiMappings;
 

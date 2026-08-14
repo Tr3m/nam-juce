@@ -409,3 +409,8 @@ void CoolSliderLookAndFeel::setOffsetDeficit(int newOffsetX, int newOffsetY)
     this->offsetDeficitX = newOffsetX;
     this->offsetDeficitY = newOffsetY;
 }
+
+void CoolSliderLookAndFeel::setRotarySliderThumbScale (float newScale)
+{
+    this->rotarySliderThumbScale = newScale;
+}

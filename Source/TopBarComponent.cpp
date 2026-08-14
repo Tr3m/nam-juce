@@ -86,8 +86,7 @@ void TopBarComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
                 modelsURL.launchInDefaultBrowser(); 
                 break;
             case DropdownOptions::Info:
-                openInfoWindow("NEURAL AMP MODELER\n(nam-juce)\n\nVersion " + juce::String(PLUG_VERSION)
-                               + "\n\nA JUCE implementation of the Neural Amp Modeler Plugin.");
+                showInfoWindow();
                 break;
             default: break;
         }
@@ -103,16 +102,15 @@ void TopBarComponent::setMenuSelectedId(int id)
         settingsDropdown->setSelectedId(id, juce::NotificationType::sendNotification);
 }
 
-void TopBarComponent::openInfoWindow(juce::String m)
+void TopBarComponent::showInfoWindow()
 {
+    SafePointer<DialogWindow> dialogWindow;
     juce::DialogWindow::LaunchOptions options;
-    auto* label = new Label();
-    label->setText(m, dontSendNotification);
-    label->setColour(Label::textColourId, Colours::whitesmoke);
-    label->setJustificationType(juce::Justification::centred);
-    options.content.setOwned(label);
 
-    juce::Rectangle<int> area(0, 0, 300, 200);
+    auto* infoComponent = new InfoComponent(audioProcessor.getPreferences());
+    options.content.setOwned(infoComponent);
+
+    juce::Rectangle<int> area(0, 0, 300, 260);
 
     options.content->setSize(area.getWidth(), area.getHeight());
 
@@ -124,10 +122,10 @@ void TopBarComponent::openInfoWindow(juce::String m)
 
     dialogWindow = options.launchAsync();
     // dialogWindow->setResizable(true, false);
-    dialogWindow->setResizeLimits(300, 200, 300, 200);
+    dialogWindow->setResizeLimits(300, 260, 300, 260);
 
     if (dialogWindow != nullptr)
-        dialogWindow->centreWithSize(300, 200);
+        dialogWindow->centreWithSize(300, 260);
 }
 
 void TopBarComponent::showPreferencesWindow()

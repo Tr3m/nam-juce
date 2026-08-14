@@ -15,6 +15,8 @@ juce_add_binary_data(BinaryData SOURCES
     slim_thumb_on.png
     Mohave-Bold.ttf
     Mohave-Regular.ttf
+    knob_background.png
+    githubicon.png
     ${SRC_FILES}
 )
 
