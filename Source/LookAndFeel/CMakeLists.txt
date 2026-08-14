@@ -12,4 +12,5 @@ PRIVATE
     CoolSliderLookAndFeel.h
     ComboBoxLookAndFeel.h
     ColourIds.h
+    PrefixedTextEditor.h
 )

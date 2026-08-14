@@ -126,13 +126,13 @@ void NamJUCEAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
     meterOutSource.resize(getTotalNumOutputChannels(), sampleRate * 0.1 / samplesPerBlock);
 
     // Load last NAM Model
-    if (lastModelPath != "null")
+    if (lastModelPath != "null" && modelFound)
     {
         this->updateDirectoryModels(lastModelPath);
         this->loadNamModel(juce::File(lastModelPath));
     }
-    else
-        myNAM.clearModel();
+    // else
+    //     myNAM.clearModel();
 
     // Load last IR
     if (lastIrPath != "null" && irFound)
@@ -161,11 +161,14 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
         if (!fileCheck.exists())
         {
             myNAM.clearModel();
+            modelFound = false;
             lastModelName = "Model File Missing!";
             lastModelPath = modelPath.toStdString();
+            this->isA2 = false;
         }
         else
         {
+            modelFound = true;
             this->loadNamModel(juce::File(modelPath.toStdString()), false);
             // lastModelPath = modelPath.toStdString();
             // lastModelName = fileCheck.getFileNameWithoutExtension().toStdString();
@@ -176,6 +179,7 @@ void NamJUCEAudioProcessor::loadFromPreset(juce::String modelPath, juce::String 
         myNAM.clearModel();
         lastModelPath = "null";
         lastModelName = "";
+        this->isA2 = false;
     }
 
     // Load last IR
@@ -232,6 +236,7 @@ bool NamJUCEAudioProcessor::loadNamModel(juce::File modelToLoad, bool suspendPro
 
     if (loaded)
     {
+        this->modelFound = true;
         auto addons = apvts.state.getOrCreateChildWithName("addons", nullptr);
         lastModelPath = model_path;
         lastModelName = modelToLoad.getFileNameWithoutExtension().toStdString();
@@ -687,13 +692,19 @@ void NamJUCEAudioProcessor::setStateInformation(const void* data, int sizeInByte
                 {
                     juce::File fileCheck{lastModelPath};
                     if (!fileCheck.exists())
+                    {
                         lastModelName = "Model File Missing!";
+                        modelFound = false;
+                    }
+                    else
+                        modelFound = true;
                 }
             }
             catch (const std::exception& e)
             {
                 lastModelPath = "null";
                 lastModelName = "";
+                modelFound = false;
             }
 
             // Try to load last IR

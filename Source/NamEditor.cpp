@@ -498,9 +498,9 @@ void NamEditor::loadIrButtonClicked()
     loadIRButton->setEnabled(true);
 }
 
-void NamEditor::initializeTextBox(const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height)
+void NamEditor::initializeTextBox(const juce::String label, std::unique_ptr<PrefixedTextEditor>& textBox, int x, int y, int width, int height)
 {
-    textBox.reset(new juce::TextEditor(label));
+    textBox.reset(new PrefixedTextEditor());
     addAndMakeVisible(textBox.get());
     textBox->setMultiLine(false);
     textBox->setReturnKeyStartsNewLine(false);
@@ -584,21 +584,20 @@ void NamEditor::populateIrComboBox()
 
 void NamEditor::updateModelBox()
 {
-    if (audioProcessor.isModelLoaded())
-    {
-        modelNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-        modelNameBox->setText((audioProcessor.isA2Model() && audioProcessor.getPreferences().showA2Indicator ? "[A2] " : "") + audioProcessor.getLastModelName());
-        modelNameBox->setCaretPosition(0);
-        clearModelButton->setVisible(audioProcessor.isModelLoaded());
-        modelComboBox->setTooltip(juce::String(audioProcessor.getLastModelName()));
-        slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
-    }
+    modelNameBox->setColour(juce::TextEditor::textColourId, audioProcessor.isModelLoaded() ? juce::Colours::snow : juce::Colours::red);
+    modelNameBox->setText(audioProcessor.getLastModelName() == "null" ? "" : audioProcessor.getLastModelName(), juce::NotificationType::dontSendNotification);
+    modelNameBox->setCaretPosition(0);
+    modelNameBox->setA2(audioProcessor.isA2Model() && audioProcessor.getPreferences().showA2Indicator ? true : false);
+    clearModelButton->setVisible(audioProcessor.isModelLoaded());
+    modelComboBox->setTooltip(juce::String(audioProcessor.getLastModelName()));
+    slimSlider->setLookAndFeel(audioProcessor.isA2Model() ? &slimLnfOn : &slimLnfOff);
+
 }
 
 void NamEditor::updateIrBox()
 {
-    irNameBox->setColour(juce::TextEditor::textColourId, juce::Colours::snow);
-    irNameBox->setText(audioProcessor.getLastIrName());
+    irNameBox->setColour(juce::TextEditor::textColourId, audioProcessor.getIrStatus() ? juce::Colours::snow : juce::Colours::red);
+    irNameBox->setText(audioProcessor.getLastIrName() == "null" ? "" : audioProcessor.getLastIrName());
     irNameBox->setCaretPosition(0);
     clearIrButton->setVisible(audioProcessor.getIrStatus());
     irComboBox->setTooltip(juce::String(audioProcessor.getLastIrName()));

@@ -131,6 +131,7 @@ bool NeuralAmpModeler::isModelLoaded()
 void NeuralAmpModeler::clearModel()
 {
     this->shouldRemoveModel = true;
+    this->modelLoaded = false;
 }
 
 void NeuralAmpModeler::setSlimSize(double size)

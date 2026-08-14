@@ -110,7 +110,7 @@ void TopBarComponent::showInfoWindow()
     auto* infoComponent = new InfoComponent(audioProcessor.getPreferences());
     options.content.setOwned(infoComponent);
 
-    juce::Rectangle<int> area(0, 0, 300, 260);
+    juce::Rectangle<int> area(0, 0, 340, 300);
 
     options.content->setSize(area.getWidth(), area.getHeight());
 
@@ -122,10 +122,10 @@ void TopBarComponent::showInfoWindow()
 
     dialogWindow = options.launchAsync();
     // dialogWindow->setResizable(true, false);
-    dialogWindow->setResizeLimits(300, 260, 300, 260);
+    dialogWindow->setResizeLimits(340, 300, 340, 300);
 
     if (dialogWindow != nullptr)
-        dialogWindow->centreWithSize(300, 260);
+        dialogWindow->centreWithSize(340, 300);
 }
 
 void TopBarComponent::showPreferencesWindow()

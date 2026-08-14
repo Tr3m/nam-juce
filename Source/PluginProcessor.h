@@ -161,6 +161,7 @@ private:
     double slimSize {1.0};
 
     bool isA2 {false};
+    bool modelFound{false};
 
     IrProcessor cab;
     bool irFound{false};

@@ -22,7 +22,7 @@ public:
         knob.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
         knob.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
         knob.setLookAndFeel(&lnf);
-        knob.setRange(0.0f, 1.0f, 0.1f);
+        knob.setRange(0.0f, 1.0f, 0.01f);
         knob.setDoubleClickReturnValue(true, 0.5f);
         knob.setValue(0.5f,juce::NotificationType::dontSendNotification);
 

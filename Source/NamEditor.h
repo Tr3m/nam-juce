@@ -84,7 +84,7 @@ private:
 
     std::unique_ptr<LedComponent> ledComponent;
 
-    std::unique_ptr<juce::TextEditor> modelNameBox, irNameBox;
+    std::unique_ptr<PrefixedTextEditor> modelNameBox, irNameBox;
 
     foleys::LevelMeter meterIn{foleys::LevelMeter::SingleChannel}, meterOut{foleys::LevelMeter::SingleChannel};
     MeterLookAndFeel meterlnf;
@@ -109,7 +109,7 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NamEditor)
 
 private:
-    void initializeTextBox (const juce::String label, std::unique_ptr<juce::TextEditor>& textBox, int x, int y, int width, int height);
+    void initializeTextBox (const juce::String label, std::unique_ptr<PrefixedTextEditor>& textBox, int x, int y, int width, int height);
     void initializeButton (const juce::String label, const juce::String buttonText, std::unique_ptr<juce::ImageButton>& button, int x, int y, int width, int height);
 
     // Pass this to the Preset Manager for updating the gui after loading a new preset.

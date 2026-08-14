@@ -10,3 +10,4 @@
 #include "CoolButtonLookAndFeel.h"
 #include "CoolSliderLookAndFeel.h"
 #include "ComboBoxLookAndFeel.h"
+#include "PrefixedTextEditor.h"
