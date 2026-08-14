@@ -102,6 +102,19 @@ public:
         g.strokePath (path, PathStrokeType (2.0f));
     }
 
+    void preparePopupMenuWindow(juce::Component& window) override
+    {
+        window.setOpaque (false);
+    }
+
+    int getMenuWindowFlags() override
+    {
+        auto flags = LookAndFeel_V4::getMenuWindowFlags();
+        flags &= ~juce::ComponentPeer::windowHasDropShadow;
+
+        return flags;
+    }
+
     void drawPopupMenuBackgroundWithOptions(juce::Graphics& g, int width, int height,
             const juce::PopupMenu::Options& options) override
     {
@@ -111,16 +124,12 @@ public:
 
         g.setColour(findColour(juce::PopupMenu::backgroundColourId));
 
-        #if JUCE_LINUX || JUCE_BSD 
-        g.fillAll(findColour(juce::PopupMenu::backgroundColourId));
-        #else
         g.fillRoundedRectangle(
             0.0f,
             0.0f,
             static_cast<float>(width),
             static_cast<float>(height),
             cornerRadius);
-        #endif
     }
 
 void drawPopupMenuItem (Graphics& g, const juce::Rectangle<int>& area,
@@ -130,7 +139,7 @@ void drawPopupMenuItem (Graphics& g, const juce::Rectangle<int>& area,
                                         const juce::String& shortcutKeyText,
                                         const juce::Drawable* icon, const juce::Colour* const textColourToUse) override
 {
-    constexpr float cornerRadius = 9.0f;
+    constexpr float cornerRadius = 8.0f;
 
     if (isSeparator)
     {
@@ -213,6 +222,35 @@ void drawPopupMenuItem (Graphics& g, const juce::Rectangle<int>& area,
         }
     }
 }
+
+void drawPopupMenuUpDownArrow (Graphics& g, int width, int height, bool isScrollUpArrow) override
+{
+    constexpr float cornerRadius = 12.0f;
+    auto background = findColour (PopupMenu::backgroundColourId);
+
+
+    g.setGradientFill (ColourGradient (background, 0.0f, (float) height * 0.5f,
+                                       background.withAlpha (0.0f),
+                                       0.0f, isScrollUpArrow ? ((float) height) : 0.0f,
+                                       false));
+
+    // g.fillRect (1, 1, width - 2, height - 2);
+    g.fillRoundedRectangle (1, 1, width - 2, height - 2, cornerRadius);
+
+    auto hw = (float) width * 0.5f;
+    auto arrowW = (float) height * 0.3f;
+    auto y1 = (float) height * (isScrollUpArrow ? 0.6f : 0.3f);
+    auto y2 = (float) height * (isScrollUpArrow ? 0.3f : 0.6f);
+
+    Path p;
+    p.addTriangle (hw - arrowW, y1,
+                   hw + arrowW, y1,
+                   hw, y2);
+
+    g.setColour (findColour (PopupMenu::textColourId).withAlpha (0.5f));
+    g.fillPath (p);
+}
+
 
 
 };

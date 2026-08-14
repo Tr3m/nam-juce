@@ -24,6 +24,7 @@ public:
         cbLNF.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
         cbLNF.setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
         cbLNF.setColour(juce::TextEditor::ColourIds::backgroundColourId, juce::Colours::black.withAlpha(0.7f));
+        cbLNF.setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, juce::Colour::fromString("FF2E2E2E").withAlpha(1.0f));
 
         paramComboBox.reset(new juce::ComboBox());
         addAndMakeVisible(paramComboBox.get());

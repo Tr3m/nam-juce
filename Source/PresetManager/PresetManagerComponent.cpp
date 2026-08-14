@@ -10,6 +10,7 @@ PresetManagerComponent::PresetManagerComponent(PresetManager& pm, std::function<
 void PresetManagerComponent::constructUI()
 {
     cbLnf.setColour(juce::PopupMenu::backgroundColourId, preferences.popupMenuColour);
+    cbLnf.setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, preferences.popupMenuSelectionColour);
     cbLnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
     cbLnf.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::transparentBlack);
 

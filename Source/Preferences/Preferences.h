@@ -61,7 +61,8 @@ public:
 
     int getColourSchemeIndex() { return this->colourSchemeIndex; };
     
-    const juce::Colour popupMenuColour {juce::Colour::fromString("FF121212").withAlpha(0.8f)};
+    const juce::Colour popupMenuColour {juce::Colour::fromString("FF121212").withAlpha(0.9f)};
+    const juce::Colour popupMenuSelectionColour {juce::Colour::fromString("FF2E2E2E").withAlpha(1.0f)};
     bool showA2Indicator {false};
 
 private:

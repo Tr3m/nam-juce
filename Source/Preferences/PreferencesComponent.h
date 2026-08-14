@@ -43,9 +43,10 @@ public:
             colourChanged();
         };
 
-        a2IndicatorLabel.reset(new juce::Label({}, TRANS("Show A2 Indicator\nin Model Text Box:")));
+        a2IndicatorLabel.reset(new juce::Label({}, TRANS("Show A2 Indicator:")));
         a2IndicatorLabel->setJustificationType(juce::Justification::centredRight);
         a2IndicatorLabel->attachToComponent(a2Indicator.get(), true);
+        a2IndicatorLabel->setTooltip("Show/Hide A2 indicator in the Model Text Box.");
 
         lnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::snow.withAlpha(0.5f));
         lnf.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::transparentBlack);

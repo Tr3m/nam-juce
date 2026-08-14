@@ -702,6 +702,9 @@ void NamEditor::setLookAndFeels()
     slimLnfOn.setColour(juce::BubbleComponent::backgroundColourId, audioProcessor.getPreferences().popupMenuColour);
     slimLnfOn.setColour(juce::BubbleComponent::ColourIds::outlineColourId, juce::Colours::snow.withAlpha(0.25f));
 
+    slimLnfOff.setColour(juce::BubbleComponent::backgroundColourId, audioProcessor.getPreferences().popupMenuColour);
+    slimLnfOff.setColour(juce::BubbleComponent::ColourIds::outlineColourId, juce::Colours::snow.withAlpha(0.25f));
+
     lnfFont.setSizeAndStyle(17.0f, juce::Font::FontStyleFlags::bold, 1.0f, 0.0f);
     loadButtonLnf.setTextFont(lnfFont);
     loadButtonLnf.setTextYOffset(1);
@@ -715,6 +718,7 @@ void NamEditor::setLookAndFeels()
     lnf.setColour(Slider::textBoxTextColourId, juce::Colours::ivory);
 
     cbLnf.setColour(juce::PopupMenu::backgroundColourId, preferences.popupMenuColour);
+    cbLnf.setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, preferences.popupMenuSelectionColour);
     cbLnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
 
     lnf.setRotarySliderImage(knobImage);

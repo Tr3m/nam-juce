@@ -11,6 +11,7 @@ TopBarComponent::TopBarComponent(NamJUCEAudioProcessor& p,
     colourSchemeChanged(std::move(updateColourScheme))
 {
     lnf.setColour(juce::PopupMenu::backgroundColourId, audioProcessor.getPreferences().popupMenuColour);
+    lnf.setColour(juce::PopupMenu::ColourIds::highlightedBackgroundColourId, audioProcessor.getPreferences().popupMenuSelectionColour);
     lnf.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colours::transparentBlack);
 
     addAndMakeVisible(&pmc);
@@ -116,7 +117,7 @@ void TopBarComponent::openInfoWindow(juce::String m)
     options.content->setSize(area.getWidth(), area.getHeight());
 
     options.dialogTitle = "Info";
-    options.dialogBackgroundColour = juce::Colours::darkgrey;
+    options.dialogBackgroundColour = juce::Colour::fromString("FF2E2E2E");
     options.escapeKeyTriggersCloseButton = true;
     options.useNativeTitleBar = true;
     options.resizable = true;
@@ -142,7 +143,7 @@ void TopBarComponent::showPreferencesWindow()
     options.content->setSize(area.getWidth(), area.getHeight() + 10);
 
     options.dialogTitle = "Preferences";
-    options.dialogBackgroundColour = juce::Colours::darkgrey;
+    options.dialogBackgroundColour = juce::Colour::fromString("FF2E2E2E");
     options.escapeKeyTriggersCloseButton = true;
     options.useNativeTitleBar = true;
     options.resizable = true;
@@ -152,5 +153,5 @@ void TopBarComponent::showPreferencesWindow()
     dialogWindow->setResizeLimits(500, 400, 600, 800);
     
     if (dialogWindow != nullptr)
-        dialogWindow->centreWithSize(500, 500);
+        dialogWindow->centreWithSize(500, 400);
 }
