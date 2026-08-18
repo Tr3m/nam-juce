@@ -642,6 +642,7 @@ void NamJUCEAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     xml->setAttribute("LastIrSearchDir", lastIrSerachDir);
 
     xml->setAttribute("SlimSize", int(this->slimSize * 10));
+    xml->setAttribute("WindowWidth", int(windowWidth));
     
     //Preferences
     xml->setAttribute("colourScheme", preferences.getColourSchemeIndex());
@@ -661,6 +662,9 @@ void NamJUCEAudioProcessor::setStateInformation(const void* data, int sizeInByte
     {
         if(xmlState->hasAttribute("SlimSize"))
             this->slimSize = double(xmlState->getIntAttribute("SlimSize") / 10.0);
+
+        if(xmlState->hasAttribute("WindowWidth"))
+            this->windowWidth = static_cast<float>(xmlState->getIntAttribute("WindowWidth"));
 
         if(xmlState->hasAttribute("colourScheme"))
             preferences.setColourScheme(xmlState->getIntAttribute("colourScheme"));
