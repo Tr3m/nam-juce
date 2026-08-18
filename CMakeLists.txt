@@ -90,20 +90,6 @@ target_sources(${PROJECT_NAME}
 PRIVATE
     Modules/ff_meters/ff_meters.h
     Modules/ff_meters/ff_meters.cpp
-    # Modules/NeuralAmpModelerCore/NAM/activations.cpp
-    # Modules/NeuralAmpModelerCore/NAM/activations.h
-    # Modules/NeuralAmpModelerCore/NAM/convnet.cpp
-    # Modules/NeuralAmpModelerCore/NAM/convnet.h
-    # Modules/NeuralAmpModelerCore/NAM/dsp.cpp
-    # Modules/NeuralAmpModelerCore/NAM/dsp.h
-    # Modules/NeuralAmpModelerCore/NAM/get_dsp.cpp
-    # Modules/NeuralAmpModelerCore/NAM/lstm.cpp
-    # Modules/NeuralAmpModelerCore/NAM/lstm.h
-    # Modules/NeuralAmpModelerCore/NAM/util.cpp
-    # Modules/NeuralAmpModelerCore/NAM/util.h
-    # Modules/NeuralAmpModelerCore/NAM/version.h
-    # Modules/NeuralAmpModelerCore/NAM/wavenet.cpp
-    # Modules/NeuralAmpModelerCore/NAM/wavenet.h
     Modules/AudioDSPTools/dsp/dsp.cpp
     Modules/AudioDSPTools/dsp/dsp.h
     Modules/AudioDSPTools/dsp/ImpulseResponse.cpp

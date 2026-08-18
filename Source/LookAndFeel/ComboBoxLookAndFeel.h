@@ -132,127 +132,127 @@ public:
             cornerRadius);
     }
 
-void drawPopupMenuItem (Graphics& g, const juce::Rectangle<int>& area,
-                                        const bool isSeparator, const bool isActive,
-                                        const bool isHighlighted, const bool isTicked,
-                                        const bool hasSubMenu, const juce::String& text,
-                                        const juce::String& shortcutKeyText,
-                                        const juce::Drawable* icon, const juce::Colour* const textColourToUse) override
-{
-    constexpr float cornerRadius = 8.0f;
-
-    if (isSeparator)
+    void drawPopupMenuItem (Graphics& g, const juce::Rectangle<int>& area,
+                                            const bool isSeparator, const bool isActive,
+                                            const bool isHighlighted, const bool isTicked,
+                                            const bool hasSubMenu, const juce::String& text,
+                                            const juce::String& shortcutKeyText,
+                                            const juce::Drawable* icon, const juce::Colour* const textColourToUse) override
     {
-        auto r  = area.reduced (5, 0);
-        r.removeFromTop (roundToInt (((float) r.getHeight() * 0.5f) - 0.5f));
+        constexpr float cornerRadius = 8.0f;
 
-        g.setColour (findColour (PopupMenu::textColourId).withAlpha (0.3f));
-        g.fillRect (r.removeFromTop (1));
-    }
-    else
-    {
-        auto textColour = (textColourToUse == nullptr ? findColour (PopupMenu::textColourId)
-                                                      : *textColourToUse);
-
-        auto r  = area.reduced (1);
-
-        if (isHighlighted && isActive)
+        if (isSeparator)
         {
-            g.setColour (findColour (PopupMenu::highlightedBackgroundColourId));
-            g.fillRoundedRectangle (r.toFloat(), cornerRadius);
+            auto r  = area.reduced (5, 0);
+            r.removeFromTop (roundToInt (((float) r.getHeight() * 0.5f) - 0.5f));
 
-            g.setColour (findColour (PopupMenu::highlightedTextColourId));
+            g.setColour (findColour (PopupMenu::textColourId).withAlpha (0.3f));
+            g.fillRect (r.removeFromTop (1));
         }
         else
         {
-            g.setColour (textColour.withMultipliedAlpha (isActive ? 1.0f : 0.5f));
-        }
+            auto textColour = (textColourToUse == nullptr ? findColour (PopupMenu::textColourId)
+                                                          : *textColourToUse);
 
-        r.reduce (jmin (5, area.getWidth() / 20), 0);
+            auto r  = area.reduced (1);
 
-        auto font = getPopupMenuFont();
+            if (isHighlighted && isActive)
+            {
+                g.setColour (findColour (PopupMenu::highlightedBackgroundColourId));
+                g.fillRoundedRectangle (r.toFloat(), cornerRadius);
 
-        auto maxFontHeight = (float) r.getHeight() / 1.3f;
+                g.setColour (findColour (PopupMenu::highlightedTextColourId));
+            }
+            else
+            {
+                g.setColour (textColour.withMultipliedAlpha (isActive ? 1.0f : 0.5f));
+            }
 
-        if (font.getHeight() > maxFontHeight)
-            font.setHeight (maxFontHeight);
+            r.reduce (jmin (5, area.getWidth() / 20), 0);
 
-        g.setFont (font);
+            auto font = getPopupMenuFont();
 
-        auto iconArea = r.removeFromLeft (roundToInt (maxFontHeight)).toFloat();
+            auto maxFontHeight = (float) r.getHeight() / 1.3f;
 
-        if (icon != nullptr)
-        {
-            icon->drawWithin (g, iconArea, RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize, 1.0f);
-            r.removeFromLeft (roundToInt (maxFontHeight * 0.5f));
-        }
-        else if (isTicked)
-        {
-            auto tick = getTickShape (1.0f);
-            //g.fillPath (tick, tick.getTransformToScaleToFit (iconArea.reduced (iconArea.getWidth() / 5, 0).toFloat(), true));
-            g.fillEllipse(iconArea.withWidth(iconArea.getWidth() / 3).withHeight(iconArea.getWidth() / 3).withCentre(iconArea.getCentre()));
-        }
+            if (font.getHeight() > maxFontHeight)
+                font.setHeight (maxFontHeight);
 
-        if (hasSubMenu)
-        {
-            auto arrowH = 0.6f * getPopupMenuFont().getAscent();
+            g.setFont (font);
 
-            auto x = static_cast<float> (r.removeFromRight ((int) arrowH).getX());
-            auto halfH = static_cast<float> (r.getCentreY());
+            auto iconArea = r.removeFromLeft (roundToInt (maxFontHeight)).toFloat();
 
-            Path path;
-            path.startNewSubPath (x, halfH - arrowH * 0.5f);
-            path.lineTo (x + arrowH * 0.6f, halfH);
-            path.lineTo (x, halfH + arrowH * 0.5f);
+            if (icon != nullptr)
+            {
+                icon->drawWithin (g, iconArea, RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize, 1.0f);
+                r.removeFromLeft (roundToInt (maxFontHeight * 0.5f));
+            }
+            else if (isTicked)
+            {
+                auto tick = getTickShape (1.0f);
+                //g.fillPath (tick, tick.getTransformToScaleToFit (iconArea.reduced (iconArea.getWidth() / 5, 0).toFloat(), true));
+                g.fillEllipse(iconArea.withWidth(iconArea.getWidth() / 3).withHeight(iconArea.getWidth() / 3).withCentre(iconArea.getCentre()));
+            }
 
-            g.strokePath (path, PathStrokeType (2.0f));
-        }
+            if (hasSubMenu)
+            {
+                auto arrowH = 0.6f * getPopupMenuFont().getAscent();
 
-        r.removeFromRight (3);
-        g.drawFittedText (text, r, Justification::centredLeft, 1);
+                auto x = static_cast<float> (r.removeFromRight ((int) arrowH).getX());
+                auto halfH = static_cast<float> (r.getCentreY());
 
-        if (shortcutKeyText.isNotEmpty())
-        {
-            auto f2 = font;
-            f2.setHeight (f2.getHeight() * 0.75f);
-            f2.setHorizontalScale (0.95f);
-            g.setFont (f2);
+                Path path;
+                path.startNewSubPath (x, halfH - arrowH * 0.5f);
+                path.lineTo (x + arrowH * 0.6f, halfH);
+                path.lineTo (x, halfH + arrowH * 0.5f);
 
-            g.drawText (shortcutKeyText, r, Justification::centredRight, true);
+                g.strokePath (path, PathStrokeType (2.0f));
+            }
+
+            r.removeFromRight (3);
+            g.drawFittedText (text, r, Justification::centredLeft, 1);
+
+            if (shortcutKeyText.isNotEmpty())
+            {
+                auto f2 = font;
+                f2.setHeight (f2.getHeight() * 0.75f);
+                f2.setHorizontalScale (0.95f);
+                g.setFont (f2);
+
+                g.drawText (shortcutKeyText, r, Justification::centredRight, true);
+            }
         }
     }
-}
 
-void drawPopupMenuUpDownArrow (Graphics& g, int width, int height, bool isScrollUpArrow) override
-{
-    constexpr float cornerRadius = 12.0f;
-    auto background = findColour (PopupMenu::backgroundColourId);
-
-
-    g.setGradientFill (ColourGradient (background, 0.0f, (float) height * 0.5f,
-                                       background.withAlpha (0.0f),
-                                       0.0f, isScrollUpArrow ? ((float) height) : 0.0f,
-                                       false));
-
-    // g.fillRect (1, 1, width - 2, height - 2);
-    g.fillRoundedRectangle (1, 1, width - 2, height - 2, cornerRadius);
-
-    auto hw = (float) width * 0.5f;
-    auto arrowW = (float) height * 0.3f;
-    auto y1 = (float) height * (isScrollUpArrow ? 0.6f : 0.3f);
-    auto y2 = (float) height * (isScrollUpArrow ? 0.3f : 0.6f);
-
-    Path p;
-    p.addTriangle (hw - arrowW, y1,
-                   hw + arrowW, y1,
-                   hw, y2);
-
-    g.setColour (findColour (PopupMenu::textColourId).withAlpha (0.5f));
-    g.fillPath (p);
-}
+    void drawPopupMenuUpDownArrow (Graphics& g, int width, int height, bool isScrollUpArrow) override
+    {
+        constexpr float cornerRadius = 12.0f;
+        auto background = findColour (PopupMenu::backgroundColourId);
 
 
+        g.setGradientFill (ColourGradient (background, 0.0f, (float) height * 0.5f,
+                                           background.withAlpha (0.0f),
+                                           0.0f, isScrollUpArrow ? ((float) height) : 0.0f,
+                                           false));
 
-};
+        // g.fillRect (1, 1, width - 2, height - 2);
+        g.fillRoundedRectangle (1, 1, width - 2, height - 2, cornerRadius);
+
+        auto hw = (float) width * 0.5f;
+        auto arrowW = (float) height * 0.3f;
+        auto y1 = (float) height * (isScrollUpArrow ? 0.6f : 0.3f);
+        auto y2 = (float) height * (isScrollUpArrow ? 0.3f : 0.6f);
+
+        Path p;
+        p.addTriangle (hw - arrowW, y1,
+                       hw + arrowW, y1,
+                       hw, y2);
+
+        g.setColour (findColour (PopupMenu::textColourId).withAlpha (0.5f));
+        g.fillPath (p);
+    }
+
+
+
+    };
 
 #endif // __COMBO_BOX_LNF_H__

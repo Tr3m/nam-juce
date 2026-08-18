@@ -1,6 +1,3 @@
-[submodule "Modules/json"]
-	path = Modules/json
-	url = https://github.com/nlohmann/json
 [submodule "Modules/ff_meters"]
 	path = Modules/ff_meters
 	url = https://github.com/ffAudio/ff_meters
