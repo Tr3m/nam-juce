@@ -37,6 +37,52 @@ def generateUninstaller():
         os.system(f"sudo chmod +x {installer_dir}/uninstall-{pkg_name}" if args.sudo else f"chmod +x {installer_dir}/uninstall-{pkg_name}")
         print("Export Finished!\n")
 
+
+# ================================================================================
+
+def generate_preinstall_script(target_bundle, target_pkg, template, output):
+    with open (template, 'r') as f:
+        script = f.read().strip()
+
+    target_append = f'''
+if remove_if_matching_bundle "${target_bundle}" "${{EXPECTED_BUNDLE_IDS[@]}}"; then
+    forget_packages "{target_pkg}" "${{EXPECTED_PACKAGE_IDS[@]}}"
+fi
+
+exit 0
+    '''
+
+    script += f'\n{target_append}'
+    
+    if args.dryrun:
+        print(f'\n{script}')
+        print(f'Write to: {output}')
+    else:
+        with open(output, 'w') as f:
+            f.write(script)
+
+        os.chmod(output, 0o755)
+
+
+def generate_standalone_postinstall_script(template, output):
+    with open (template, 'r') as f:
+        script = f.read().strip()
+
+    if args.dryrun:
+        print(f'\n{script}')
+        print(f'Write to: {output}')
+    else:
+        with open(output, 'w') as f:
+            f.write(script)
+
+        os.chmod(output, 0o755)
+
+# ================================================================================
+
+def set_component_plist(path_to_target, output):
+    os.system(f'pkgbuild --analyze --root {path_to_target} {output}')
+    os.system(f'plutil -replace BundleIsRelocatable -bool NO {output}')
+
 # ================================================================================
 
 parser = argparse.ArgumentParser(description='')
@@ -46,6 +92,8 @@ parser.add_argument('--name', '-n', type=str, help='Override installer executabl
 parser.add_argument('--archive', '-a', dest='archive', action='store_true', help='Archive reslulting executable.')
 parser.add_argument('--uninstall', '-u', dest='uninstall', action='store_true', help='Generate Uninstall Script.')
 parser.add_argument('--sudo', '-s', dest='sudo', action='store_true', help='Request sudo priviledges.')
+parser.add_argument('--suffix', '-sf', dest='suffix', type=str, help='Specify dmg suffix')
+parser.add_argument('--export', '-e', dest='export', action='store_true', help='Export Build Commands')
 args = parser.parse_args()
 
 os.system("sudo clear" if args.sudo else "clear") # Get sudo priviledges at the start of the script to avoid getting prompted later on...
@@ -74,38 +122,61 @@ if args.uninstall:
     generateUninstaller()
     exit()
 
-if not os.path.exists(f'{pkg_output_dir}'):
+if not os.path.isdir(f'{pkg_output_dir}'):
 	print(f'Creating {pkg_output_dir}...\n')
 	if not args.dryrun:
 		os.system(f"mkdir -p {pkg_output_dir}")
+
+if not os.path.isdir(f'{pkg_output_dir}/scripts/app'):
+    os.system(f"mkdir -p {pkg_output_dir}/scripts/app")
+if not os.path.isdir(f'{pkg_output_dir}/scripts/vst'):
+    os.system(f"mkdir -p {pkg_output_dir}/scripts/vst")
+if not os.path.isdir(f'{pkg_output_dir}/scripts/au'):
+    os.system(f"mkdir -p {pkg_output_dir}/scripts/au")
 
 # Build Packages
 
 # Standalone Package
 print("Creating Standalone PKG...\n")
-standalone_command = f'pkgbuild --root {artefacts_dir}/Release/Standalone/ --identifier {common_identifier}.app.pkg.{pkg_name} --version {version} --install-location "/Applications" {pkg_output_dir}/{pkg_name}_APP.pkg'
+generate_preinstall_script("APP", "app", f'{script_root_dir}/preinstall.sh', f'{pkg_output_dir}/scripts/app/preinstall')
+generate_standalone_postinstall_script(f'{script_root_dir}/postinstall.sh', f'{pkg_output_dir}/scripts/app/postinstall') 
+set_component_plist(f'{artefacts_dir}/Release/Standalone', f'{pkg_output_dir}/app-components.plist')
+standalone_command = f'pkgbuild --root {artefacts_dir}/Release/Standalone/ --component-plist {pkg_output_dir}/app-components.plist --identifier {common_identifier}.app.pkg.{pkg_name} --version {version} --scripts {pkg_output_dir}/scripts/app --install-location "/Applications" {pkg_output_dir}/{pkg_name}_APP.pkg'
 if args.dryrun:
 	print(f'{standalone_command}\n')
 else:
-    os.system(standalone_command)
+    if args.export:
+        print(standalone_command)
+    else:
+        os.system(standalone_command)
     print("\n")
 
 # VST3 Package
 print("Creating VST3 PKG...\n")
-vst3_command = f'pkgbuild --root {artefacts_dir}/Release/VST3/ --identifier {common_identifier}.vst3.pkg.{pkg_name} --version {version} --install-location "/Library/Audio/Plug-Ins/VST" {pkg_output_dir}/{pkg_name}_VST3.pkg'
+generate_preinstall_script("VST", "vst3", f'{script_root_dir}/preinstall.sh', f'{pkg_output_dir}/scripts/vst/preinstall')
+set_component_plist(f'{artefacts_dir}/Release/VST3', f'{pkg_output_dir}/vst-components.plist')
+vst3_command = f'pkgbuild --root {artefacts_dir}/Release/VST3/ --component-plist {pkg_output_dir}/vst-components.plist --identifier {common_identifier}.vst3.pkg.{pkg_name} --version {version} --scripts {pkg_output_dir}/scripts/vst --install-location "/Library/Audio/Plug-Ins/VST" {pkg_output_dir}/{pkg_name}_VST3.pkg'
 if args.dryrun:
 	print(f'{vst3_command}\n')
 else:
-    os.system(vst3_command)
+    if args.export:
+        print(vst3_command)
+    else:
+        os.system(vst3_command)
     print("\n")
 
 # AU Package
 print("Creating AU PKG...\n")
-au_command = f'pkgbuild --root {artefacts_dir}/Release/AU/ --identifier {common_identifier}.au.pkg.{pkg_name} --version {version} --install-location "/Library/Audio/Plug-Ins/Components" {pkg_output_dir}/{pkg_name}_AU.pkg'
+generate_preinstall_script("AU", "au", f'{script_root_dir}/preinstall.sh', f'{pkg_output_dir}/scripts/au/preinstall')
+set_component_plist(f'{artefacts_dir}/Release/AU', f'{pkg_output_dir}/au-components.plist')
+au_command = f'pkgbuild --root {artefacts_dir}/Release/AU/ --component-plist {pkg_output_dir}/au-components.plist --identifier {common_identifier}.au.pkg.{pkg_name} --version {version} --scripts {pkg_output_dir}/scripts/au --install-location "/Library/Audio/Plug-Ins/Components" {pkg_output_dir}/{pkg_name}_AU.pkg'
 if args.dryrun:
 	print(f'{au_command}\n')
 else:
-    os.system(au_command)
+    if args.export:
+        print(au_command)
+    else:
+        os.system(au_command)
     print("\n")
 
 # Uninstaller
@@ -160,7 +231,10 @@ build_command = f'productbuild --resources {installer_dir} --distribution {insta
 if args.dryrun:
     print(f'{build_command}\n')
 else:
-    os.system(build_command)
+    if args.export:
+        print(build_command)
+    else:
+        os.system(build_command)
     print("\n")
 
 # Set installer icon
@@ -180,7 +254,7 @@ SetFile -a C {pkg_name}-setup.pkg
 rm tmp.icns && rm tmpicns.rsrc
 """
 
-if args.dryrun:
+if args.dryrun or args.export:
     print(f'===== PKG ICON SCRIPT =====\n\n{set_icon_script}\n\n===== END PKG ICON SCRIPT =====\n')
 else:
     os.system(set_icon_script)
@@ -196,7 +270,7 @@ if args.clear_artefacts:
 
 if args.archive:
     exec_name = f'{pkg_name}-setup.pkg'
-    archive_name = f'{pkg_name}-v{version}-mac.dmg'
+    archive_name = f'{pkg_name}-v{version}-{args.suffix if args.suffix else "mac"}.dmg'
     dmg_output_dir = f"{installer_dir}/installer"
     archive_dest = f'{dmg_output_dir}/{archive_name}'
 
