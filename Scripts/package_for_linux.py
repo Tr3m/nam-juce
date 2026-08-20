@@ -78,6 +78,7 @@ if not args.dryrun:
 print(f'Copying licence.rtf to {output_dir}/nam-juce/license.rtf')
 if not args.dryrun:
     os.system(f'cp "{license_file}" "{output_dir}/nam-juce/license.rtf"')
+    os.system(f'cp "{script_root_dir}/resources/THIRD-PARTY-NOTICES.txt" "{output_dir}/nam-juce/"')
 
 with open(f'{repo_dir}/Scripts/install-nam-juce.sh', 'r') as f:
     install_script = f.read().strip()

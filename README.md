@@ -19,25 +19,38 @@
 </div>
 
 </br>
-<p align="center">
-    <img src="https://i.allthepics.net/2024/08/12/namJuce.gif" alt="animated" />
-</p>
+<div align="center">
+    <img src="Assets/README/namJuce.gif" alt="animated" />
+</div>
+
+<div align="center">
+    <table width="965px" style='max-width:100%;'>
+        <tr>
+            <td><img src="Assets/README/gui_animation.gif"></td>
+            <td><img src="Assets/README/eq_animation.gif"></td>
+        </tr>
+    </table>
+</div>
+
 
 ## Table of Contents
 
-- [Installation](#installation)
-  - [Releases](#releases)
-  - [Chocolatey (Windows)](#chocolatey)
-- [Building](#building)
-    - [Optional CMake Flags](#optional-flags)
-- [Supported Platforms](#supported-platforms)
-- [Supported Formats](#supported-formats)
-- [Getting Amp Models](#getting-models)
+1. [Installation](#installation)
+    * [Releases](#releases)
+    * [Chocolatey (Windows)](#chocolatey)
+2. [Building](#building)
+    * [Windows](#building-windows)
+    * [MacOS](#building-macos)
+    * [Linux](#building-linux)
+    * [Optional CMake Flags](#optional-flags)
+3. [Supported Platforms](#supported-platforms)
+4. [Supported Formats](#supported-formats)
+5. [Getting Models](#getting-models)
 
 ## <a id="installation"></a> Installation
 
 ### <a id="releases"></a> Releases
-The latest version for Windows and MacOS can be found in the [Releases](https://github.com/Tr3m/nam-juce/releases) page.
+The latest versions for Windows, MacOS and Linux can be found in the [Releases](https://github.com/Tr3m/nam-juce/releases) page.
 
 ### <a id="chocolatey"></a> Chocolatey (Windows)
 For windows, the Chocolatey package can be installed by running:
@@ -61,6 +74,19 @@ cmake -B build
 cmake --build build --config Release -j %NUMBER_OF_PROCESSORS% 
 ```
 The `%NUMBER_OF_PROCESSORS%` environment variable is for cmd. The Powershell/New Windows Terminal equivalent is `$ENV:NUMBER_OF_PROCESSORS`.
+
+<br/>
+
+> [!NOTE]
+> The Standalone application build for Windows doesn't support ASIO by default.
+
+For ASIO support a path to Steingberg's ASIO SDK needs to be provided by using the `ASIO_PATH` flag with CMake:
+
+```bash
+cmake -B build -DASIO_PATH=<path/to/asio/common>
+```
+
+<br/>
 
 ### <a id="building-macos"></a> MacOS
 
@@ -91,6 +117,10 @@ Linux dependencies for JUCE can be found [here](https://github.com/juce-framewor
 
 The resulting binaries can be found under <u>`build/NEURAL_AMP_MODELER_artefacts/Release/`</u>.
 
+<br/>
+
+More plugin formats like LV2 and Legacy VST can be built by providing the appropriate SDK paths and setting the corresponding JUCE flags in the main `CMakeLists.txt` file.
+
 ## <a id="supported-platforms"></a> Supported Platforms
 
 - Windows
@@ -105,9 +135,23 @@ The resulting binaries can be found under <u>`build/NEURAL_AMP_MODELER_artefacts
 
 <br/>
 
-Note: The Standalone application for Windows doesn't support ASIO by default. For ASIO support a path to Steingberg's ASIO SDK needs to be provided by using the `ASIO_PATH` flag with CMake.
-
-More plugin formats like LV2 and Legacy VST can be built by providing the appropriate SDK paths and setting the corresponding JUCE flags in the main `CMakeLists.txt` file.
 
 ## <a id="getting-models"></a> Getting Models
-You can find Models and Impulse Responses shared by the community on [ToneHunt](https://tonehunt.org).
+
+<div style="display: flex; align-items: left; gap: 8px;">
+    <p style="margin: 0;">
+    You can find Models and Impulse Responses shared by the community on 
+        <a href="https://www.tone3000.com/">
+            <img src="Assets/README/tone3000-logo.svg" height="17" align="absmiddle"/>
+        </a>
+    </p> 
+</div>
+
+<br/>
+
+##
+
+<div align="center">
+    </br>
+  <img src="Assets/README/womm.png" width="90px"/>
+</div>

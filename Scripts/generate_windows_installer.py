@@ -60,6 +60,7 @@ OutputDir={repo_dir}\\Installers\\windows
 WizardSmallImageFile={repo_dir}\\Scripts\\resources\\icon.bmp
 WizardImageFile={repo_dir}\\Scripts\\resources\\banner.bmp
 LicenseFile={repo_dir}\\Scripts\\resources\\license.rtf
+InfoBeforeFile={repo_dir}\\Scripts\\resources\\THIRD-PARTY-NOTICES.txt
 
 
 [Types]

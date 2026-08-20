@@ -285,6 +285,7 @@ if args.archive:
 
     if not args.dryrun:
         os.system(f'cp {installer_dir}/{exec_name} {dmg_output_dir} && cp {installer_dir}/uninstall-{pkg_name} {dmg_output_dir}')
+        os.system(f'cp {script_root_dir}/resources/THIRD-PARTY-NOTICES.txt {dmg_output_dir}')
 
     clone_command = f'git clone https://github.com/create-dmg/create-dmg {installer_dir}/create-dmg'
 
@@ -304,7 +305,7 @@ if args.archive:
 
     print(f'Archiving as {archive_dest}\n')
 
-    archive_command = f'sh {installer_dir}/create-dmg/create-dmg --volname {pkg_name} {installer_dir}/{archive_name} {dmg_output_dir}'
+    archive_command = f'sh {installer_dir}/create-dmg/create-dmg --text-size 12 --volname {pkg_name} {installer_dir}/{archive_name} {dmg_output_dir}'
 
     if args.dryrun:
         print(f'{archive_command}\n')

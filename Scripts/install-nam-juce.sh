@@ -180,9 +180,9 @@ run_option()
     case $choice in
         1)  # View license
             if command -v less >/dev/null 2>&1; then
-                cat "$SCRIPT_DIR/nam-juce/license.rtf" | less
+                cat "$SCRIPT_DIR/nam-juce/license.rtf" "$SCRIPT_DIR/nam-juce/THIRD-PARTY-NOTICES.txt" | less
             else
-                cat "$SCRIPT_DIR/nam-juce/license.rtf" | more
+                cat "$SCRIPT_DIR/nam-juce/license.rtf" "$SCRIPT_DIR/nam-juce/THIRD-PARTY-NOTICES.txt" | more
             fi
             clear
             print_options

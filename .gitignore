@@ -9,3 +9,4 @@ Scripts/venv
 venv
 compile_commands.json
 .cache/
+.DS_Store
