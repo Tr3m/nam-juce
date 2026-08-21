@@ -25,6 +25,15 @@ def create_directory_structure(output_dir):
     if not args.dryrun:
         os.system(f'mkdir -p {output_dir}/nam-juce/resources')
 
+
+def get_changelog(changelog_path, version):
+    with open (changelog_path, "r") as f:
+        changelog = f.read().strip()
+
+    changelog = changelog.replace("Changelog", f'Changelog (v{version})')
+
+    return changelog
+
 # ================================================================================
 
 parser = argparse.ArgumentParser(description='')
@@ -96,6 +105,19 @@ else:
         f.write(install_script)
 
     os.chmod(f'{output_dir}/install-nam-juce.sh', 0o755)
+
+changelog = get_changelog(f'{repo_dir}/CHANGELOG.md', version)
+
+print("Exporting Changelog...")
+
+if args.dryrun:
+    print("====== CHANGELOG ======")
+    print(changelog)
+    print("====== END CHANGELOG ======")
+    print(f'Output to: {output_dir}/CHANGELOG.txt')
+else:
+    with open(f'{output_dir}/CHANGELOG.txt', "w") as f:
+        f.write(changelog)
 
 if args.archive:
     print("Archiving...")

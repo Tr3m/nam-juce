@@ -137,15 +137,18 @@ print_options()
     echo ""
     echo "      Run the nam-juce standalone binary without installing it."
     echo ""
-    echo "  3. Install nam-juce Standalone/VST3"
+    echo "  3. View Changelog"
+    echo "      View changes for version PLUGIN_VERSION"
+    echo ""
+    echo "  4. Install nam-juce Standalone/VST3"
     echo ""
     echo "      The vst3 plug-in will be installed in $HOME/.vst3."
     echo "      The standalone application binary will be installed in /usr/bin."
     echo "      You will be prompted for optional desktop integration."
     echo ""
-    echo "  4. Uninstall nam-juce"
+    echo "  5. Uninstall nam-juce"
     echo ""
-    echo "  5. Add desktop integration for $SCRIPT_DIR/nam-juce/bin/nam-juce"
+    echo "  6. Add desktop integration for $SCRIPT_DIR/nam-juce/bin/nam-juce"
     echo ""
 	echo "      If you've extracted nam-juce into the path you would like"
 	echo "      it to live in ($SCRIPT_DIR/nam-juce), you can set"
@@ -180,26 +183,41 @@ run_option()
     case $choice in
         1)  # View license
             if command -v less >/dev/null 2>&1; then
-                cat "$SCRIPT_DIR/nam-juce/license.rtf" "$SCRIPT_DIR/nam-juce/THIRD-PARTY-NOTICES.txt" | less
+                (cat "$SCRIPT_DIR/nam-juce/license.rtf" && printf '\n\n' && cat "$SCRIPT_DIR/nam-juce/THIRD-PARTY-NOTICES.txt") | less
             else
-                cat "$SCRIPT_DIR/nam-juce/license.rtf" "$SCRIPT_DIR/nam-juce/THIRD-PARTY-NOTICES.txt" | more
+                (cat "$SCRIPT_DIR/nam-juce/license.rtf" && printf '\n\n' && cat "$SCRIPT_DIR/nam-juce/THIRD-PARTY-NOTICES.txt") | more
             fi
             clear
             print_options
 
-            get_option "Command" 1 5
+            get_option "Command" 1 6
 
             selection=$?
             run_option $selection
             ;;
-        2)
+        2) # Launch
             echo Launching $SCRIPT_DIR/nam-juce/bin/nam-juce...
             $SCRIPT_DIR/nam-juce/bin/nam-juce
             ;;
-        3)
+        3) # View Changelog
+            if command -v less >/dev/null 2>&1; then
+                cat "$SCRIPT_DIR/CHANGELOG.txt" | less
+            else
+                cat "$SCRIPT_DIR/CHANGELOG.txt" | more
+            fi
+            clear
+            print_options
+
+            get_option "Command" 1 6
+
+            selection=$?
+            run_option $selection
+
+            ;;
+        4) # Install
             install
             ;;
-        4)
+        5) # Uninstall
             check_installed
             installed=$?
 
@@ -211,7 +229,7 @@ run_option()
             fi
             ;;
 
-        5)
+        6) # Desktop Integration
             echo""
             do_desktop_ingegration "$SCRIPT_DIR/nam-juce/bin/nam-juce"
             echo ""
@@ -267,7 +285,7 @@ echo ""
 print_options
 
 
-get_option "Command" 1 5
+get_option "Command" 1 6
 
 selection=$?
 run_option $selection

@@ -37,6 +37,13 @@ def generateUninstaller():
         os.system(f"sudo chmod +x {installer_dir}/uninstall-{pkg_name}" if args.sudo else f"chmod +x {installer_dir}/uninstall-{pkg_name}")
         print("Export Finished!\n")
 
+def get_changelog(changelog_path, version):
+    with open (changelog_path, "r") as f:
+        changelog = f.read().strip()
+
+    changelog = changelog.replace("Changelog", f'Changelog (v{version})')
+
+    return changelog
 
 # ================================================================================
 
@@ -55,8 +62,10 @@ exit 0
     script += f'\n{target_append}'
     
     if args.dryrun:
-        print(f'\n{script}')
-        print(f'Write to: {output}')
+        print("===== PREINSTALL SCRIPT =====")
+        print(f'{script}')
+        print("===== END PREINSTALL SCRIPT =====")
+        print(f'Write to: {output}\n')
     else:
         with open(output, 'w') as f:
             f.write(script)
@@ -69,8 +78,10 @@ def generate_standalone_postinstall_script(template, output):
         script = f.read().strip()
 
     if args.dryrun:
-        print(f'\n{script}')
-        print(f'Write to: {output}')
+        print("===== POSTNSTALL SCRIPT =====")
+        print(f'{script}')
+        print("===== END POSTNSTALL SCRIPT =====")
+        print(f'Write to: {output}\n')
     else:
         with open(output, 'w') as f:
             f.write(script)
@@ -282,10 +293,21 @@ if args.archive:
         os.system(f'rm {dmg_output_dir}/*')
 
     print("Setting up output directory...\n")
+        
+    print("Exporting Changelog...")
+    changelog = get_changelog(f'{repo_dir}/CHANGELOG.md', version)
 
     if not args.dryrun:
         os.system(f'cp {installer_dir}/{exec_name} {dmg_output_dir} && cp {installer_dir}/uninstall-{pkg_name} {dmg_output_dir}')
         os.system(f'cp {script_root_dir}/resources/THIRD-PARTY-NOTICES.txt {dmg_output_dir}')
+
+        with open(f'{dmg_output_dir}/CHANGELOG.txt', "w") as f:
+            f.write(changelog)
+    else:
+        print("====== CHANGELOG ======")
+        print(changelog)
+        print("====== END CHANGELOG ======")
+        print(f'Output to: {dmg_output_dir}/CHANGELOG.txt\n')
 
     clone_command = f'git clone https://github.com/create-dmg/create-dmg {installer_dir}/create-dmg'
 
@@ -305,7 +327,14 @@ if args.archive:
 
     print(f'Archiving as {archive_dest}\n')
 
-    archive_command = f'sh {installer_dir}/create-dmg/create-dmg --text-size 12 --volname {pkg_name} {installer_dir}/{archive_name} {dmg_output_dir}'
+    archive_command = f'sh {installer_dir}/create-dmg/create-dmg\
+            --volname "{pkg_name}-v{version}"\
+            --icon-size 64 --text-size 12\
+            --icon "{pkg_name}-setup.pkg" 10 10\
+            --icon "uninstall-{pkg_name}" 150 10\
+            --icon "CHANGELOG.txt" 270 10\
+            --icon "THIRD-PARTY-NOTICES.txt" 10 150\
+            {installer_dir}/{archive_name} {dmg_output_dir}'
 
     if args.dryrun:
         print(f'{archive_command}\n')

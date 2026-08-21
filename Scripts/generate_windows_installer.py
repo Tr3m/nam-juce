@@ -3,6 +3,18 @@ import argparse
 import inspect
 import py7zr
 
+# ========================================================================
+
+def get_changelog(changelog_path, version):
+    with open (changelog_path, "r") as f:
+        changelog = f.read().strip()
+
+    changelog = changelog.replace("Changelog", f'Changelog (v{version})')
+
+    return changelog
+
+# ========================================================================
+
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--dryrun', '-d', dest='dryrun', action='store_true', help='Dry run.')
 parser.add_argument('--name', '-n', type=str, help='Override installer executable name.')
@@ -117,18 +129,34 @@ if args.dryrun:
 else:
 	os.system(issc_command)
 
+print(f'Exporting Changelog...')
+changelog = get_changelog(f'{repo_dir}/CHANGELOG.md', version)
+
+if args.dryrun:
+    print("====== CHANGELOG ======")
+    print(changelog)
+    print("====== END CHANGELOG ======")
+    print(f'Output to: {repo_dir}\\Installers\\windows\\CHANGELOG.txt\n')
+else:
+    with open(f'{repo_dir}\\Installers\\windows\\CHANGELOG.txt', "w") as f:
+        f.write(changelog)
+
 if args.archive:
-	exec_name = f'{installer_exe_name if args.name == None else args.name}-setup.exe'
-	archive_name = f'{installer_exe_name if args.name == None else args.name}-v{version}-win.zip'
-	archive_dest = f'{repo_dir}\\Installers\\windows'
-	print(f'Archiving as {archive_dest}\n')
+    exec_name = f'{installer_exe_name if args.name == None else args.name}-setup.exe'
+    archive_name = f'{installer_exe_name if args.name == None else args.name}-v{version}-win.zip'
+    archive_dest = f'{repo_dir}\\Installers\\windows'
+    print(f'Archiving as {archive_dest}\n')
 
-	archive_command = f'powershell Compress-Archive {archive_dest}\\{exec_name} {archive_dest}\\{archive_name}'
+    archive_command = f'powershell Compress-Archive\
+            -Path {archive_dest}\\{exec_name}, {archive_dest}\\CHANGELOG.txt\
+            {archive_dest}\\{archive_name}'
 
-	if args.dryrun:
-		print(f'{archive_command}\n')
-	else:
-		os.system(archive_command)
-		print("\n")
+    if args.dryrun:
+        print(f'{archive_command}\n')
+    else:
+        if os.path.exists(f'{archive_dest}\\{archive_name}'):
+            os.remove(f'{archive_dest}\\{archive_name}')
+        os.system(archive_command)
+        print("\n")
 
 print("Done!")
