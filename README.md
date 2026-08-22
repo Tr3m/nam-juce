@@ -1,5 +1,4 @@
 <div id="namjuce-icon" align="center">
-    <br />
     <img src="./Assets/ICON.png" alt="nam-juce icon" width="128"/>
     <h1>NAM JUCE</h1>
     <h3>Neural Amp Modeler JUCE Implementation</h3>
@@ -8,14 +7,17 @@
 
 <div id="badges" align="center">
 
-[![current release](https://img.shields.io/github/release/tr3m/nam-juce.svg)](https://github.com/tr3m/nam-juce/releases)
-[![chocolatey](https://img.shields.io/chocolatey/v/nam-juce)](https://community.chocolatey.org/packages/nam-juce/)
-[![license](https://img.shields.io/github/license/tr3m/nam-juce.svg)](https://github.com/tr3m/nam-juce/blob/master/LICENSE.txt)
+[![current release](https://img.shields.io/github/v/release/tr3m/nam-juce?label=Release&logo=github&color=green)](https://github.com/tr3m/nam-juce/releases)
+[![chocolatey](https://img.shields.io/chocolatey/v/nam-juce?label=Chocolatey&logo=chocolatey&color=blue)](https://community.chocolatey.org/packages/nam-juce/)
+[![license](https://img.shields.io/github/license/tr3m/nam-juce?label=License)](https://github.com/tr3m/nam-juce/blob/master/LICENSE.txt)
 </div>
 
-<div id="badges" align="center">
+<div id="previews" align="center">
 
-**A JUCE implementation of Steven Atkinson's [NeuralAmpModelerPlugin](https://github.com/sdatkinson/NeuralAmpModelerPlugin). This Repository is still a work-in-proress, but the basic functionality is there.**
+**A JUCE implementation of Steven Atkinson's [NeuralAmpModelerPlugin](https://github.com/sdatkinson/NeuralAmpModelerPlugin).**
+<br/>
+
+This Repository is still a work-in-progress, but the basic functionality is there.
 </div>
 
 </br>
@@ -24,7 +26,7 @@
 </div>
 
 <div align="center">
-    <table width="965px" style='max-width:100%;'>
+    <table style='max-width:965px;'>
         <tr>
             <td><img src="Assets/README/gui_animation.gif"></td>
             <td><img src="Assets/README/eq_animation.gif"></td>
@@ -65,7 +67,7 @@ git clone https://github.com/tr3m/nam-juce
 cd nam-juce
 ```
 
-Git sumbodules dont need to be initialized manually. CMake will initialize the appropriate submodules depending on the defined flags.
+Git submodules don't need to be initialized manually. CMake will initialize the appropriate submodules depending on the defined flags.
 
 ### <a id="building-windows"></a> Windows
 
@@ -119,7 +121,7 @@ The resulting binaries can be found under <u>`build/NEURAL_AMP_MODELER_artefacts
 
 <br/>
 
-More plugin formats like LV2 and Legacy VST can be built by providing the appropriate SDK paths and setting the corresponding JUCE flags in the main `CMakeLists.txt` file.
+More plug-in formats like LV2 and Legacy VST can be built by providing the appropriate SDK paths and setting the corresponding JUCE flags in the main `CMakeLists.txt` file.
 
 ## <a id="supported-platforms"></a> Supported Platforms
 
@@ -127,7 +129,7 @@ More plugin formats like LV2 and Legacy VST can be built by providing the approp
 - MacOS
 - Linux
 
-## <a id="suppoprted-formats"></a> Supported Formats
+## <a id="supported-formats"></a> Supported Formats
 
 - VST3
 - AU
