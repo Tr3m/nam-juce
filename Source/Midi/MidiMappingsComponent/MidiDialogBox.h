@@ -11,7 +11,7 @@ public:
     MidiDialogBox(NamJUCEAudioProcessor& p, std::function<void()>&& parentUpdater) 
         : audioPocessor(p), cancelOrOkClicked(std::move(parentUpdater))
     {
-        // this->getLookAndFeel().setColour(juce::TextEditor::backgroundColourId, juce::Colour::fromString("FF121212").withAlpha(0.7f));
+        lnf.setColour(juce::TextEditor::backgroundColourId, juce::Colour::fromString("FF121212").withAlpha(0.7f));
         // this->getLookAndFeel().setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour::fromString("FF121212").withAlpha(0.7f));
         lnf.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::transparentBlack);
 
@@ -19,6 +19,7 @@ public:
         presetName.addListener(this);
         presetName.setJustification(juce::Justification::centred);
         presetName.setInputRestrictions(30, allowedCharacters);
+        presetName.setLookAndFeel(&lnf);
 
         presetName.onReturnKey = [this] { savePreset(); };
         presetName.onEscapeKey = [this] { cancelOrOkClicked(); };
